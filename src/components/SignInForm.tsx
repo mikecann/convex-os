@@ -1,4 +1,5 @@
 import { useAuthActions } from "@convex-dev/auth/react";
+import { Vertical } from "gls";
 import { useState } from "react";
 import { Button, TextBox, Typography, Window } from "react-windows-xp";
 
@@ -43,25 +44,27 @@ export default function SignInForm() {
             });
         }}
       >
-        <Typography variant="paragraph">
-          Log in to see the numbers straight from the Convex cloud.
-        </Typography>
-        <TextBox
-          id="email"
-          type="email"
-          label="Email"
-          value={email}
-          onChange={setEmail}
-          autoComplete="email"
-        />
-        <TextBox
-          id="password"
-          type="password"
-          label="Password"
-          value={password}
-          onChange={setPassword}
-          autoComplete={flow === "signUp" ? "new-password" : "current-password"}
-        />
+        <Vertical spacing={0}>
+          <TextBox
+            id="email"
+            type="email"
+            label="Email"
+            value={email}
+            onChange={setEmail}
+            autoComplete="email"
+          />
+          <TextBox
+            id="password"
+            type="password"
+            label="Password"
+            value={password}
+            onChange={setPassword}
+            autoComplete={
+              flow === "signUp" ? "new-password" : "current-password"
+            }
+          />
+        </Vertical>
+
         <div>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
