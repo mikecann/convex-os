@@ -1,21 +1,23 @@
 import { useState } from "react";
-import { Taskbar, StartMenu } from "./taskbar";
+import { Taskbar } from "./taskbar/Taskbar";
+import { StartMenu } from "./taskbar/StartMenu";
 
 export function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
 
-  const handleStartClick = () => {
-    setIsStartMenuOpen(!isStartMenuOpen);
-  };
-
-  const handleStartMenuClose = () => {
-    setIsStartMenuOpen(false);
-  };
-
   return (
     <>
-      <Taskbar onStartClick={handleStartClick} />
-      <StartMenu isOpen={isStartMenuOpen} onClose={handleStartMenuClose} />
+      <Taskbar
+        onStartClick={() => {
+          setIsStartMenuOpen(!isStartMenuOpen);
+        }}
+      />
+      <StartMenu
+        isOpen={isStartMenuOpen}
+        onClose={() => {
+          setIsStartMenuOpen(false);
+        }}
+      />
     </>
   );
 }
