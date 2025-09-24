@@ -62,7 +62,7 @@ export default function SignInForm() {
           onChange={setPassword}
           autoComplete={flow === "signUp" ? "new-password" : "current-password"}
         />
-        <div className="signin-actions">
+        <div>
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? flow === "signIn"
@@ -85,7 +85,7 @@ export default function SignInForm() {
           </Button>
         </div>
         {error && (
-          <div className="signin-error">
+          <div>
             <Typography variant="paragraph">{error}</Typography>
           </div>
         )}

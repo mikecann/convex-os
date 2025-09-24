@@ -7,32 +7,22 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Wallpaper } from "react-windows-xp";
+import { Button, Wallpaper } from "react-windows-xp";
 import SignInForm from "./components/SignInForm";
 
 export default function App() {
   return (
-    <Wallpaper
-      fullScreen
-      className="app-wallpaper"
-      style={{
-        backgroundImage: 'url("/bliss.webp")',
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-      }}
-    >
+    <Wallpaper fullScreen>
       <div className="app-shell">
-        <header className="app-header">
-          <span className="app-header-title">Convex + React + Convex Auth</span>
+        <header>
           <SignOutButton />
         </header>
-        <main className="app-main">
-          <h1 className="app-title">Convex + React + Convex Auth</h1>
+        <main>
           <Authenticated>
             <Content />
           </Authenticated>
           <Unauthenticated>
-            <div className="unauthenticated-container">
+            <div>
               <SignInForm />
             </div>
           </Unauthenticated>
@@ -50,11 +40,7 @@ function SignOutButton() {
     return null;
   }
 
-  return (
-    <button className="sign-out-button" onClick={() => void signOut()}>
-      Sign out
-    </button>
-  );
+  return <Button onClick={() => void signOut()}>Sign out</Button>;
 }
 
 function Content() {
@@ -66,14 +52,14 @@ function Content() {
 
   if (viewer === undefined || numbers === undefined) {
     return (
-      <div className="loading-card">
+      <div>
         <p>loading... (consider a loading skeleton)</p>
       </div>
     );
   }
 
   return (
-    <div className="content-card">
+    <div>
       <p>Welcome {viewer ?? "Anonymous"}!</p>
       <p>
         Click the button below and open this page in another window - this data
@@ -81,7 +67,6 @@ function Content() {
       </p>
       <p>
         <button
-          className="primary-button"
           onClick={() => {
             void addNumber({ value: Math.floor(Math.random() * 10) });
           }}
@@ -95,62 +80,6 @@ function Content() {
           ? " Click the button!"
           : ` ${numbers?.join(", ") ?? "..."}`}
       </p>
-      <p>
-        Edit <code className="file-chip">convex/myFunctions.ts</code> to change
-        your backend
-      </p>
-      <p>
-        Edit <code className="file-chip">src/App.tsx</code> to change your
-        frontend
-      </p>
-      <div className="resources">
-        <p className="resources-title">Useful resources:</p>
-        <div className="resources-grid">
-          <div className="resources-column">
-            <ResourceCard
-              title="Convex docs"
-              description="Read comprehensive documentation for all Convex features."
-              href="https://docs.convex.dev/home"
-            />
-            <ResourceCard
-              title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing collection of articles, videos, and walkthroughs."
-              href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
-            />
-          </div>
-          <div className="resources-column">
-            <ResourceCard
-              title="Templates"
-              description="Browse our collection of templates to get started quickly."
-              href="https://www.convex.dev/templates"
-            />
-            <ResourceCard
-              title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks, and show off your projects."
-              href="https://www.convex.dev/community"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function ResourceCard({
-  title,
-  description,
-  href,
-}: {
-  title: string;
-  description: string;
-  href: string;
-}) {
-  return (
-    <div className="resource-card">
-      <a href={href} className="resource-link">
-        {title}
-      </a>
-      <p className="resource-description">{description}</p>
     </div>
   );
 }
