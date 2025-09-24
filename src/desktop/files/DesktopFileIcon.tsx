@@ -1,4 +1,10 @@
-import { CSSProperties, RefObject, useRef, useState } from "react";
+import {
+  CSSProperties,
+  RefObject,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+} from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
@@ -11,6 +17,9 @@ type DesktopFileIconProps = {
   onOpen?: (file: DesktopFileDoc) => void;
   onDelete?: (fileId: Id<"files">) => void;
   containerRef: RefObject<HTMLDivElement | null>;
+  registerNode: (element: HTMLDivElement | null) => void;
+  isSelected: boolean;
+  onMouseDown: (event: ReactMouseEvent<HTMLDivElement>) => void;
 };
 
 export function DesktopFileIcon({
@@ -18,6 +27,9 @@ export function DesktopFileIcon({
   onOpen,
   onDelete,
   containerRef,
+  registerNode,
+  isSelected,
+  onMouseDown,
 }: DesktopFileIconProps) {
   const [isDragging, setIsDragging] = useState(false);
   const updatePosition = useMutation(api.files.updateDesktopFilePosition);
@@ -28,8 +40,8 @@ export function DesktopFileIcon({
     position: "absolute",
     left: `${file.position.x}px`,
     top: `${file.position.y}px`,
-    width: "64px",
-    height: "64px",
+    minWidth: "70px",
+    minHeight: "82px",
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
@@ -40,11 +52,23 @@ export function DesktopFileIcon({
     textAlign: "center",
     color: "white",
     textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
+    borderRadius: "8px",
+    padding: "6px",
+    border: isSelected
+      ? "1px solid rgba(255,255,255,0.8)"
+      : "1px solid transparent",
+    backgroundColor: isSelected ? "rgba(59,130,246,0.35)" : "rgba(0,0,0,0.05)",
   };
 
   return (
     <div
+      ref={registerNode}
       draggable
+      onMouseDown={(event) => {
+        event.stopPropagation();
+        if (event.button !== 0) return;
+        onMouseDown(event);
+      }}
       onDragStart={(event) => {
         setIsDragging(true);
         const rect = containerRef.current?.getBoundingClientRect();

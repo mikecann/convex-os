@@ -1,4 +1,4 @@
-import { DesktopFileIcon } from "./DesktopFileIcon";
+import { DesktopFileIcon, type DesktopFileDoc } from "./DesktopFileIcon";
 import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
@@ -16,6 +16,18 @@ export function DesktopFiles() {
   const deleteFiles = useMutation(api.files.deleteDesktopFiles);
   const { uploadFiles } = useDesktopFileUploader();
   const handleError = useErrorHandler();
+  const [selectedIds, setSelectedIds] = useState<Array<Id<"files">>>([]);
+  const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
+  const [selectionRect, setSelectionRect] = useState<{
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  } | null>(null);
+  const iconNodesRef = useRef(
+    new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
+  );
+  const hasDraggedRef = useRef(false);
 
   useEffect(() => {
     const handleGlobalDragEnd = () => {
@@ -34,6 +46,72 @@ export function DesktopFiles() {
   return (
     <div
       ref={containerRef}
+      onMouseDown={(event) => {
+        if (event.button !== 0) return;
+        if (!containerRef.current) return;
+
+        const rect = containerRef.current.getBoundingClientRect();
+        const startX = event.clientX - rect.left;
+        const startY = event.clientY - rect.top;
+        selectionStartRef.current = { x: startX, y: startY };
+        setSelectionRect({ left: startX, top: startY, width: 0, height: 0 });
+        hasDraggedRef.current = false;
+        setSelectedIds([]);
+
+        const handleMouseMove = (moveEvent: MouseEvent) => {
+          if (!selectionStartRef.current || !containerRef.current) return;
+          moveEvent.preventDefault();
+          hasDraggedRef.current = true;
+
+          const currentX = moveEvent.clientX - rect.left;
+          const currentY = moveEvent.clientY - rect.top;
+          const width = currentX - selectionStartRef.current.x;
+          const height = currentY - selectionStartRef.current.y;
+          const normalized = {
+            left:
+              width >= 0
+                ? selectionStartRef.current.x
+                : selectionStartRef.current.x + width,
+            top:
+              height >= 0
+                ? selectionStartRef.current.y
+                : selectionStartRef.current.y + height,
+            width: Math.abs(width),
+            height: Math.abs(height),
+          };
+          setSelectionRect(normalized);
+
+          const selected: Array<Id<"files">> = [];
+          iconNodesRef.current.forEach(({ element, file }) => {
+            const iconRect = element.getBoundingClientRect();
+            const containerRect = containerRef.current?.getBoundingClientRect();
+            if (!containerRect) return;
+
+            const iconLeft = iconRect.left - containerRect.left;
+            const iconTop = iconRect.top - containerRect.top;
+            const iconWidth = iconRect.width;
+            const iconHeight = iconRect.height;
+            const intersects =
+              normalized.left < iconLeft + iconWidth &&
+              normalized.left + normalized.width > iconLeft &&
+              normalized.top < iconTop + iconHeight &&
+              normalized.top + normalized.height > iconTop;
+            if (intersects) selected.push(file._id);
+          });
+          setSelectedIds(selected);
+        };
+
+        const handleMouseUp = () => {
+          selectionStartRef.current = null;
+          setSelectionRect(null);
+          if (!hasDraggedRef.current) setSelectedIds([]);
+          window.removeEventListener("mousemove", handleMouseMove);
+          window.removeEventListener("mouseup", handleMouseUp);
+        };
+
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", handleMouseUp);
+      }}
       onDrop={async (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -119,6 +197,24 @@ export function DesktopFiles() {
           key={file._id}
           file={file}
           containerRef={containerRef}
+          isSelected={selectedIds.includes(file._id)}
+          registerNode={(element) => {
+            if (!element) {
+              iconNodesRef.current.delete(file._id);
+              return;
+            }
+            iconNodesRef.current.set(file._id, { element, file });
+          }}
+          onMouseDown={(event) => {
+            if (!event.shiftKey) {
+              setSelectedIds([file._id]);
+              return;
+            }
+            setSelectedIds((current) => {
+              if (current.includes(file._id)) return current;
+              return [...current, file._id];
+            });
+          }}
           onDelete={async (id) => {
             try {
               await deleteFiles({ fileIds: [id] });
@@ -135,6 +231,19 @@ export function DesktopFiles() {
             inset: 0,
             border: "2px dashed rgba(255,255,255,0.8)",
             background: "rgba(255,255,255,0.1)",
+          }}
+        />
+      ) : null}
+      {selectionRect ? (
+        <div
+          style={{
+            position: "absolute",
+            left: `${selectionRect.left}px`,
+            top: `${selectionRect.top}px`,
+            width: `${selectionRect.width}px`,
+            height: `${selectionRect.height}px`,
+            border: "1px solid rgba(96, 165, 250, 0.9)",
+            background: "rgba(59, 130, 246, 0.3)",
           }}
         />
       ) : null}
