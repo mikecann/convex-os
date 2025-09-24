@@ -1,5 +1,5 @@
 import { DesktopFileIcon } from "./DesktopFileIcon";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import {
@@ -16,6 +16,20 @@ export function DesktopFiles() {
   const deleteFiles = useMutation(api.files.deleteDesktopFiles);
   const { uploadFiles } = useDesktopFileUploader();
   const handleError = useErrorHandler();
+
+  useEffect(() => {
+    const handleGlobalDragEnd = () => {
+      setIsDragOver(false);
+    };
+
+    window.addEventListener("dragend", handleGlobalDragEnd);
+    window.addEventListener("drop", handleGlobalDragEnd);
+
+    return () => {
+      window.removeEventListener("dragend", handleGlobalDragEnd);
+      window.removeEventListener("drop", handleGlobalDragEnd);
+    };
+  }, []);
 
   return (
     <div
@@ -54,6 +68,8 @@ export function DesktopFiles() {
           setIsDragOver(false);
           return;
         }
+        const nextTarget = event.relatedTarget as Node | null;
+        if (nextTarget && containerRef.current.contains(nextTarget)) return;
         const rect = containerRef.current.getBoundingClientRect();
         if (event.clientX < rect.left || event.clientX > rect.right) {
           setIsDragOver(false);
@@ -61,7 +77,9 @@ export function DesktopFiles() {
         }
         if (event.clientY < rect.top || event.clientY > rect.bottom) {
           setIsDragOver(false);
+          return;
         }
+        setIsDragOver(false);
       }}
       onDragOver={(event) => {
         event.preventDefault();
