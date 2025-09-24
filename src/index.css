@@ -13,3 +13,7 @@
 .signin-fields .field-row-stacked input {
   width: 100%;
 }
+
+.window-body {
+  margin: 0px 3px 0px 3px !important;
+}
