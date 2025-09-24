@@ -2,6 +2,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { Button, TextBox, Window } from "react-windows-xp";
 import { Box, Horizontal, Vertical } from "../common/components";
+import { useErrorHandler } from "../errors/useErrorHandler";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signIn: "Sign in to Convex Desktop",
@@ -13,8 +14,8 @@ export default function SignInForm() {
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { handleError, dismissError } = useErrorHandler();
 
   return (
     <Window title={windowTitleByFlow[flow]} style={{ width: "400px" }}>
@@ -52,7 +53,7 @@ export default function SignInForm() {
             event.preventDefault();
             if (isSubmitting) return;
             if (!email || !password) {
-              setError("Email and password are both required.");
+              handleError("Email and password are both required.");
               return;
             }
             const formData = new FormData();
@@ -62,10 +63,13 @@ export default function SignInForm() {
             setIsSubmitting(true);
             void signIn("password", formData)
               .then(() => {
-                setError(null);
+                dismissError();
               })
-              .catch((signInError: Error) => {
-                setError(`Password sign-in failed: ${signInError.message}`);
+              .catch((signInError: unknown) => {
+                handleError({
+                  message: "Password sign-in failed",
+                  details: signInError,
+                });
               })
               .finally(() => {
                 setIsSubmitting(false);
@@ -113,7 +117,7 @@ export default function SignInForm() {
                 type="button"
                 onClick={() => {
                   setFlow(flow === "signIn" ? "signUp" : "signIn");
-                  setError(null);
+                  dismissError();
                 }}
               >
                 {flow === "signIn"

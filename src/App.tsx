@@ -9,26 +9,29 @@ import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Button, Wallpaper } from "react-windows-xp";
 import SignInForm from "./auth/SignInForm";
+import ErrorsProvider from "./errors/ErrorsProvider";
 
 export default function App() {
   return (
-    <Wallpaper fullScreen>
-      <div className="app-shell">
-        <header>
-          <SignOutButton />
-        </header>
-        <main>
-          <Authenticated>
-            <Content />
-          </Authenticated>
-          <Unauthenticated>
-            <div>
-              <SignInForm />
-            </div>
-          </Unauthenticated>
-        </main>
-      </div>
-    </Wallpaper>
+    <ErrorsProvider>
+      <Wallpaper fullScreen>
+        <div className="app-shell">
+          <header>
+            <SignOutButton />
+          </header>
+          <main>
+            <Authenticated>
+              <Content />
+            </Authenticated>
+            <Unauthenticated>
+              <div>
+                <SignInForm />
+              </div>
+            </Unauthenticated>
+          </main>
+        </div>
+      </Wallpaper>
+    </ErrorsProvider>
   );
 }
 
