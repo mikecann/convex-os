@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface WindowProps {
   title?: string;
@@ -6,14 +6,16 @@ interface WindowProps {
   className?: string;
   style?: React.CSSProperties;
   statusBar?: React.ReactNode;
+  bodyStyle?: React.CSSProperties;
 }
 
-export function Window({ 
-  title, 
-  children, 
-  className = '', 
+export function Window({
+  title,
+  children,
+  className = "",
   style,
-  statusBar
+  statusBar,
+  bodyStyle,
 }: WindowProps) {
   return (
     <div className={`window ${className}`} style={style}>
@@ -22,14 +24,10 @@ export function Window({
           <div className="title-bar-text">{title}</div>
         </div>
       )}
-      <div className="window-body">
+      <div className="window-body" style={bodyStyle}>
         {children}
       </div>
-      {statusBar && (
-        <div className="status-bar">
-          {statusBar}
-        </div>
-      )}
+      {statusBar && <div className="status-bar">{statusBar}</div>}
     </div>
   );
 }

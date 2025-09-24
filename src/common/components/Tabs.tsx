@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 interface TabPanel {
   id: string;
@@ -13,11 +13,11 @@ interface TabsProps {
   className?: string;
 }
 
-export function Tabs({ 
-  tabs, 
-  defaultActiveTab, 
-  onTabChange, 
-  className = '' 
+export function Tabs({
+  tabs,
+  defaultActiveTab,
+  onTabChange,
+  className = "",
 }: TabsProps) {
   const [activeTab, setActiveTab] = useState(defaultActiveTab || tabs[0]?.id);
 
@@ -29,7 +29,7 @@ export function Tabs({
   return (
     <section className={`tabs ${className}`}>
       <menu role="tablist">
-        {tabs.map(tab => (
+        {tabs.map((tab) => (
           <button
             key={tab.id}
             role="tab"
@@ -41,7 +41,7 @@ export function Tabs({
           </button>
         ))}
       </menu>
-      {tabs.map(tab => (
+      {tabs.map((tab) => (
         <article
           key={tab.id}
           role="tabpanel"

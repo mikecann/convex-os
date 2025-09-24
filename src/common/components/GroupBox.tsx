@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface GroupBoxProps {
   title?: string;
@@ -7,7 +7,12 @@ interface GroupBoxProps {
   style?: React.CSSProperties;
 }
 
-export function GroupBox({ title, children, className = '', style }: GroupBoxProps) {
+export function GroupBox({
+  title,
+  children,
+  className = "",
+  style,
+}: GroupBoxProps) {
   return (
     <fieldset className={className} style={style}>
       {title && <legend>{title}</legend>}

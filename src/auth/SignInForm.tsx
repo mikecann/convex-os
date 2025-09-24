@@ -1,6 +1,13 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import { Button, TextBox, Window, Box, Horizontal, Vertical } from "../common/components";
+import {
+  Button,
+  TextBox,
+  Window,
+  Box,
+  Horizontal,
+  Vertical,
+} from "../common/components";
 import { useErrorHandler } from "../errors/useErrorHandler";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
@@ -17,7 +24,11 @@ export default function SignInForm() {
   const { handleError, dismissError } = useErrorHandler();
 
   return (
-    <Window title={windowTitleByFlow[flow]} style={{ width: "400px" }}>
+    <Window
+      title={windowTitleByFlow[flow]}
+      style={{ width: "400px" }}
+      bodyStyle={{ margin: "0px 3px 0px 3px" }}
+    >
       <Vertical gap={5}>
         <Vertical
           style={{
