@@ -1,5 +1,6 @@
 import { useCallback, useContext } from "react";
 import { ErrorsContext } from "./ErrorsContext";
+import { ConvexError } from "convex/values";
 
 export function useErrorHandler() {
   const context = useContext(ErrorsContext);
@@ -11,6 +12,11 @@ export function useErrorHandler() {
     (error: unknown) => {
       if (!error) {
         context.showError("An unknown error occurred.");
+        return;
+      }
+
+      if (error instanceof ConvexError) {
+        context.showError(error.message);
         return;
       }
 

@@ -102,7 +102,11 @@ export function Window({
     : style || {};
 
   return (
-    <div ref={windowRef} className={`window ${className}`} style={windowStyle}>
+    <div
+      ref={windowRef}
+      className={`window ${className}`}
+      style={{ ...windowStyle }}
+    >
       {title && (
         <div
           className="title-bar"
