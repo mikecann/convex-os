@@ -157,6 +157,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           style={{
             display: "flex",
             height: "315px",
+            overflow: "hidden",
           }}
         >
           {/* Left column - Programs */}
@@ -165,81 +166,80 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               width: "195px",
               background: "white",
               borderRight: "1px solid #BFBFBF",
-              padding: "3px 0",
+              display: "flex",
+              flexDirection: "column",
             }}
           >
-            {leftMenuItems.map((item, index) => (
-              <div key={index}>
-                {index === 2 && (
+            <div style={{ flex: 1, padding: "3px 0", overflow: "hidden" }}>
+              {leftMenuItems.map((item, index) => (
+                <div key={index}>
+                  {index === 2 && (
+                    <div
+                      style={{
+                        height: "1px",
+                        background: "#C5C5C5",
+                        margin: "3px 8px",
+                      }}
+                    />
+                  )}
                   <div
                     style={{
-                      height: "1px",
-                      background: "#C5C5C5",
-                      margin: "3px 8px",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: item.subtitle ? "4px 8px 2px 8px" : "6px 8px",
+                      cursor: "pointer",
+                      minHeight: item.subtitle ? "34px" : "26px",
                     }}
-                  />
-                )}
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: item.subtitle ? "4px 8px 2px 8px" : "6px 8px",
-                    cursor: "pointer",
-                    minHeight: item.subtitle ? "34px" : "26px",
-                  }}
-                  onClick={() => handleMenuItemClick(item)}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.background = "#316AC5";
-                    e.currentTarget.style.color = "white";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.background = "transparent";
-                    e.currentTarget.style.color = "black";
-                  }}
-                >
-                  <img
-                    src={item.icon}
-                    alt={item.label}
-                    style={{
-                      width: "24px",
-                      height: "24px",
-                      flexShrink: 0,
+                    onClick={() => handleMenuItemClick(item)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = "#316AC5";
+                      e.currentTarget.style.color = "white";
                     }}
-                  />
-                  <div style={{ display: "flex", flexDirection: "column" }}>
-                    <span
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = "transparent";
+                      e.currentTarget.style.color = "black";
+                    }}
+                  >
+                    <img
+                      src={item.icon}
+                      alt={item.label}
                       style={{
-                        fontSize: "11px",
-                        fontWeight: item.subtitle ? "bold" : "normal",
-                        lineHeight: "1.2",
+                        width: "24px",
+                        height: "24px",
+                        flexShrink: 0,
                       }}
-                    >
-                      {item.label}
-                    </span>
-                    {item.subtitle && (
+                    />
+                    <div style={{ display: "flex", flexDirection: "column" }}>
                       <span
                         style={{
-                          fontSize: "10px",
-                          color: "#666",
-                          lineHeight: "1.1",
+                          fontSize: "11px",
+                          fontWeight: item.subtitle ? "bold" : "normal",
+                          lineHeight: "1.2",
                         }}
                       >
-                        {item.subtitle}
+                        {item.label}
                       </span>
-                    )}
+                      {item.subtitle && (
+                        <span
+                          style={{
+                            fontSize: "10px",
+                            color: "#666",
+                            lineHeight: "1.1",
+                          }}
+                        >
+                          {item.subtitle}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
 
             {/* All Programs section */}
             <div
               style={{
-                position: "absolute",
-                bottom: "62px",
-                left: "0",
-                width: "195px",
                 borderTop: "1px solid #C5C5C5",
                 background: "white",
               }}
@@ -280,6 +280,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               background:
                 "linear-gradient(to bottom, #E8F4FD 0%, #D6EBFA 100%)",
               padding: "3px 0",
+              overflow: "hidden",
             }}
           >
             {rightMenuItems.map((item, index) => (
@@ -343,6 +344,8 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
             padding: "0 12px",
             borderTop: "1px solid rgba(255,255,255,0.3)",
             gap: "6px",
+            position: "relative",
+            zIndex: 10,
           }}
         >
           <div
