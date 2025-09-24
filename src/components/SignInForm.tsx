@@ -16,9 +16,9 @@ export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
-    <Window className="w-[24rem]" title={windowTitleByFlow[flow]}>
+    <Window className="signin-window" title={windowTitleByFlow[flow]}>
       <form
-        className="flex flex-col gap-4"
+        className="signin-form"
         onSubmit={(event) => {
           event.preventDefault();
           if (isSubmitting) return;
@@ -62,7 +62,7 @@ export default function SignInForm() {
           onChange={setPassword}
           autoComplete={flow === "signUp" ? "new-password" : "current-password"}
         />
-        <div className="flex flex-col gap-2">
+        <div className="signin-actions">
           <Button type="submit" disabled={isSubmitting}>
             {isSubmitting
               ? flow === "signIn"
@@ -85,7 +85,7 @@ export default function SignInForm() {
           </Button>
         </div>
         {error && (
-          <div className="rounded border border-red-500 bg-red-500/20 px-3 py-2">
+          <div className="signin-error">
             <Typography variant="paragraph">{error}</Typography>
           </div>
         )}

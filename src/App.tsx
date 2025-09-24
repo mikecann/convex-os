@@ -14,27 +14,25 @@ export default function App() {
   return (
     <Wallpaper
       fullScreen
-      className="flex min-h-screen flex-col"
+      className="app-wallpaper"
       style={{
         backgroundImage: 'url("/bliss.webp")',
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
     >
-      <div className="flex min-h-screen flex-col bg-light/90 dark:bg-dark/80">
-        <header className="sticky top-0 z-10 bg-light/90 dark:bg-dark/80 p-4 border-b-2 border-slate-200 dark:border-slate-800 backdrop-blur">
-          Convex + React + Convex Auth
+      <div className="app-shell">
+        <header className="app-header">
+          <span className="app-header-title">Convex + React + Convex Auth</span>
           <SignOutButton />
         </header>
-        <main className="flex flex-1 flex-col gap-16 p-8">
-          <h1 className="text-4xl font-bold text-center text-dark dark:text-light">
-            Convex + React + Convex Auth
-          </h1>
+        <main className="app-main">
+          <h1 className="app-title">Convex + React + Convex Auth</h1>
           <Authenticated>
             <Content />
           </Authenticated>
           <Unauthenticated>
-            <div className="flex justify-center">
+            <div className="unauthenticated-container">
               <SignInForm />
             </div>
           </Unauthenticated>
@@ -47,17 +45,15 @@ export default function App() {
 function SignOutButton() {
   const { isAuthenticated } = useConvexAuth();
   const { signOut } = useAuthActions();
+
+  if (!isAuthenticated) {
+    return null;
+  }
+
   return (
-    <>
-      {isAuthenticated && (
-        <button
-          className="bg-slate-200 dark:bg-slate-800 text-dark dark:text-light rounded-md px-2 py-1"
-          onClick={() => void signOut()}
-        >
-          Sign out
-        </button>
-      )}
-    </>
+    <button className="sign-out-button" onClick={() => void signOut()}>
+      Sign out
+    </button>
   );
 }
 
@@ -70,14 +66,14 @@ function Content() {
 
   if (viewer === undefined || numbers === undefined) {
     return (
-      <div className="mx-auto">
+      <div className="loading-card">
         <p>loading... (consider a loading skeleton)</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col gap-8 max-w-lg mx-auto">
+    <div className="content-card">
       <p>Welcome {viewer ?? "Anonymous"}!</p>
       <p>
         Click the button below and open this page in another window - this data
@@ -85,7 +81,7 @@ function Content() {
       </p>
       <p>
         <button
-          className="bg-dark dark:bg-light text-light dark:text-dark text-sm px-4 py-2 rounded-md border-2"
+          className="primary-button"
           onClick={() => {
             void addNumber({ value: Math.floor(Math.random() * 10) });
           }}
@@ -94,29 +90,23 @@ function Content() {
         </button>
       </p>
       <p>
-        Numbers:{" "}
+        Numbers:
         {numbers?.length === 0
-          ? "Click the button!"
-          : (numbers?.join(", ") ?? "...")}
+          ? " Click the button!"
+          : ` ${numbers?.join(", ") ?? "..."}`}
       </p>
       <p>
-        Edit
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          convex/myFunctions.ts
-        </code>
-        to change your backend
+        Edit <code className="file-chip">convex/myFunctions.ts</code> to change
+        your backend
       </p>
       <p>
-        Edit
-        <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
-          src/App.tsx
-        </code>
-        to change your frontend
+        Edit <code className="file-chip">src/App.tsx</code> to change your
+        frontend
       </p>
-      <div className="flex flex-col">
-        <p className="text-lg font-bold">Useful resources:</p>
-        <div className="flex gap-2">
-          <div className="flex flex-col gap-2 w-1/2">
+      <div className="resources">
+        <p className="resources-title">Useful resources:</p>
+        <div className="resources-grid">
+          <div className="resources-column">
             <ResourceCard
               title="Convex docs"
               description="Read comprehensive documentation for all Convex features."
@@ -124,12 +114,11 @@ function Content() {
             />
             <ResourceCard
               title="Stack articles"
-              description="Learn about best practices, use cases, and more from a growing
-            collection of articles, videos, and walkthroughs."
+              description="Learn about best practices, use cases, and more from a growing collection of articles, videos, and walkthroughs."
               href="https://www.typescriptlang.org/docs/handbook/2/basic-types.html"
             />
           </div>
-          <div className="flex flex-col gap-2 w-1/2">
+          <div className="resources-column">
             <ResourceCard
               title="Templates"
               description="Browse our collection of templates to get started quickly."
@@ -137,8 +126,7 @@ function Content() {
             />
             <ResourceCard
               title="Discord"
-              description="Join our developer community to ask questions, trade tips & tricks,
-            and show off your projects."
+              description="Join our developer community to ask questions, trade tips & tricks, and show off your projects."
               href="https://www.convex.dev/community"
             />
           </div>
@@ -158,11 +146,11 @@ function ResourceCard({
   href: string;
 }) {
   return (
-    <div className="flex flex-col gap-2 bg-slate-200 dark:bg-slate-800 p-4 rounded-md h-28 overflow-auto">
-      <a href={href} className="text-sm underline hover:no-underline">
+    <div className="resource-card">
+      <a href={href} className="resource-link">
         {title}
       </a>
-      <p className="text-xs">{description}</p>
+      <p className="resource-description">{description}</p>
     </div>
   );
 }
