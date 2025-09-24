@@ -9,6 +9,8 @@ interface WindowProps {
   bodyStyle?: React.CSSProperties;
   titleBarStyle?: React.CSSProperties;
   draggable?: boolean;
+  onClose?: () => void;
+  showCloseButton?: boolean;
 }
 
 export function Window({
@@ -20,6 +22,8 @@ export function Window({
   bodyStyle,
   titleBarStyle,
   draggable = true,
+  onClose,
+  showCloseButton = false,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -110,6 +114,18 @@ export function Window({
           onMouseDown={handleMouseDown}
         >
           <div className="title-bar-text">{title}</div>
+          {showCloseButton && onClose && (
+            <div className="title-bar-controls">
+              <button
+                aria-label="Close"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClose();
+                }}
+                onMouseDown={(e) => e.stopPropagation()}
+              ></button>
+            </div>
+          )}
         </div>
       )}
       <div className="window-body" style={bodyStyle}>

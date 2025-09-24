@@ -1,15 +1,14 @@
-import { useContext } from "react";
+import { useCallback, useContext } from "react";
 import { ErrorsContext } from "./ErrorsContext";
 
 export function useErrorHandler() {
   const context = useContext(ErrorsContext);
 
-  if (!context) {
+  if (!context)
     throw new Error("useErrorHandler must be used within an ErrorsProvider");
-  }
 
-  return {
-    handleError: (error: unknown) => {
+  return useCallback(
+    (error: unknown) => {
       if (!error) {
         context.showError("An unknown error occurred.");
         return;
@@ -44,6 +43,6 @@ export function useErrorHandler() {
 
       context.showError("An unexpected error occurred.");
     },
-    dismissError: context.dismissError,
-  };
+    [context],
+  );
 }

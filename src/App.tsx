@@ -7,7 +7,8 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Button, Wallpaper } from "./common/components";
+import { Button } from "./common/components/Button";
+import { Wallpaper } from "./common/components/Wallpaper";
 import SignInForm from "./auth/SignInForm";
 import ErrorsProvider from "./errors/ErrorsProvider";
 

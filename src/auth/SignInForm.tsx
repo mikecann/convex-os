@@ -1,14 +1,13 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import {
-  Button,
-  TextBox,
-  Window,
-  Box,
-  Horizontal,
-  Vertical,
-} from "../common/components";
+
 import { useErrorHandler } from "../errors/useErrorHandler";
+import { Window } from "../common/components/Window";
+import Vertical from "../common/components/Vertical";
+import Horizontal from "../common/components/Horizontal";
+import { TextBox } from "../common/components/TextBox";
+import Box from "../common/components/Box";
+import { Button } from "../common/components/Button";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signIn: "Sign in to Convex Desktop",
@@ -21,7 +20,7 @@ export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { handleError, dismissError } = useErrorHandler();
+  const onError = useErrorHandler();
 
   return (
     <Window
@@ -64,7 +63,7 @@ export default function SignInForm() {
             event.preventDefault();
             if (isSubmitting) return;
             if (!email || !password) {
-              handleError("Email and password are both required.");
+              onError("Email and password are both required.");
               return;
             }
             const formData = new FormData();
@@ -73,15 +72,7 @@ export default function SignInForm() {
             formData.append("flow", flow);
             setIsSubmitting(true);
             void signIn("password", formData)
-              .then(() => {
-                dismissError();
-              })
-              .catch((signInError: unknown) => {
-                handleError({
-                  message: "Password sign-in failed",
-                  details: signInError,
-                });
-              })
+              .catch(onError)
               .finally(() => {
                 setIsSubmitting(false);
               });
@@ -128,7 +119,6 @@ export default function SignInForm() {
                 type="button"
                 onClick={() => {
                   setFlow(flow === "signIn" ? "signUp" : "signIn");
-                  dismissError();
                 }}
               >
                 {flow === "signIn"

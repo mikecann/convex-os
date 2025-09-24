@@ -1,6 +1,9 @@
 import { PropsWithChildren, useState } from "react";
-import { Window, Box } from "../common/components";
 import { ErrorsContext, ErrorsContextValue } from "./ErrorsContext";
+import { Window } from "../common/components/Window";
+import Vertical from "../common/components/Vertical";
+import Horizontal from "../common/components/Horizontal";
+import { Button } from "../common/components/Button";
 
 type ErrorState = {
   message: string;
@@ -29,18 +32,40 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
         <Window
           title="Error"
           style={{
-            position: "fixed",
-            top: "20px",
-            right: "20px",
-            width: "320px",
+            width: "400px",
           }}
+          showCloseButton={true}
+          onClose={dismissError}
         >
-          <Box style={{ padding: "12px" }}>
-            {/* <Error
-              message={errorState.message}
-              onClose={() => dismissError()}
-            /> */}
-          </Box>
+          <Vertical gap={16} style={{ padding: "16px" }}>
+            <Horizontal gap={16} align="start">
+              {/* Error icon */}
+              <img
+                src="/error-cross.png"
+                alt="Error"
+                style={{
+                  position: "absolute",
+                  top: "40px",
+                  left: "20px",
+                  width: "64px",
+                  height: "64px",
+                  flexShrink: 0,
+                }}
+              />
+
+              {/* Error message */}
+              <div style={{ flex: 1, paddingTop: "4px", paddingLeft: "80px" }}>
+                {errorState.message}
+              </div>
+            </Horizontal>
+
+            {/* OK button */}
+            <Horizontal justify="center" style={{ paddingTop: "8px" }}>
+              <Button onClick={dismissError} style={{ minWidth: "75px" }}>
+                OK
+              </Button>
+            </Horizontal>
+          </Vertical>
         </Window>
       ) : null}
     </ErrorsContext.Provider>
