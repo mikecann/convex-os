@@ -11,7 +11,9 @@ interface StartMenuProps {
 interface MenuItem {
   icon: string;
   label: string;
+  subtitle?: string;
   onClick?: () => void;
+  expanded?: boolean;
 }
 
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
@@ -21,28 +23,28 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   if (!isOpen) return null;
 
   const leftMenuItems: MenuItem[] = [
-    { icon: "🌐", label: "Internet Explorer" },
-    { icon: "📧", label: "E-mail" },
-    { icon: "⬛", label: "Command Prompt" },
-    { icon: "🟢", label: "MSN" },
-    { icon: "🎵", label: "Windows Media Player" },
-    { icon: "💬", label: "Windows Messenger" },
-    { icon: "📄", label: "Notepad" },
-    { icon: "ℹ️", label: "Tour Windows XP" },
+    { icon: "/xp/ie.png", label: "Internet", subtitle: "Internet Explorer" },
+    { icon: "/xp/outlook.png", label: "E-mail", subtitle: "Outlook Express" },
+    { icon: "/xp/cmd.png", label: "Command Prompt" },
+    { icon: "/xp/msn.png", label: "MSN Messenger" },
+    { icon: "/xp/mediaplayer.png", label: "Windows Media Player" },
+    { icon: "/xp/solitaire.png", label: "Solitaire" },
+    { icon: "/xp/paint.png", label: "Paint" },
+    { icon: "/xp/help.png", label: "Tour Windows XP" },
   ];
 
   const rightMenuItems: MenuItem[] = [
-    { icon: "📁", label: "My Documents" },
-    { icon: "📄", label: "My Recent Documents" },
-    { icon: "🖼️", label: "My Pictures" },
-    { icon: "🎵", label: "My Music" },
-    { icon: "💻", label: "My Computer" },
-    { icon: "⚙️", label: "Control Panel" },
-    { icon: "🔧", label: "Set Program Access and Defaults" },
-    { icon: "🖨️", label: "Printers and Faxes" },
-    { icon: "❓", label: "Help and Support" },
-    { icon: "🔍", label: "Search" },
-    { icon: "🏃", label: "Run..." },
+    { icon: "/xp/folder.png", label: "My Documents" },
+    { icon: "/xp/recentdoc.png", label: "My Recent Documents", expanded: true },
+    { icon: "/xp/folder_image.png", label: "My Pictures" },
+    { icon: "/xp/folder_music.png", label: "My Music" },
+    { icon: "/xp/mycomputer.png", label: "My Computer" },
+    { icon: "/xp/clipboard.png", label: "Control Panel" },
+    { icon: "/xp/defaultprog.png", label: "Set Program Access and Defaults" },
+    { icon: "/xp/printerfax.png", label: "Printers and Faxes" },
+    { icon: "/xp/help.png", label: "Help and Support" },
+    { icon: "/xp/search.png", label: "Search" },
+    { icon: "/xp/run.png", label: "Run..." },
   ];
 
   const handleLogOff = () => {
@@ -81,87 +83,177 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
       <div
         style={{
           position: "fixed",
-          bottom: "32px",
+          bottom: "30px",
           left: "2px",
-          width: "320px",
-          height: "450px",
-          background: "linear-gradient(to bottom, #245EDC 0%, #1E4DB5 100%)",
-          border: "2px outset #245EDC",
+          width: "385px",
+          height: "445px",
+          background: "#245EDC",
+          border: "3px ridge #C0C0C0",
+          borderBottomColor: "#404040",
+          borderRightColor: "#404040",
           borderRadius: "8px 8px 0 0",
-          boxShadow: "2px -2px 6px rgba(0,0,0,0.3)",
+          boxShadow: "4px 0 10px rgba(0, 0, 0, 0.5)",
           zIndex: 999,
           overflow: "hidden",
+          fontFamily: "MS Sans Serif, Arial, sans-serif",
         }}
       >
-        {/* User section */}
+        {/* White top border */}
         <div
           style={{
-            background: "linear-gradient(to bottom, #4080FF 0%, #245EDC 100%)",
-            padding: "8px 16px",
-            borderBottom: "1px solid #0831D9",
+            height: "2px",
+            background: "white",
+            width: "100%",
+          }}
+        />
+
+        {/* User section header */}
+        <div
+          style={{
+            background:
+              "linear-gradient(to right, #5A8DEE 0%, #4577DC 50%, #245EDC 100%)",
+            padding: "10px 16px",
+            borderBottom: "1px solid rgba(255,255,255,0.2)",
             display: "flex",
             alignItems: "center",
-            gap: "8px",
+            gap: "12px",
+            height: "58px",
           }}
         >
-          <div
+          <img
+            src="/xp/users.png"
+            alt="User"
             style={{
-              width: "32px",
-              height: "32px",
-              background:
-                "linear-gradient(to bottom, #FFD700 0%, #FFA500 100%)",
-              borderRadius: "4px",
-              border: "1px solid #FF8C00",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "16px",
+              width: "48px",
+              height: "48px",
+              border: "2px solid rgba(255,255,255,0.3)",
+              borderRadius: "3px",
+              boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
             }}
-          >
-            👤
-          </div>
+          />
           <span
             style={{
               color: "white",
-              fontFamily: "MS Sans Serif, sans-serif",
-              fontSize: "12px",
+              fontSize: "16px",
               fontWeight: "bold",
-              textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
+              textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
             }}
           >
-            {user?.email || "User"}
+            {user?.name || user?.email || "User"}
           </span>
         </div>
+
+        {/* Orange separator */}
+        <div
+          style={{
+            height: "3px",
+            background: "linear-gradient(to right, #FF9500 0%, #FF7A00 100%)",
+            borderBottom: "1px solid #D4640A",
+          }}
+        />
 
         {/* Main menu content */}
         <div
           style={{
             display: "flex",
-            height: "calc(100% - 100px)",
-            background: "white",
+            height: "315px",
           }}
         >
           {/* Left column - Programs */}
           <div
             style={{
-              width: "50%",
+              width: "195px",
               background: "white",
-              borderRight: "1px solid #C0C0C0",
+              borderRight: "1px solid #BFBFBF",
+              padding: "3px 0",
             }}
           >
             {leftMenuItems.map((item, index) => (
+              <div key={index}>
+                {index === 2 && (
+                  <div
+                    style={{
+                      height: "1px",
+                      background: "#C5C5C5",
+                      margin: "3px 8px",
+                    }}
+                  />
+                )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: item.subtitle ? "4px 8px 2px 8px" : "6px 8px",
+                    cursor: "pointer",
+                    minHeight: item.subtitle ? "34px" : "26px",
+                  }}
+                  onClick={() => handleMenuItemClick(item)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#316AC5";
+                    e.currentTarget.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "black";
+                  }}
+                >
+                  <img
+                    src={item.icon}
+                    alt={item.label}
+                    style={{
+                      width: "24px",
+                      height: "24px",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <div style={{ display: "flex", flexDirection: "column" }}>
+                    <span
+                      style={{
+                        fontSize: "11px",
+                        fontWeight: item.subtitle ? "bold" : "normal",
+                        lineHeight: "1.2",
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                    {item.subtitle && (
+                      <span
+                        style={{
+                          fontSize: "10px",
+                          color: "#666",
+                          lineHeight: "1.1",
+                        }}
+                      >
+                        {item.subtitle}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* All Programs section */}
+            <div
+              style={{
+                position: "absolute",
+                bottom: "62px",
+                left: "0",
+                width: "195px",
+                borderTop: "1px solid #C5C5C5",
+                background: "white",
+              }}
+            >
               <div
-                key={index}
                 style={{
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
-                  padding: "4px 8px",
+                  padding: "8px",
                   cursor: "pointer",
                   fontSize: "11px",
-                  fontFamily: "MS Sans Serif, sans-serif",
+                  fontWeight: "bold",
                 }}
-                onClick={() => handleMenuItemClick(item)}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#316AC5";
                   e.currentTarget.style.color = "white";
@@ -171,52 +263,70 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                   e.currentTarget.style.color = "black";
                 }}
               >
-                <span style={{ fontSize: "16px", width: "16px" }}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
+                <span>All Programs</span>
+                <img
+                  src="/xp/all-programs.ico"
+                  alt="All Programs"
+                  style={{ width: "15px", height: "15px", marginLeft: "auto" }}
+                />
               </div>
-            ))}
+            </div>
           </div>
 
-          {/* Right column - Folders and system items */}
+          {/* Right column - System items */}
           <div
             style={{
-              width: "50%",
-              background: "#E6F3FF",
+              width: "190px",
+              background:
+                "linear-gradient(to bottom, #E8F4FD 0%, #D6EBFA 100%)",
+              padding: "3px 0",
             }}
           >
             {rightMenuItems.map((item, index) => (
-              <div
-                key={index}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px",
-                  padding: "4px 8px",
-                  cursor: "pointer",
-                  fontSize: "11px",
-                  fontFamily: "MS Sans Serif, sans-serif",
-                }}
-                onClick={() => handleMenuItemClick(item)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = "#316AC5";
-                  e.currentTarget.style.color = "white";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = "#E6F3FF";
-                  e.currentTarget.style.color = "black";
-                }}
-              >
-                <span style={{ fontSize: "16px", width: "16px" }}>
-                  {item.icon}
-                </span>
-                <span>{item.label}</span>
-                {item.label === "My Recent Documents" && (
-                  <span style={{ marginLeft: "auto", fontSize: "8px" }}>
-                    ▶
-                  </span>
+              <div key={index}>
+                {(index === 5 || index === 8) && (
+                  <div
+                    style={{
+                      height: "1px",
+                      background: "#9CBEE8",
+                      margin: "3px 8px",
+                    }}
+                  />
                 )}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "6px 8px",
+                    cursor: "pointer",
+                    fontSize: "11px",
+                    minHeight: "26px",
+                  }}
+                  onClick={() => handleMenuItemClick(item)}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#316AC5";
+                    e.currentTarget.style.color = "white";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "transparent";
+                    e.currentTarget.style.color = "black";
+                  }}
+                >
+                  <img
+                    src={item.icon}
+                    alt={item.label}
+                    style={{
+                      width: "16px",
+                      height: "16px",
+                      flexShrink: 0,
+                    }}
+                  />
+                  <span style={{ flex: 1 }}>{item.label}</span>
+                  {item.expanded && (
+                    <span style={{ fontSize: "8px", color: "#666" }}>▶</span>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -225,75 +335,96 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         {/* Bottom section */}
         <div
           style={{
-            height: "50px",
-            background: "linear-gradient(to bottom, #245EDC 0%, #1E4DB5 100%)",
+            height: "60px",
+            background: "linear-gradient(to bottom, #4B7CE8 0%, #2E5BDC 100%)",
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 8px",
-            borderTop: "1px solid #4080FF",
+            justifyContent: "flex-end",
+            padding: "0 12px",
+            borderTop: "1px solid rgba(255,255,255,0.3)",
+            gap: "6px",
           }}
         >
-          {/* All Programs button */}
           <div
             style={{
               display: "flex",
               alignItems: "center",
               gap: "4px",
-              padding: "4px 8px",
+              padding: "6px 10px",
               cursor: "pointer",
-              color: "white",
-              fontSize: "11px",
-              fontFamily: "MS Sans Serif, sans-serif",
-              borderRadius: "2px",
+              background:
+                "linear-gradient(to bottom, #FF9D3F 0%, #E67C00 100%)",
+              border: "1px solid #CC6600",
+              borderRadius: "3px",
+              boxShadow:
+                "inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.1)",
             }}
+            onClick={handleLogOff}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+              e.currentTarget.style.background =
+                "linear-gradient(to bottom, #FFB366 0%, #F28A1A 100%)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = "transparent";
+              e.currentTarget.style.background =
+                "linear-gradient(to bottom, #FF9D3F 0%, #E67C00 100%)";
             }}
           >
-            <span>All Programs</span>
-            <span style={{ fontSize: "8px" }}>▶</span>
+            <img
+              src="/xp/logoff.png"
+              alt="Log Off"
+              style={{ width: "16px", height: "16px" }}
+            />
+            <span
+              style={{
+                color: "white",
+                fontSize: "11px",
+                fontWeight: "bold",
+                textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
+              }}
+            >
+              Log Off
+            </span>
           </div>
 
-          {/* Log Off and Turn Off Computer buttons */}
-          <div style={{ display: "flex", gap: "4px" }}>
-            <button
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "4px",
+              padding: "6px 10px",
+              cursor: "pointer",
+              background:
+                "linear-gradient(to bottom, #FF6B6B 0%, #CC0000 100%)",
+              border: "1px solid #990000",
+              borderRadius: "3px",
+              boxShadow:
+                "inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.1)",
+            }}
+            onClick={handleTurnOffComputer}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(to bottom, #FF8888 0%, #DD1A1A 100%)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background =
+                "linear-gradient(to bottom, #FF6B6B 0%, #CC0000 100%)";
+            }}
+          >
+            <img
+              src="/xp/shutdown.png"
+              alt="Turn Off"
+              style={{ width: "16px", height: "16px" }}
+            />
+            <span
               style={{
-                background:
-                  "linear-gradient(to bottom, #FF9D3F 0%, #F25C05 100%)",
-                border: "1px outset #FF9D3F",
                 color: "white",
                 fontSize: "11px",
-                fontFamily: "MS Sans Serif, sans-serif",
-                padding: "4px 8px",
-                cursor: "pointer",
-                borderRadius: "2px",
+                fontWeight: "bold",
                 textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
               }}
-              onClick={handleLogOff}
             >
-              📤 Log Off
-            </button>
-            <button
-              style={{
-                background:
-                  "linear-gradient(to bottom, #FF6B6B 0%, #CC0000 100%)",
-                border: "1px outset #FF6B6B",
-                color: "white",
-                fontSize: "11px",
-                fontFamily: "MS Sans Serif, sans-serif",
-                padding: "4px 8px",
-                cursor: "pointer",
-                borderRadius: "2px",
-                textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
-              }}
-              onClick={handleTurnOffComputer}
-            >
-              🔌 Turn Off Computer
-            </button>
+              Turn Off Computer
+            </span>
           </div>
         </div>
       </div>
