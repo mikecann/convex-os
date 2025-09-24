@@ -29,19 +29,6 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
       {/* Start button */}
       <StartButton onClick={onStartClick} />
 
-      {/* IE Explorer icon */}
-      {/* <img
-        src="/convex.svg"
-        alt="Internet Explorer"
-        style={{
-          marginLeft: "16px",
-          marginRight: "16px",
-          width: "20px",
-          height: "20px",
-          filter: "brightness(1.2)",
-        }}
-      /> */}
-
       {/* System tray */}
       <div
         style={{

@@ -1,10 +1,4 @@
-import {
-  Authenticated,
-  Unauthenticated,
-  useConvexAuth,
-  useMutation,
-  useQuery,
-} from "convex/react";
+import { Authenticated, Unauthenticated } from "convex/react";
 import { Wallpaper } from "./common/components/Wallpaper";
 import SignInWindow from "./auth/SignInWindow";
 import ErrorsProvider from "./common/errors/ErrorsProvider";
@@ -24,14 +18,3 @@ export default function App() {
     </ErrorsProvider>
   );
 }
-
-// function SignOutButton() {
-//   const { isAuthenticated } = useConvexAuth();
-//   const { signOut } = useAuthActions();
-
-//   if (!isAuthenticated) {
-//     return null;
-//   }
-
-//   return <Button onClick={() => void signOut()}>Sign out</Button>;
-// }
