@@ -33,6 +33,7 @@ export default function SignInForm() {
         <Vertical
           style={{
             overflow: "hidden",
+            userSelect: "none",
           }}
         >
           <Horizontal
