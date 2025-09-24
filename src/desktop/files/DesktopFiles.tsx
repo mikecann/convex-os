@@ -40,6 +40,12 @@ export function DesktopFiles() {
 
         setIsDragOver(false);
 
+        if (
+          event.dataTransfer.types.includes("application/x-desktop-file-id")
+        ) {
+          return;
+        }
+
         if (event.dataTransfer.files.length === 0) return;
 
         const deskRect = containerRef.current?.getBoundingClientRect();
@@ -60,6 +66,12 @@ export function DesktopFiles() {
       }}
       onDragEnter={(event) => {
         event.preventDefault();
+        if (
+          event.dataTransfer.types.includes("application/x-desktop-file-id")
+        ) {
+          event.dataTransfer.dropEffect = "move";
+          return;
+        }
         setIsDragOver(true);
       }}
       onDragLeave={(event) => {
@@ -83,6 +95,12 @@ export function DesktopFiles() {
       }}
       onDragOver={(event) => {
         event.preventDefault();
+        if (
+          event.dataTransfer.types.includes("application/x-desktop-file-id")
+        ) {
+          event.dataTransfer.dropEffect = "move";
+          return;
+        }
         event.dataTransfer.dropEffect = "copy";
       }}
       style={{
@@ -95,14 +113,12 @@ export function DesktopFiles() {
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
       }}
-      // onClick={() => {
-      //   setIsStartMenuOpen(false);
-      // }}
     >
       {files.map((file) => (
         <DesktopFileIcon
           key={file._id}
           file={file}
+          containerRef={containerRef}
           onDelete={async (id) => {
             try {
               await deleteFiles({ fileIds: [id] });

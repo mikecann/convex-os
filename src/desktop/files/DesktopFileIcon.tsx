@@ -1,4 +1,4 @@
-import { CSSProperties, useState } from "react";
+import { CSSProperties, RefObject, useRef, useState } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc, Id } from "../../../convex/_generated/dataModel";
@@ -10,16 +10,19 @@ type DesktopFileIconProps = {
   file: DesktopFileDoc;
   onOpen?: (file: DesktopFileDoc) => void;
   onDelete?: (fileId: Id<"files">) => void;
+  containerRef: RefObject<HTMLDivElement | null>;
 };
 
 export function DesktopFileIcon({
   file,
   onOpen,
   onDelete,
+  containerRef,
 }: DesktopFileIconProps) {
   const [isDragging, setIsDragging] = useState(false);
   const updatePosition = useMutation(api.files.updateDesktopFilePosition);
   const handleError = useErrorHandler();
+  const dragOffsetRef = useRef({ x: 0, y: 0 });
 
   const style: CSSProperties = {
     position: "absolute",
@@ -44,17 +47,23 @@ export function DesktopFileIcon({
       draggable
       onDragStart={(event) => {
         setIsDragging(true);
-        const offsetX = event.clientX - file.position.x;
-        const offsetY = event.clientY - file.position.y;
-        event.dataTransfer.setData(
-          "application/json",
-          JSON.stringify({ id: file._id, offsetX, offsetY }),
-        );
+        const rect = containerRef.current?.getBoundingClientRect();
+        const containerLeft = rect?.left ?? 0;
+        const containerTop = rect?.top ?? 0;
+        dragOffsetRef.current = {
+          x: event.clientX - (containerLeft + file.position.x),
+          y: event.clientY - (containerTop + file.position.y),
+        };
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("application/x-desktop-file-id", file._id);
       }}
       onDragEnd={async (event) => {
         setIsDragging(false);
-        const newX = event.clientX;
-        const newY = event.clientY;
+        const rect = containerRef.current?.getBoundingClientRect();
+        const containerLeft = rect?.left ?? 0;
+        const containerTop = rect?.top ?? 0;
+        const newX = event.clientX - containerLeft - dragOffsetRef.current.x;
+        const newY = event.clientY - containerTop - dragOffsetRef.current.y;
 
         if (Number.isNaN(newX) || Number.isNaN(newY)) return;
 
