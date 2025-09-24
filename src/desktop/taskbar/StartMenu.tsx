@@ -16,7 +16,7 @@ interface MenuItem {
 
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
-  const user = useQuery(api.auth.currentUser);
+  const user = useQuery(api.auth.findMe);
 
   if (!isOpen) return null;
 

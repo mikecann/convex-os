@@ -25,11 +25,12 @@ export function Clock() {
         color: "white",
         fontSize: "12px",
         fontFamily: "MS Sans Serif, sans-serif",
-        padding: "2px 8px",
+        padding: "2px 4px",
         minWidth: "60px",
         textAlign: "center",
         cursor: "default",
         userSelect: "none",
+        fontWeight: "400",
       }}
     >
       {formatTime(time)}

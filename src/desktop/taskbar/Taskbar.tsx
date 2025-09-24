@@ -15,54 +15,55 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         bottom: 0,
         left: 0,
         right: 0,
+        width: "100vw",
         height: "30px",
-        background:
-          "linear-gradient(to bottom, #245EDC 0%, #1E4DB5 50%, #1941A5 100%)",
-        border: "1px solid #0831D9",
-        borderBottom: "none",
+        backgroundImage:
+          "linear-gradient(0deg, #042b8e 0%, #0551f6 6%, #0453ff 51%, #0551f6 63%, #0551f6 81%, #3a8be8 99%, #0453ff 100%)",
         display: "flex",
         alignItems: "center",
-        justifyContent: "space-between",
-        padding: "2px",
-        zIndex: 1000,
-        boxShadow: "0 -1px 3px rgba(0,0,0,0.3)",
+        justifyContent: "flex-start",
+        zIndex: 9999,
+        userSelect: "none",
       }}
     >
-      {/* Left side - Start button */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          height: "100%",
-        }}
-      >
-        <StartButton onClick={onStartClick} />
-      </div>
+      {/* Start button */}
+      <StartButton onClick={onStartClick} />
 
-      {/* Center - Empty space for future taskbar items */}
-      <div
+      {/* IE Explorer icon */}
+      {/* <img
+        src="/convex.svg"
+        alt="Internet Explorer"
         style={{
-          flex: 1,
-          height: "100%",
-          display: "flex",
-          alignItems: "center",
-          padding: "0 8px",
+          marginLeft: "16px",
+          marginRight: "16px",
+          width: "20px",
+          height: "20px",
+          filter: "brightness(1.2)",
         }}
-      >
-        {/* This space can be used for open windows/applications */}
-      </div>
+      /> */}
 
-      {/* Right side - System tray with clock */}
+      {/* System tray */}
       <div
         style={{
+          marginLeft: "auto",
+          height: "100%",
+          width: "fit-content",
+          color: "white",
+          borderTop: "1px solid #075dca",
+          borderBottom: "1px solid #0a5bc6",
+          borderRight: "1px solid transparent",
+          borderLeft: "1px solid black",
+          backgroundImage:
+            "linear-gradient(0deg, #0a5bc6 0%, #1198e9 6%, #1198e9 51%, #1198e9 63%, #1198e9 77%, #19b9f3 95%, #075dca 97%)",
+          boxShadow: "2px 0px 3px #20e2fc inset",
           display: "flex",
           alignItems: "center",
-          height: "100%",
-          background:
-            "linear-gradient(to bottom, #1E4DB5 0%, #1941A5 50%, #0831D9 100%)",
-          border: "1px inset #245EDC",
-          borderRadius: "2px",
-          marginRight: "2px",
+          justifyContent: "flex-end",
+          paddingLeft: "8px",
+          paddingRight: "8px",
+          paddingTop: "1px",
+          fontSize: "14px",
+          gap: "4px",
         }}
       >
         <Clock />
