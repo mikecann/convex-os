@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Authenticated,
   Unauthenticated,
@@ -9,27 +7,40 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useState } from "react";
+import { Wallpaper } from "react-windows-xp";
+import SignInForm from "./components/SignInForm";
 
 export default function App() {
   return (
-    <>
-      <header className="sticky top-0 z-10 bg-light dark:bg-dark p-4 border-b-2 border-slate-200 dark:border-slate-800">
-        Convex + React + Convex Auth
-        <SignOutButton />
-      </header>
-      <main className="p-8 flex flex-col gap-16">
-        <h1 className="text-4xl font-bold text-center">
+    <Wallpaper
+      fullScreen
+      className="flex min-h-screen flex-col"
+      style={{
+        backgroundImage: 'url("/bliss.webp")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div className="flex min-h-screen flex-col bg-light/90 dark:bg-dark/80">
+        <header className="sticky top-0 z-10 bg-light/90 dark:bg-dark/80 p-4 border-b-2 border-slate-200 dark:border-slate-800 backdrop-blur">
           Convex + React + Convex Auth
-        </h1>
-        <Authenticated>
-          <Content />
-        </Authenticated>
-        <Unauthenticated>
-          <SignInForm />
-        </Unauthenticated>
-      </main>
-    </>
+          <SignOutButton />
+        </header>
+        <main className="flex flex-1 flex-col gap-16 p-8">
+          <h1 className="text-4xl font-bold text-center text-dark dark:text-light">
+            Convex + React + Convex Auth
+          </h1>
+          <Authenticated>
+            <Content />
+          </Authenticated>
+          <Unauthenticated>
+            <div className="flex justify-center">
+              <SignInForm />
+            </div>
+          </Unauthenticated>
+        </main>
+      </div>
+    </Wallpaper>
   );
 }
 
@@ -47,67 +58,6 @@ function SignOutButton() {
         </button>
       )}
     </>
-  );
-}
-
-function SignInForm() {
-  const { signIn } = useAuthActions();
-  const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
-  const [error, setError] = useState<string | null>(null);
-  return (
-    <div className="flex flex-col gap-8 w-96 mx-auto">
-      <p>Log in to see the numbers</p>
-      <form
-        className="flex flex-col gap-2"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target as HTMLFormElement);
-          formData.set("flow", flow);
-          void signIn("password", formData).catch((error) => {
-            setError(error.message);
-          });
-        }}
-      >
-        <input
-          className="bg-light dark:bg-dark text-dark dark:text-light rounded-md p-2 border-2 border-slate-200 dark:border-slate-800"
-          type="email"
-          name="email"
-          placeholder="Email"
-        />
-        <input
-          className="bg-light dark:bg-dark text-dark dark:text-light rounded-md p-2 border-2 border-slate-200 dark:border-slate-800"
-          type="password"
-          name="password"
-          placeholder="Password"
-        />
-        <button
-          className="bg-dark dark:bg-light text-light dark:text-dark rounded-md"
-          type="submit"
-        >
-          {flow === "signIn" ? "Sign in" : "Sign up"}
-        </button>
-        <div className="flex flex-row gap-2">
-          <span>
-            {flow === "signIn"
-              ? "Don't have an account?"
-              : "Already have an account?"}
-          </span>
-          <span
-            className="text-dark dark:text-light underline hover:no-underline cursor-pointer"
-            onClick={() => setFlow(flow === "signIn" ? "signUp" : "signIn")}
-          >
-            {flow === "signIn" ? "Sign up instead" : "Sign in instead"}
-          </span>
-        </div>
-        {error && (
-          <div className="bg-red-500/20 border-2 border-red-500/50 rounded-md p-2">
-            <p className="text-dark dark:text-light font-mono text-xs">
-              Error signing in: {error}
-            </p>
-          </div>
-        )}
-      </form>
-    </div>
   );
 }
 
@@ -150,17 +100,17 @@ function Content() {
           : (numbers?.join(", ") ?? "...")}
       </p>
       <p>
-        Edit{" "}
+        Edit
         <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
           convex/myFunctions.ts
-        </code>{" "}
+        </code>
         to change your backend
       </p>
       <p>
-        Edit{" "}
+        Edit
         <code className="text-sm font-bold font-mono bg-slate-200 dark:bg-slate-800 px-1 py-0.5 rounded-md">
           src/App.tsx
-        </code>{" "}
+        </code>
         to change your frontend
       </p>
       <div className="flex flex-col">
