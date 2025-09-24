@@ -7,6 +7,7 @@ interface WindowProps {
   style?: React.CSSProperties;
   statusBar?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
+  titleBarStyle?: React.CSSProperties;
 }
 
 export function Window({
@@ -16,11 +17,15 @@ export function Window({
   style,
   statusBar,
   bodyStyle,
+  titleBarStyle,
 }: WindowProps) {
   return (
     <div className={`window ${className}`} style={style}>
       {title && (
-        <div className="title-bar">
+        <div
+          className="title-bar"
+          style={{ userSelect: "none", ...titleBarStyle }}
+        >
           <div className="title-bar-text">{title}</div>
         </div>
       )}
