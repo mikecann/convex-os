@@ -92,24 +92,24 @@ export default function SignInForm() {
               <TextBox
                 id="email"
                 type="email"
-                label="Email"
-                stacked
+                label="Email:"
                 value={email}
-                onChange={setEmail}
+                onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                style={{ maxWidth: "200px" }}
+                labelStyle={{ width: "80px" }}
+                style={{ width: "200px" }}
               />
               <TextBox
                 id="password"
                 type="password"
-                label="Password"
-                stacked
+                label="Password:"
                 value={password}
-                onChange={setPassword}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete={
                   flow === "signUp" ? "new-password" : "current-password"
                 }
-                style={{ maxWidth: "200px" }}
+                labelStyle={{ width: "80px" }}
+                style={{ width: "200px" }}
               />
             </Vertical>
 

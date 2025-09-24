@@ -6,18 +6,3 @@ body {
   padding: 0;
 }
 
-.signin-fields .field-row-stacked {
-  display: grid;
-  grid-template-columns: 80px 1fr;
-  column-gap: 12px;
-  align-items: center;
-}
-
-.signin-fields .field-row-stacked label {
-  justify-self: end;
-  width: 80px;
-}
-
-.signin-fields .field-row-stacked input {
-  width: 100%;
-}
