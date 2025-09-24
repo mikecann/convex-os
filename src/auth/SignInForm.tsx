@@ -1,6 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 import { Button, TextBox, Typography, Window } from "react-windows-xp";
+import { Horizontal, Vertical } from "../common/components";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signIn: "Sign in to Convex Desktop",
@@ -16,7 +17,11 @@ export default function SignInForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   return (
-    <Window className="signin-window" title={windowTitleByFlow[flow]}>
+    <Window
+      className="signin-window"
+      title={windowTitleByFlow[flow]}
+      style={{ width: "400px" }}
+    >
       <form
         className="signin-form"
         onSubmit={(event) => {
@@ -43,56 +48,60 @@ export default function SignInForm() {
             });
         }}
       >
-        <div className="signin-fields">
-          <TextBox
-            id="email"
-            type="email"
-            label="Email"
-            stacked
-            value={email}
-            onChange={setEmail}
-            autoComplete="email"
-          />
-          <TextBox
-            id="password"
-            type="password"
-            label="Password"
-            stacked
-            value={password}
-            onChange={setPassword}
-            autoComplete={
-              flow === "signUp" ? "new-password" : "current-password"
-            }
-          />
-        </div>
+        <Vertical gap={20}>
+          <Vertical className="signin-fields">
+            <TextBox
+              id="email"
+              type="email"
+              label="Email"
+              stacked
+              value={email}
+              onChange={setEmail}
+              autoComplete="email"
+              style={{ maxWidth: "200px" }}
+            />
+            <TextBox
+              id="password"
+              type="password"
+              label="Password"
+              stacked
+              value={password}
+              onChange={setPassword}
+              autoComplete={
+                flow === "signUp" ? "new-password" : "current-password"
+              }
+              style={{ maxWidth: "200px" }}
+            />
+          </Vertical>
 
-        <div>
-          <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting
-              ? flow === "signIn"
-                ? "Signing in..."
-                : "Creating account..."
-              : flow === "signIn"
-                ? "Sign in"
-                : "Sign up"}
-          </Button>
-          <Button
-            type="button"
-            onClick={() => {
-              setFlow(flow === "signIn" ? "signUp" : "signIn");
-              setError(null);
-            }}
-          >
-            {flow === "signIn"
-              ? "Need an account? Sign up"
-              : "Already registered? Sign in"}
-          </Button>
-        </div>
-        {error && (
+          <Horizontal gap={10} justify="end">
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting
+                ? flow === "signIn"
+                  ? "Signing in..."
+                  : "Creating account..."
+                : flow === "signIn"
+                  ? "Sign in"
+                  : "Sign up"}
+            </Button>
+            <Button
+              type="button"
+              onClick={() => {
+                setFlow(flow === "signIn" ? "signUp" : "signIn");
+                setError(null);
+              }}
+            >
+              {flow === "signIn"
+                ? "Need an account? Sign up"
+                : "Already registered? Sign in"}
+            </Button>
+          </Horizontal>
+          {/* {error && (
           <div>
             <Typography variant="paragraph">{error}</Typography>
           </div>
-        )}
+        )} */}
+        </Vertical>
       </form>
     </Window>
   );
