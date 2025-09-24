@@ -86,7 +86,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           bottom: "30px",
           left: "2px",
           width: "385px",
-          height: "445px",
+          height: "425px",
           background: "#245EDC",
           border: "3px ridge #C0C0C0",
           borderBottomColor: "#404040",
@@ -112,20 +112,20 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           style={{
             background:
               "linear-gradient(to right, #5A8DEE 0%, #4577DC 50%, #245EDC 100%)",
-            padding: "10px 16px",
+            padding: "6px 12px",
             borderBottom: "1px solid rgba(255,255,255,0.2)",
             display: "flex",
             alignItems: "center",
-            gap: "12px",
-            height: "58px",
+            gap: "10px",
+            height: "48px",
           }}
         >
           <img
             src="/xp/users.png"
             alt="User"
             style={{
-              width: "48px",
-              height: "48px",
+              width: "40px",
+              height: "40px",
               border: "2px solid rgba(255,255,255,0.3)",
               borderRadius: "3px",
               boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
@@ -134,7 +134,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           <span
             style={{
               color: "white",
-              fontSize: "16px",
+              fontSize: "14px",
               fontWeight: "bold",
               textShadow: "1px 1px 2px rgba(0,0,0,0.7)",
             }}
@@ -156,7 +156,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         <div
           style={{
             display: "flex",
-            height: "315px",
+            height: "325px",
             overflow: "hidden",
           }}
         >
@@ -170,7 +170,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               flexDirection: "column",
             }}
           >
-            <div style={{ flex: 1, padding: "3px 0", overflow: "hidden" }}>
+            <div style={{ flex: 1, padding: "1px 0", overflow: "hidden" }}>
               {leftMenuItems.map((item, index) => (
                 <div key={index}>
                   {index === 2 && (
@@ -187,9 +187,9 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                       display: "flex",
                       alignItems: "center",
                       gap: "8px",
-                      padding: item.subtitle ? "4px 8px 2px 8px" : "6px 8px",
+                      padding: item.subtitle ? "2px 8px 1px 8px" : "3px 8px",
                       cursor: "pointer",
-                      minHeight: item.subtitle ? "34px" : "26px",
+                      minHeight: item.subtitle ? "30px" : "22px",
                     }}
                     onClick={() => handleMenuItemClick(item)}
                     onMouseEnter={(e) => {
@@ -249,7 +249,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                   display: "flex",
                   alignItems: "center",
                   gap: "8px",
-                  padding: "8px",
+                  padding: "6px 8px",
                   cursor: "pointer",
                   fontSize: "11px",
                   fontWeight: "bold",
@@ -279,7 +279,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               width: "190px",
               background:
                 "linear-gradient(to bottom, #E8F4FD 0%, #D6EBFA 100%)",
-              padding: "3px 0",
+              padding: "1px 0",
               overflow: "hidden",
             }}
           >
@@ -299,10 +299,10 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                     display: "flex",
                     alignItems: "center",
                     gap: "8px",
-                    padding: "6px 8px",
+                    padding: "3px 8px",
                     cursor: "pointer",
                     fontSize: "11px",
-                    minHeight: "26px",
+                    minHeight: "22px",
                   }}
                   onClick={() => handleMenuItemClick(item)}
                   onMouseEnter={(e) => {
@@ -336,40 +336,42 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         {/* Bottom section */}
         <div
           style={{
-            height: "60px",
-            background: "linear-gradient(to bottom, #4B7CE8 0%, #2E5BDC 100%)",
+            height: "35px",
+            background:
+              "linear-gradient(to bottom, #588bf9 0%, #1354e1 30%, #2E5BDC 100%)",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
-            padding: "0 12px",
+            padding: "0 8px",
             borderTop: "1px solid rgba(255,255,255,0.3)",
-            gap: "6px",
+            gap: "4px",
             position: "relative",
             zIndex: 10,
           }}
         >
-          <div
+          <button
             style={{
               display: "flex",
               alignItems: "center",
               gap: "4px",
-              padding: "6px 10px",
+              padding: "4px 8px",
               cursor: "pointer",
-              background:
-                "linear-gradient(to bottom, #FF9D3F 0%, #E67C00 100%)",
-              border: "1px solid #CC6600",
-              borderRadius: "3px",
-              boxShadow:
-                "inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.1)",
+              background: "none",
+              border: "none",
+              borderRadius: "2px",
+              fontSize: "11px",
+              fontFamily: "MS Sans Serif, Arial, sans-serif",
+              color: "white",
             }}
             onClick={handleLogOff}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(to bottom, #FFB366 0%, #F28A1A 100%)";
+            onMouseDown={(e) => {
+              e.currentTarget.style.border = "none";
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.border = "none";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(to bottom, #FF9D3F 0%, #E67C00 100%)";
+              e.currentTarget.style.border = "none";
             }}
           >
             <img
@@ -377,40 +379,32 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               alt="Log Off"
               style={{ width: "16px", height: "16px" }}
             />
-            <span
-              style={{
-                color: "white",
-                fontSize: "11px",
-                fontWeight: "bold",
-                textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
-              }}
-            >
-              Log Off
-            </span>
-          </div>
+            <span>Log Off</span>
+          </button>
 
-          <div
+          <button
             style={{
               display: "flex",
               alignItems: "center",
               gap: "4px",
-              padding: "6px 10px",
+              padding: "4px 8px",
               cursor: "pointer",
-              background:
-                "linear-gradient(to bottom, #FF6B6B 0%, #CC0000 100%)",
-              border: "1px solid #990000",
-              borderRadius: "3px",
-              boxShadow:
-                "inset 1px 1px 0 rgba(255,255,255,0.3), inset -1px -1px 0 rgba(0,0,0,0.1)",
+              background: "none",
+              border: "none",
+              borderRadius: "2px",
+              fontSize: "11px",
+              fontFamily: "MS Sans Serif, Arial, sans-serif",
+              color: "white",
             }}
             onClick={handleTurnOffComputer}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(to bottom, #FF8888 0%, #DD1A1A 100%)";
+            onMouseDown={(e) => {
+              e.currentTarget.style.border = "none";
+            }}
+            onMouseUp={(e) => {
+              e.currentTarget.style.border = "none";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background =
-                "linear-gradient(to bottom, #FF6B6B 0%, #CC0000 100%)";
+              e.currentTarget.style.border = "none";
             }}
           >
             <img
@@ -418,17 +412,8 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               alt="Turn Off"
               style={{ width: "16px", height: "16px" }}
             />
-            <span
-              style={{
-                color: "white",
-                fontSize: "11px",
-                fontWeight: "bold",
-                textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
-              }}
-            >
-              Turn Off Computer
-            </span>
-          </div>
+            <span>Turn Off Computer</span>
+          </button>
         </div>
       </div>
     </>
