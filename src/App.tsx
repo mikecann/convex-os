@@ -8,7 +8,7 @@ import {
 import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { Button, Wallpaper } from "react-windows-xp";
-import SignInForm from "./components/SignInForm";
+import SignInForm from "./auth/SignInForm";
 
 export default function App() {
   return (

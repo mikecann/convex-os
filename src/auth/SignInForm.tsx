@@ -44,11 +44,12 @@ export default function SignInForm() {
             });
         }}
       >
-        <Vertical spacing={0}>
+        <div className="signin-fields">
           <TextBox
             id="email"
             type="email"
             label="Email"
+            stacked
             value={email}
             onChange={setEmail}
             autoComplete="email"
@@ -57,13 +58,14 @@ export default function SignInForm() {
             id="password"
             type="password"
             label="Password"
+            stacked
             value={password}
             onChange={setPassword}
             autoComplete={
               flow === "signUp" ? "new-password" : "current-password"
             }
           />
-        </Vertical>
+        </div>
 
         <div>
           <Button type="submit" disabled={isSubmitting}>
