@@ -1,5 +1,4 @@
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Vertical } from "gls";
 import { useState } from "react";
 import { Button, TextBox, Typography, Window } from "react-windows-xp";
 
