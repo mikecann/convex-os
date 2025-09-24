@@ -81,54 +81,41 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
       <div
         style={{
           position: "fixed",
-          bottom: "30px",
-          left: "0px",
-          width: "384px",
-          height: "436px",
-          backgroundColor: "rgba(255, 255, 255, 0.5)",
-          border: "2px solid #0831d9",
-          borderBottom: "none",
+          bottom: "32px",
+          left: "2px",
+          width: "320px",
+          height: "450px",
+          background: "linear-gradient(to bottom, #245EDC 0%, #1E4DB5 100%)",
+          border: "2px outset #245EDC",
           borderRadius: "8px 8px 0 0",
           boxShadow: "2px -2px 6px rgba(0,0,0,0.3)",
           zIndex: 999,
           overflow: "hidden",
-          fontFamily: "Segoe UI, sans-serif",
-          userSelect: "none",
-          display: "flex",
-          flexDirection: "column",
         }}
       >
         {/* User section */}
         <div
           style={{
-            backgroundImage: "linear-gradient(0deg, #0072f4 0%, #3889e6 11%, #1472e6 42%, #004cb0 92%, #70aafb 96%, #255db5 100%)",
-            borderTop: "1px solid #0831d9",
-            borderLeft: "1px solid #0831d9", 
-            borderRight: "1px solid #001ea0",
-            boxShadow: "0px 1px 22px rgba(8, 50, 217, 0.62) inset",
-            textShadow: "2px 2px 1px #020236",
-            borderRadius: "8px 8px 0 0",
-            height: "64px",
+            background: "linear-gradient(to bottom, #4080FF 0%, #245EDC 100%)",
+            padding: "8px 16px",
+            borderBottom: "1px solid #0831D9",
             display: "flex",
             alignItems: "center",
-            justifyContent: "flex-start",
             gap: "8px",
-            paddingLeft: "8px",
-            flexShrink: 0,
           }}
         >
           <div
             style={{
-              border: "1px solid white",
-              width: "48px",
-              height: "48px", 
-              borderRadius: "6px",
-              overflow: "hidden",
+              width: "32px",
+              height: "32px",
+              background:
+                "linear-gradient(to bottom, #FFD700 0%, #FFA500 100%)",
+              borderRadius: "4px",
+              border: "1px solid #FF8C00",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "24px",
-              backgroundColor: "#FFD700",
+              fontSize: "16px",
             }}
           >
             👤
@@ -136,13 +123,13 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           <span
             style={{
               color: "white",
-              fontFamily: "Segoe UI, sans-serif",
-              fontSize: "16px",
+              fontFamily: "MS Sans Serif, sans-serif",
+              fontSize: "12px",
               fontWeight: "bold",
-              letterSpacing: "1px",
+              textShadow: "1px 1px 1px rgba(0,0,0,0.5)",
             }}
           >
-            {user?.email || "Guest"}
+            {user?.email || "User"}
           </span>
         </div>
 

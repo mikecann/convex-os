@@ -27,7 +27,7 @@ export function StartButton({ onClick }: StartButtonProps) {
         fontStyle: "italic",
         fontFamily: "MS Sans Serif, sans-serif",
         border: "none",
-        borderRadius: "0 12px 8px 0",
+        borderRadius: "0 8px 0 0",
         cursor: "pointer",
         outline: "none",
         display: "flex",
