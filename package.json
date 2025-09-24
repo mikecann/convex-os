@@ -18,8 +18,8 @@
     "convex": "^1.27.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-windows-xp": "^0.7.1",
-    "typestyle": "^2.4.0"
+    "typestyle": "^2.4.0",
+    "xp.css": "^0.2.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.21.0",

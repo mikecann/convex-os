@@ -8,8 +8,8 @@
         "convex": "^1.27.0",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
-        "react-windows-xp": "^0.7.1",
         "typestyle": "^2.4.0",
+        "xp.css": "^0.2.6",
       },
       "devDependencies": {
         "@eslint/js": "^9.21.0",
@@ -916,8 +916,6 @@
     "react-dom": ["react-dom@19.1.1", "", { "dependencies": { "scheduler": "^0.26.0" }, "peerDependencies": { "react": "^19.1.1" } }, "sha512-Dlq/5LAZgF0Gaz6yiqZCf6VCcZs1ghAJyrsu84Q/GT0gV+mCxbfmKNoGRKBYMJ8IEdGPqu49YWXD02GCknEDkw=="],
 
     "react-refresh": ["react-refresh@0.17.0", "", {}, "sha512-z6F7K9bV85EfseRCp2bzrpyQ0Gkw1uLoCel9XBVWPg/TjRj94SkJzUTGfOa4bs7iJvBWtQG0Wq7wnI0syw3EBQ=="],
-
-    "react-windows-xp": ["react-windows-xp@0.7.1", "", { "dependencies": { "xp.css": "^0.2.4" }, "peerDependencies": { "react": ">=16.8.0", "react-dom": ">=16.8.0" } }, "sha512-ZwVp4adgeM62fXajd9VXVq6IqlnJOaRGbzUV6WCT7Nm1Sg6L2r8ZUqP2HP/brCJET8FuXcdrROEG5oBTG1k8iA=="],
 
     "read-pkg": ["read-pkg@3.0.0", "", { "dependencies": { "load-json-file": "^4.0.0", "normalize-package-data": "^2.3.2", "path-type": "^3.0.0" } }, "sha512-BLq/cCO9two+lBgiTYNqD6GdtK8s4NpaWrl6/rCO9w0TUS8oJl7cmToOZfRYllKTISY6nt1U7jQ53brmKqY6BA=="],
 

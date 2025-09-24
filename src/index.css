@@ -1,3 +1,6 @@
+/* Import XP.css styles */
+@import "xp.css/dist/XP.css";
+
 .signin-fields .field-row-stacked {
   display: grid;
   grid-template-columns: 80px 1fr;

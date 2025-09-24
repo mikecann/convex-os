@@ -7,7 +7,7 @@ import {
 } from "convex/react";
 import { api } from "../convex/_generated/api";
 import { useAuthActions } from "@convex-dev/auth/react";
-import { Button, Wallpaper } from "react-windows-xp";
+import { Button, Wallpaper } from "./common/components";
 import SignInForm from "./auth/SignInForm";
 import ErrorsProvider from "./errors/ErrorsProvider";
 

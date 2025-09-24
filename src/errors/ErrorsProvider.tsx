@@ -1,6 +1,5 @@
 import { PropsWithChildren, useState } from "react";
-import { Button, Window } from "react-windows-xp";
-import { Box, Horizontal } from "../common/components";
+import { Window, Box } from "../common/components";
 import { ErrorsContext, ErrorsContextValue } from "./ErrorsContext";
 
 type ErrorState = {

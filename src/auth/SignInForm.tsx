@@ -1,7 +1,6 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
-import { Button, TextBox, Window } from "react-windows-xp";
-import { Box, Horizontal, Vertical } from "../common/components";
+import { Button, TextBox, Window, Box, Horizontal, Vertical } from "../common/components";
 import { useErrorHandler } from "../errors/useErrorHandler";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
