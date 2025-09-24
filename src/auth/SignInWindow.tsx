@@ -1,7 +1,7 @@
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 
-import { useErrorHandler } from "../errors/useErrorHandler";
+import { useErrorHandler } from "../common/errors/useErrorHandler";
 import { Window } from "../common/components/Window";
 import Vertical from "../common/components/Vertical";
 import Horizontal from "../common/components/Horizontal";
@@ -14,7 +14,7 @@ const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signUp: "Create a Convex Desktop account",
 };
 
-export default function SignInForm() {
+export default function SignInWindow() {
   const { signIn } = useAuthActions();
   const [flow, setFlow] = useState<"signIn" | "signUp">("signIn");
   const [email, setEmail] = useState("");

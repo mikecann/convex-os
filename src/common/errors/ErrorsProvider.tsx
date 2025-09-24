@@ -1,9 +1,9 @@
 import { PropsWithChildren, useState } from "react";
 import { ErrorsContext, ErrorsContextValue } from "./ErrorsContext";
-import { Window } from "../common/components/Window";
-import Vertical from "../common/components/Vertical";
-import Horizontal from "../common/components/Horizontal";
-import { Button } from "../common/components/Button";
+import { Window } from "../components/Window";
+import Vertical from "../components/Vertical";
+import Horizontal from "../components/Horizontal";
+import { Button } from "../components/Button";
 
 type ErrorState = {
   message: string;
