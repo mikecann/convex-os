@@ -39,15 +39,13 @@ export function StartButton({ onClick }: StartButtonProps) {
         gap: "4px",
       }}
     >
-      <div
+      <img
+        src="/convex.svg"
+        alt="Convex"
         style={{
           width: "16px",
           height: "16px",
-          background: "radial-gradient(circle, #FFD700, #FFA500)",
-          borderRadius: "2px",
-          border: "1px solid #FF8C00",
-          boxShadow: "inset 1px 1px 2px rgba(255,255,255,0.3)",
-          display: "inline-block",
+          filter: "brightness(1.2)",
         }}
       />
       Start
