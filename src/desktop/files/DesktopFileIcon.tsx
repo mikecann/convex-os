@@ -72,59 +72,6 @@ export function DesktopFileIcon({
       .finally(() => setIsRenaming(false));
   };
 
-  const style: CSSProperties = {
-    position: "absolute",
-    left: `${file.position.x}px`,
-    top: `${file.position.y}px`,
-    width: "96px",
-    minHeight: "112px",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: "6px",
-    cursor: isRenaming ? "text" : isDragging ? "grabbing" : "pointer",
-    userSelect: "none",
-    textAlign: "center",
-    color: "white",
-    textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
-    borderRadius: "8px",
-    padding: "6px",
-    boxSizing: "border-box",
-    border: isSelected
-      ? "1px solid rgba(255,255,255,0.8)"
-      : "1px solid transparent",
-    backgroundColor: isSelected ? "rgba(59,130,246,0.35)" : "rgba(0,0,0,0.05)",
-  };
-
-  const labelStyle: CSSProperties = {
-    fontSize: "12px",
-    lineHeight: "1.2",
-    maxWidth: "84px",
-    padding: "0 2px",
-    whiteSpace: "normal",
-    wordBreak: "break-word",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    display: "-webkit-box",
-    WebkitLineClamp: 3,
-    WebkitBoxOrient: "vertical",
-  };
-
-  const inputStyle: CSSProperties = {
-    fontSize: "12px",
-    lineHeight: "1.2",
-    maxWidth: "84px",
-    width: "100%",
-    padding: "2px",
-    borderRadius: "4px",
-    border: "1px solid rgba(255,255,255,0.8)",
-    backgroundColor: "rgba(0,0,0,0.6)",
-    color: "white",
-    textAlign: "center",
-    outline: "none",
-  };
-
   return (
     <div
       ref={registerNode}
@@ -192,7 +139,32 @@ export function DesktopFileIcon({
         renamedDuringSessionRef.current = true;
       }}
       tabIndex={0}
-      style={style}
+      style={{
+        position: "absolute",
+        left: `${file.position.x}px`,
+        top: `${file.position.y}px`,
+        width: "96px",
+        minHeight: "112px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "6px",
+        cursor: isRenaming ? "text" : isDragging ? "grabbing" : "pointer",
+        userSelect: "none",
+        textAlign: "center",
+        color: "white",
+        textShadow: "1px 1px 2px rgba(0,0,0,0.6)",
+        borderRadius: "8px",
+        padding: "6px",
+        boxSizing: "border-box",
+        border: isSelected
+          ? "1px solid rgba(255,255,255,0.8)"
+          : "1px solid transparent",
+        backgroundColor: isSelected
+          ? "rgba(59,130,246,0.35)"
+          : "rgba(0,0,0,0.0)",
+      }}
     >
       <img
         src="/xp/doc.png"
@@ -220,15 +192,45 @@ export function DesktopFileIcon({
             setNameDraft(file.name);
             setIsRenaming(false);
           }}
-          style={inputStyle}
+          style={{
+            fontSize: "12px",
+            lineHeight: "1.2",
+            maxWidth: "84px",
+            width: "100%",
+            padding: "2px",
+            borderRadius: "4px",
+            border: "1px solid rgba(255,255,255,0.8)",
+            backgroundColor: "rgba(0,0,0,0.6)",
+            color: "white",
+            textAlign: "center",
+            outline: "none",
+          }}
           spellCheck={false}
         />
       ) : (
-        <span style={labelStyle}>{file.name}</span>
+        <span
+          style={{
+            fontSize: "12px",
+            lineHeight: "1.2",
+            maxWidth: "84px",
+            padding: "0 2px",
+            whiteSpace: "normal",
+            wordBreak: "break-word",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+          }}
+        >
+          {file.name}
+        </span>
       )}
+
       {file.uploadState.kind === "uploading" ? (
         <span style={{ fontSize: "10px" }}>{file.uploadState.progress}%</span>
       ) : null}
+
       {file.uploadState.kind === "errored" ? (
         <span style={{ fontSize: "10px", color: "#ffb4b4" }}>
           {file.uploadState.message}

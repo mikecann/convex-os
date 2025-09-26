@@ -18,6 +18,7 @@ import type * as files_lib from "../files/lib.js";
 import type * as http from "../http.js";
 import type * as lib from "../lib.js";
 import type * as my_files from "../my/files.js";
+import type * as my_user from "../my/user.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -33,6 +34,7 @@ declare const fullApi: ApiFromModules<{
   http: typeof http;
   lib: typeof lib;
   "my/files": typeof my_files;
+  "my/user": typeof my_user;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,

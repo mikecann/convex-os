@@ -16,46 +16,36 @@ interface MenuItem {
   expanded?: boolean;
 }
 
+const leftMenuItems: MenuItem[] = [
+  { icon: "/xp/ie.png", label: "Internet", subtitle: "Internet Explorer" },
+  { icon: "/xp/outlook.png", label: "E-mail", subtitle: "Outlook Express" },
+  { icon: "/xp/cmd.png", label: "Command Prompt" },
+  { icon: "/xp/msn.png", label: "MSN Messenger" },
+  { icon: "/xp/mediaplayer.png", label: "Windows Media Player" },
+  { icon: "/xp/solitaire.png", label: "Solitaire" },
+  { icon: "/xp/paint.png", label: "Paint" },
+  { icon: "/xp/help.png", label: "Tour Windows XP" },
+];
+
+const rightMenuItems: MenuItem[] = [
+  { icon: "/xp/folder.png", label: "My Documents" },
+  { icon: "/xp/recentdoc.png", label: "My Recent Documents", expanded: true },
+  { icon: "/xp/folder_image.png", label: "My Pictures" },
+  { icon: "/xp/folder_music.png", label: "My Music" },
+  { icon: "/xp/mycomputer.png", label: "My Computer" },
+  { icon: "/xp/clipboard.png", label: "Control Panel" },
+  { icon: "/xp/defaultprog.png", label: "Set Program Access and Defaults" },
+  { icon: "/xp/printerfax.png", label: "Printers and Faxes" },
+  { icon: "/xp/help.png", label: "Help and Support" },
+  { icon: "/xp/search.png", label: "Search" },
+  { icon: "/xp/run.png", label: "Run..." },
+];
+
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
-  const user = useQuery(api.auth.findMe);
+  const user = useQuery(api.my.user.find);
 
   if (!isOpen) return null;
-
-  const leftMenuItems: MenuItem[] = [
-    { icon: "/xp/ie.png", label: "Internet", subtitle: "Internet Explorer" },
-    { icon: "/xp/outlook.png", label: "E-mail", subtitle: "Outlook Express" },
-    { icon: "/xp/cmd.png", label: "Command Prompt" },
-    { icon: "/xp/msn.png", label: "MSN Messenger" },
-    { icon: "/xp/mediaplayer.png", label: "Windows Media Player" },
-    { icon: "/xp/solitaire.png", label: "Solitaire" },
-    { icon: "/xp/paint.png", label: "Paint" },
-    { icon: "/xp/help.png", label: "Tour Windows XP" },
-  ];
-
-  const rightMenuItems: MenuItem[] = [
-    { icon: "/xp/folder.png", label: "My Documents" },
-    { icon: "/xp/recentdoc.png", label: "My Recent Documents", expanded: true },
-    { icon: "/xp/folder_image.png", label: "My Pictures" },
-    { icon: "/xp/folder_music.png", label: "My Music" },
-    { icon: "/xp/mycomputer.png", label: "My Computer" },
-    { icon: "/xp/clipboard.png", label: "Control Panel" },
-    { icon: "/xp/defaultprog.png", label: "Set Program Access and Defaults" },
-    { icon: "/xp/printerfax.png", label: "Printers and Faxes" },
-    { icon: "/xp/help.png", label: "Help and Support" },
-    { icon: "/xp/search.png", label: "Search" },
-    { icon: "/xp/run.png", label: "Run..." },
-  ];
-
-  const handleLogOff = () => {
-    void signOut();
-    onClose();
-  };
-
-  const handleTurnOffComputer = () => {
-    window.close();
-    onClose();
-  };
 
   const handleMenuItemClick = (item: MenuItem) => {
     if (item.onClick) {
@@ -363,7 +353,10 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               fontFamily: "MS Sans Serif, Arial, sans-serif",
               color: "white",
             }}
-            onClick={handleLogOff}
+            onClick={() => {
+              void signOut();
+              onClose();
+            }}
             onMouseDown={(e) => {
               e.currentTarget.style.border = "none";
             }}
@@ -396,7 +389,10 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               fontFamily: "MS Sans Serif, Arial, sans-serif",
               color: "white",
             }}
-            onClick={handleTurnOffComputer}
+            onClick={() => {
+              window.close();
+              onClose();
+            }}
             onMouseDown={(e) => {
               e.currentTarget.style.border = "none";
             }}
