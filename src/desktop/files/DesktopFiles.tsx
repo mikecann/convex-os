@@ -13,10 +13,10 @@ import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog
 export function DesktopFiles() {
   const [isDragOver, setIsDragOver] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const files = useQuery(api.files.listDesktopFiles) ?? [];
-  const deleteFiles = useMutation(api.files.deleteDesktopFiles);
+  const files = useQuery(api.my.files.list) ?? [];
+  const deleteFiles = useMutation(api.my.files.deleteAll);
   const { uploadFiles } = useDesktopFileUploader();
-  const handleError = useErrorHandler();
+  const onError = useErrorHandler();
   const [selectedIds, setSelectedIds] = useState<Array<Id<"files">>>([]);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
@@ -260,14 +260,10 @@ export function DesktopFiles() {
           setIsConfirmOpen(false);
         }}
         onConfirm={async () => {
-          try {
-            await deleteFiles({ fileIds: selectedIds });
-            setSelectedIds([]);
-          } catch (error) {
-            handleError(error);
-          } finally {
-            setIsConfirmOpen(false);
-          }
+          await deleteFiles({ fileIds: selectedIds })
+            .then(() => setSelectedIds([]))
+            .catch(onError)
+            .finally(() => setIsConfirmOpen(false));
         }}
       />
     </div>

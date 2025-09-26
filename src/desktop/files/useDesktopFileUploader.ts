@@ -19,12 +19,12 @@ type UploadStatus = {
 };
 
 export function useDesktopFileUploader() {
-  const createFiles = useMutation(api.files.createDesktopFiles);
-  const startUpload = useMutation(api.files.startDesktopUpload);
-  const generateUploadUrl = useMutation(api.files.generateDesktopUploadUrl);
-  const completeUpload = useMutation(api.files.completeDesktopUpload);
-  const setErrorState = useMutation(api.files.setDesktopUploadError);
-  const updateProgress = useMutation(api.files.updateDesktopUploadProgress);
+  const createFiles = useMutation(api.my.files.createAll);
+  const startUpload = useMutation(api.my.files.startUpload);
+  //const generateUploadUrl = useMutation(api.my.files.generateUploadUrl);
+  const completeUpload = useMutation(api.my.files.completeUpload);
+  const setErrorState = useMutation(api.my.files.setUploadError);
+  const updateProgress = useMutation(api.my.files.updateUploadProgress);
   const [status, setStatus] = useState<UploadStatus>({
     kind: "idle",
     completed: 0,
@@ -54,8 +54,7 @@ export function useDesktopFileUploader() {
         if (!fileId) continue;
 
         try {
-          const uploadUrl = await generateUploadUrl();
-          await startUpload({ fileId });
+          const { uploadUrl } = await startUpload({ fileId });
 
           await new Promise<void>((resolve, reject) => {
             const xhr = new XMLHttpRequest();
