@@ -1,5 +1,5 @@
 import { DesktopFileIcon, type DesktopFileDoc } from "./DesktopFileIcon";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import {
@@ -9,7 +9,7 @@ import {
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
-import { ImagePreviewWindow } from "../../apps/ImagePreviewWindow";
+import { useTasks } from "../../common/tasks/TasksContext";
 
 const IMAGE_EXTENSIONS: ReadonlySet<string> = new Set([
   "png",
@@ -48,33 +48,16 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const [openImageIds, setOpenImageIds] = useState<Array<Id<"files">>>([]);
+  const { openImagePreview, syncFiles } = useTasks();
 
   useEffect(() => {
-    setOpenImageIds((current) =>
-      current.filter((fileId) => files.some((file) => file._id === fileId)),
-    );
-  }, [files]);
+    syncFiles(files);
+  }, [files, syncFiles]);
 
   const openFile = (file: DesktopFileDoc) => {
     if (!isImageFile(file)) return;
-    setOpenImageIds((current) => {
-      if (current.includes(file._id)) return current;
-      return [...current, file._id];
-    });
+    openImagePreview(file);
   };
-
-  const closeFile = (fileId: Id<"files">) => {
-    setOpenImageIds((current) => current.filter((id) => id !== fileId));
-  };
-
-  const openImages = useMemo(
-    () =>
-      openImageIds
-        .map((fileId) => files.find((file) => file._id === fileId) ?? null)
-        .filter((file): file is DesktopFileDoc => Boolean(file)),
-    [files, openImageIds],
-  );
 
   useEffect(() => {
     const handleGlobalDragEnd = () => {
@@ -300,15 +283,6 @@ export function DesktopFiles() {
           />
         ) : null}
       </div>
-      {openImages.map((file) => (
-        <ImagePreviewWindow
-          key={file._id}
-          file={file}
-          onClose={() => {
-            closeFile(file._id);
-          }}
-        />
-      ))}
       <ConfirmationDialog
         isOpen={isConfirmOpen}
         title="Delete Files"

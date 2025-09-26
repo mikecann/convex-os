@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Taskbar } from "./taskbar/Taskbar";
 import { StartMenu } from "./taskbar/StartMenu";
 import { DesktopFiles } from "./files/DesktopFiles";
+import { WindowingManager } from "../windowing/WindowingManager";
 
 export function Desktop() {
   const [isStartMenuOpen, setIsStartMenuOpen] = useState(false);
@@ -19,6 +20,7 @@ export function Desktop() {
     >
       <div style={{ flex: "1 1 auto", position: "relative" }}>
         <DesktopFiles />
+        <WindowingManager />
       </div>
       <Taskbar
         onStartClick={() => {

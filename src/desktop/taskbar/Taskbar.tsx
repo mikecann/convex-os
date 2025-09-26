@@ -1,12 +1,15 @@
 import React from "react";
 import { StartButton } from "./StartButton";
 import { Clock } from "./Clock";
+import { useTasks } from "../../common/tasks/TasksContext";
 
 interface TaskbarProps {
   onStartClick?: () => void;
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
+  const { tasks, activeTaskId, focusTask } = useTasks();
+
   return (
     <div
       className="taskbar"
@@ -25,6 +28,44 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
       <StartButton onClick={onStartClick} />
 
       {/* System tray */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          paddingLeft: "8px",
+          paddingRight: "8px",
+        }}
+      >
+        {tasks.map((task) => {
+          const isActive = task.id === activeTaskId;
+          return (
+            <button
+              key={task.id}
+              onClick={() => focusTask(task.id)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                padding: "6px 12px",
+                border: "1px solid rgba(0,0,0,0.4)",
+                borderRadius: "4px",
+                background: isActive
+                  ? "linear-gradient(0deg, #1d4ed8 0%, #3b82f6 100%)"
+                  : "linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%)",
+                color: "white",
+                boxShadow: isActive
+                  ? "inset 1px 1px 1px rgba(255,255,255,0.4)"
+                  : "1px 1px 2px rgba(0,0,0,0.4)",
+                cursor: "pointer",
+                minWidth: "120px",
+              }}
+            >
+              {task.title}
+            </button>
+          );
+        })}
+      </div>
       <div
         style={{
           marginLeft: "auto",

@@ -15,6 +15,7 @@ interface WindowProps {
   showMaximizeButton?: boolean;
   minWidth?: number;
   minHeight?: number;
+  onFocus?: () => void;
 }
 
 export function Window({
@@ -32,6 +33,7 @@ export function Window({
   showMaximizeButton = resizable,
   minWidth = 240,
   minHeight = 180,
+  onFocus,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -101,6 +103,7 @@ export function Window({
   }, [draggable, isDragging, dragOffset]);
 
   const handleMouseDown = (event: React.MouseEvent) => {
+    onFocus?.();
     if (!draggable || !windowRef.current || isMaximized) return;
     const windowRect = windowRef.current.getBoundingClientRect();
     setDragOffset({
@@ -308,6 +311,9 @@ export function Window({
       ref={windowRef}
       className={`window ${className}`}
       style={{ ...windowStyle }}
+      onMouseDown={() => {
+        onFocus?.();
+      }}
     >
       {title && (
         <div

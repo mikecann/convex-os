@@ -5,9 +5,16 @@ import { DesktopFileDoc } from "../desktop/files/DesktopFileIcon";
 type ImagePreviewWindowProps = {
   file: DesktopFileDoc;
   onClose: () => void;
+  onFocus?: () => void;
+  isActive?: boolean;
 };
 
-export function ImagePreviewWindow({ file, onClose }: ImagePreviewWindowProps) {
+export function ImagePreviewWindow({
+  file,
+  onClose,
+  onFocus,
+  isActive = false,
+}: ImagePreviewWindowProps) {
   const imageUrl = useMemo(() => {
     if (file.uploadState.kind === "uploaded") return file.uploadState.url;
     return undefined;
@@ -40,6 +47,7 @@ export function ImagePreviewWindow({ file, onClose }: ImagePreviewWindowProps) {
       bodyStyle={{ padding: 0, maxWidth: "80vw", maxHeight: "80vh" }}
       style={{ minWidth: "320px", minHeight: "240px" }}
       resizable
+      onFocus={onFocus}
     >
       {imageUrl ? (
         <div style={containerStyle}>
