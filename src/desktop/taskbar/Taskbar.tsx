@@ -16,7 +16,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         left: 0,
         right: 0,
         width: "100vw",
-        height: "30px",
+        height: "38px",
         backgroundImage:
           "linear-gradient(0deg, #042b8e 0%, #0551f6 6%, #0453ff 51%, #0551f6 63%, #0551f6 81%, #3a8be8 99%, #0453ff 100%)",
         display: "flex",
