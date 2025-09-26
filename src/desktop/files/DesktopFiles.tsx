@@ -8,6 +8,7 @@ import {
 } from "./useDesktopFileUploader";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
+import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
 
 export function DesktopFiles() {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -17,6 +18,7 @@ export function DesktopFiles() {
   const { uploadFiles } = useDesktopFileUploader();
   const handleError = useErrorHandler();
   const [selectedIds, setSelectedIds] = useState<Array<Id<"files">>>([]);
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const selectionStartRef = useRef<{ x: number; y: number } | null>(null);
   const [selectionRect, setSelectionRect] = useState<{
     left: number;
@@ -181,6 +183,13 @@ export function DesktopFiles() {
         }
         event.dataTransfer.dropEffect = "copy";
       }}
+      onKeyDown={(event) => {
+        if (event.key !== "Delete") return;
+        if (selectedIds.length === 0) return;
+        event.preventDefault();
+        setIsConfirmOpen(true);
+      }}
+      tabIndex={0}
       style={{
         position: "relative",
         width: "100vw",
@@ -215,13 +224,6 @@ export function DesktopFiles() {
               return [...current, file._id];
             });
           }}
-          onDelete={async (id) => {
-            try {
-              await deleteFiles({ fileIds: [id] });
-            } catch (error) {
-              handleError(error);
-            }
-          }}
         />
       ))}
       {isDragOver ? (
@@ -247,6 +249,27 @@ export function DesktopFiles() {
           }}
         />
       ) : null}
+      <ConfirmationDialog
+        isOpen={isConfirmOpen}
+        title="Delete Files"
+        message={`Are you sure you want to delete ${selectedIds.length} item${selectedIds.length === 1 ? "" : "s"}?`}
+        confirmLabel="Delete"
+        cancelLabel="Cancel"
+        variant="danger"
+        onCancel={() => {
+          setIsConfirmOpen(false);
+        }}
+        onConfirm={async () => {
+          try {
+            await deleteFiles({ fileIds: selectedIds });
+            setSelectedIds([]);
+          } catch (error) {
+            handleError(error);
+          } finally {
+            setIsConfirmOpen(false);
+          }
+        }}
+      />
     </div>
   );
 }

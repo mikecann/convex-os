@@ -15,7 +15,6 @@ export type DesktopFileDoc = Doc<"files">;
 type DesktopFileIconProps = {
   file: DesktopFileDoc;
   onOpen?: (file: DesktopFileDoc) => void;
-  onDelete?: (fileId: Id<"files">) => void;
   containerRef: RefObject<HTMLDivElement | null>;
   registerNode: (element: HTMLDivElement | null) => void;
   isSelected: boolean;
@@ -25,7 +24,6 @@ type DesktopFileIconProps = {
 export function DesktopFileIcon({
   file,
   onOpen,
-  onDelete,
   containerRef,
   registerNode,
   isSelected,
@@ -119,23 +117,6 @@ export function DesktopFileIcon({
           {file.uploadState.message}
         </span>
       ) : null}
-      <button
-        style={{
-          marginTop: "4px",
-          background: "rgba(0,0,0,0.4)",
-          border: "1px solid rgba(255,255,255,0.4)",
-          color: "white",
-          fontSize: "10px",
-          borderRadius: "4px",
-          padding: "2px 4px",
-        }}
-        onClick={(event) => {
-          event.stopPropagation();
-          if (onDelete) onDelete(file._id);
-        }}
-      >
-        Delete
-      </button>
     </div>
   );
 }
