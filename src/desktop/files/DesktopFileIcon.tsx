@@ -10,6 +10,7 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
+import { DesktopFileImage } from "./DesktopFileImage";
 
 export type DesktopFileDoc = Doc<"files">;
 
@@ -166,11 +167,7 @@ export function DesktopFileIcon({
           : "rgba(0,0,0,0.0)",
       }}
     >
-      <img
-        src="/xp/doc.png"
-        alt={file.name}
-        style={{ width: "48px", height: "48px" }}
-      />
+      <DesktopFileImage file={file} />
       {isRenaming ? (
         <input
           ref={inputRef}

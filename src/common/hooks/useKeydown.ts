@@ -25,7 +25,8 @@ export function useKeydown({
 
     const keySet = normalizedKeys ? new Set(normalizedKeys) : null;
 
-    const handleKeydown = (event: KeyboardEvent) => {
+    const handleKeydown: EventListener = (event) => {
+      if (!(event instanceof KeyboardEvent)) return;
       if (keySet && !keySet.has(event.key)) return;
       handler(event);
     };
