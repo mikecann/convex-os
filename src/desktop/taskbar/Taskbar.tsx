@@ -8,7 +8,7 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
-  const { tasks, activeTaskId, focusTask } = useTasks();
+  const { tasks, activeTaskId, focusTask, minimizeTask } = useTasks();
 
   return (
     <div
@@ -39,11 +39,17 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         }}
       >
         {tasks.map((task) => {
-          const isActive = task.id === activeTaskId;
+          const isActive = task.id === activeTaskId && !task.isMinimized;
           return (
             <button
               key={task.id}
-              onClick={() => focusTask(task.id)}
+              onClick={() => {
+                if (isActive) {
+                  minimizeTask(task.id);
+                  return;
+                }
+                focusTask(task.id);
+              }}
               style={{
                 display: "flex",
                 alignItems: "center",

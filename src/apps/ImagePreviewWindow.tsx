@@ -6,6 +6,7 @@ type ImagePreviewWindowProps = {
   file: DesktopFileDoc;
   onClose: () => void;
   onFocus?: () => void;
+  onMinimize?: () => void;
   isActive?: boolean;
 };
 
@@ -13,6 +14,7 @@ export function ImagePreviewWindow({
   file,
   onClose,
   onFocus,
+  onMinimize,
   isActive = false,
 }: ImagePreviewWindowProps) {
   const imageUrl = useMemo(() => {
@@ -48,6 +50,7 @@ export function ImagePreviewWindow({
       style={{ minWidth: "320px", minHeight: "240px" }}
       resizable
       onFocus={onFocus}
+      onMinimize={onMinimize}
     >
       {imageUrl ? (
         <div style={containerStyle}>

@@ -13,6 +13,7 @@ type ImagePreviewTask = {
   kind: "image_preview";
   title: string;
   file: DesktopFileDoc;
+  isMinimized: boolean;
 };
 
 export type Task = ImagePreviewTask;
@@ -24,6 +25,7 @@ type TasksContextValue = {
   closeTask: (taskId: string) => void;
   focusTask: (taskId: string) => void;
   syncFiles: (files: Array<DesktopFileDoc>) => void;
+  minimizeTask: (taskId: string) => void;
 };
 
 const TasksContext = createContext<TasksContextValue | undefined>(undefined);
@@ -46,6 +48,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
           ...existing,
           title: file.name,
           file,
+          isMinimized: false,
         };
         updated.splice(existingIndex, 1);
         updated.push(refreshedTask);
@@ -58,6 +61,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
         kind: "image_preview",
         title: file.name,
         file,
+        isMinimized: false,
       };
       nextActiveId = newTask.id;
       return [...current, newTask];
@@ -85,10 +89,21 @@ export function TasksProvider({ children }: PropsWithChildren) {
       if (index === -1) return current;
       const updated = [...current];
       const [task] = updated.splice(index, 1);
-      updated.push(task);
+      updated.push({ ...task, isMinimized: false });
       return updated;
     });
     setActiveTaskId(taskId);
+  }, []);
+
+  const minimizeTask = useCallback((taskId: string) => {
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === taskId ? { ...task, isMinimized: true } : task,
+      ),
+    );
+    setActiveTaskId((currentActive) =>
+      currentActive === taskId ? null : currentActive,
+    );
   }, []);
 
   const syncFiles = useCallback(
@@ -129,12 +144,14 @@ export function TasksProvider({ children }: PropsWithChildren) {
 
         changed = true;
 
-        if (
-          computedActive &&
-          !nextTasks.some((task) => task.id === computedActive)
-        ) {
-          computedActive =
-            nextTasks.length > 0 ? nextTasks[nextTasks.length - 1]!.id : null;
+        if (computedActive) {
+          const stillExists = nextTasks.some(
+            (task) => task.id === computedActive,
+          );
+          if (!stillExists) {
+            computedActive =
+              nextTasks.length > 0 ? nextTasks[nextTasks.length - 1]!.id : null;
+          }
         }
 
         if (!computedActive && nextTasks.length > 0) {
@@ -159,8 +176,17 @@ export function TasksProvider({ children }: PropsWithChildren) {
       closeTask,
       focusTask,
       syncFiles,
+      minimizeTask,
     }),
-    [tasks, activeTaskId, openImagePreview, closeTask, focusTask, syncFiles],
+    [
+      tasks,
+      activeTaskId,
+      openImagePreview,
+      closeTask,
+      focusTask,
+      syncFiles,
+      minimizeTask,
+    ],
   );
 
   return (

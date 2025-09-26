@@ -16,6 +16,7 @@ interface WindowProps {
   minWidth?: number;
   minHeight?: number;
   onFocus?: () => void;
+  onMinimize?: () => void;
 }
 
 export function Window({
@@ -34,6 +35,7 @@ export function Window({
   minWidth = 240,
   minHeight = 180,
   onFocus,
+  onMinimize,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -337,6 +339,17 @@ export function Window({
                   onClick={(event) => {
                     event.stopPropagation();
                     toggleMaximize();
+                  }}
+                  onMouseDown={(event) => event.stopPropagation()}
+                ></button>
+              ) : null}
+              {onMinimize ? (
+                <button
+                  className="minimise"
+                  aria-label="Minimize"
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    onMinimize();
                   }}
                   onMouseDown={(event) => event.stopPropagation()}
                 ></button>
