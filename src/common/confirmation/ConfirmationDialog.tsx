@@ -3,6 +3,7 @@ import Horizontal from "../components/Horizontal";
 import Vertical from "../components/Vertical";
 import { Button } from "../components/Button";
 import { Window } from "../components/Window";
+import { useKeydown } from "../hooks/useKeydown";
 
 type ConfirmationDialogProps = {
   isOpen: boolean;
@@ -25,16 +26,22 @@ export function ConfirmationDialog({
   onConfirm,
   onCancel,
 }: ConfirmationDialogProps) {
-  if (!isOpen) return null;
+  useKeydown({
+    enabled: isOpen,
+    keys: ["Enter", "Escape"],
+    handler: (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onCancel();
+        return;
+      }
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      onConfirm();
+    },
+  });
 
-  const confirmButtonStyle: React.CSSProperties =
-    variant === "danger"
-      ? {
-          background:
-            "linear-gradient(180deg, #f87171 0%, #dc2626 40%, #b91c1c 100%)",
-          color: "white",
-        }
-      : {};
+  if (!isOpen) return null;
 
   return (
     <Window
@@ -57,7 +64,15 @@ export function ConfirmationDialog({
             onClick={() => {
               onConfirm();
             }}
-            style={confirmButtonStyle}
+            style={
+              variant === "danger"
+                ? {
+                    background:
+                      "linear-gradient(180deg, #f87171 0%, #dc2626 40%, #b91c1c 100%)",
+                    color: "white",
+                  }
+                : {}
+            }
           >
             {confirmLabel}
           </Button>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
 
 interface WindowProps {
   title?: string;
@@ -29,26 +29,22 @@ export function Window({
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(!draggable);
 
-  // Center the window initially
   useEffect(() => {
+    if (!draggable) setIsInitialized(true);
+  }, [draggable]);
+
+  useLayoutEffect(() => {
     if (!draggable || isInitialized) return;
+    if (!windowRef.current) return;
 
-    const centerWindow = () => {
-      if (windowRef.current) {
-        const windowRect = windowRef.current.getBoundingClientRect();
-        const centerX = (window.innerWidth - windowRect.width) / 2;
-        const centerY = (window.innerHeight - windowRect.height) / 2;
+    const windowRect = windowRef.current.getBoundingClientRect();
+    const centerX = (window.innerWidth - windowRect.width) / 2;
+    const centerY = (window.innerHeight - windowRect.height) / 2;
 
-        setPosition({ x: centerX, y: centerY });
-        setIsInitialized(true);
-      }
-    };
-
-    // Small delay to ensure the window is rendered
-    const timer = setTimeout(centerWindow, 0);
-    return () => clearTimeout(timer);
+    setPosition({ x: centerX, y: centerY });
+    setIsInitialized(true);
   }, [draggable, isInitialized]);
 
   // Handle mouse move and mouse up events
@@ -91,15 +87,21 @@ export function Window({
     e.preventDefault();
   };
 
-  const windowStyle: React.CSSProperties = draggable
-    ? {
-        position: "absolute",
-        left: position.x,
-        top: position.y,
-        zIndex: 1000,
-        ...(style || {}),
-      }
-    : style || {};
+  const windowStyle: React.CSSProperties = (() => {
+    if (!draggable) return style || {};
+
+    const baseStyle: React.CSSProperties = {
+      position: "absolute",
+      left: position.x,
+      top: position.y,
+      zIndex: 1000,
+      ...(style || {}),
+    };
+
+    if (!isInitialized) baseStyle.visibility = "hidden";
+
+    return baseStyle;
+  })();
 
   return (
     <div
