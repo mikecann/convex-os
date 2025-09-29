@@ -449,10 +449,15 @@ export function Window({
           baseStyle.pointerEvents = "none";
         }
 
+        baseStyle.filter = isActive ? "none" : "grayscale(100%)";
+
         if (size.width !== null) baseStyle.width = `${size.width}px`;
+
         if (baseStyle.width === undefined && style?.width)
           baseStyle.width = style.width;
+
         if (size.height !== null) baseStyle.height = `${size.height}px`;
+
         if (baseStyle.height === undefined && style?.height)
           baseStyle.height = style.height;
 
