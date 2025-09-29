@@ -2,6 +2,7 @@ import {
   createContext,
   useContext,
   MouseEvent as ReactMouseEvent,
+  CSSProperties,
 } from "react";
 
 type WindowContextValue = {
@@ -17,15 +18,29 @@ type WindowContextValue = {
   titleBarStyle?: React.CSSProperties;
   // For WindowControls
   showCloseButton?: boolean;
+  setShowCloseButton: (show: boolean) => void;
   showMaximizeButton?: boolean;
+  setShowMaximizeButton: (show: boolean) => void;
   isMaximized?: boolean;
   toggleMaximize: () => void;
   // For ResizeHandles
   resizable?: boolean;
+  setResizable: (resizable: boolean) => void;
   startResize: (
-    corner: "bottom-right" | "bottom-left" | "top-right" | "top-left",
+    corner:
+      | "bottom-right"
+      | "bottom-left"
+      | "top-right"
+      | "top-left"
+      | "top"
+      | "bottom"
+      | "left"
+      | "right",
     event: ReactMouseEvent,
   ) => void;
+  // For styling
+  setBodyStyle: (style: CSSProperties) => void;
+  setStyle: (style: CSSProperties) => void;
 };
 
 export const WindowContext = createContext<WindowContextValue | undefined>(

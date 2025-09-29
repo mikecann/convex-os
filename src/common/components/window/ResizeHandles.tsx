@@ -3,9 +3,17 @@ import { useWindow } from "./WindowContext";
 
 const handleStyle: React.CSSProperties = {
   position: "absolute",
+  background: "transparent",
+};
+
+const cornerHandleStyle: React.CSSProperties = {
+  ...handleStyle,
   width: "12px",
   height: "12px",
-  background: "transparent",
+};
+
+const edgeHandleStyle: React.CSSProperties = {
+  ...handleStyle,
 };
 
 export function ResizeHandles() {
@@ -15,10 +23,56 @@ export function ResizeHandles() {
 
   return (
     <>
+      {/* Edges */}
+      <div
+        onMouseDown={(event) => startResize("top", event)}
+        style={{
+          ...edgeHandleStyle,
+          top: 0,
+          left: "6px",
+          right: "6px",
+          height: "8px",
+          cursor: "ns-resize",
+        }}
+      />
+      <div
+        onMouseDown={(event) => startResize("bottom", event)}
+        style={{
+          ...edgeHandleStyle,
+          bottom: 0,
+          left: "6px",
+          right: "6px",
+          height: "8px",
+          cursor: "ns-resize",
+        }}
+      />
+      <div
+        onMouseDown={(event) => startResize("left", event)}
+        style={{
+          ...edgeHandleStyle,
+          left: 0,
+          top: "6px",
+          bottom: "6px",
+          width: "8px",
+          cursor: "ew-resize",
+        }}
+      />
+      <div
+        onMouseDown={(event) => startResize("right", event)}
+        style={{
+          ...edgeHandleStyle,
+          right: 0,
+          top: "6px",
+          bottom: "6px",
+          width: "8px",
+          cursor: "ew-resize",
+        }}
+      />
+      {/* Corners */}
       <div
         onMouseDown={(event) => startResize("bottom-right", event)}
         style={{
-          ...handleStyle,
+          ...cornerHandleStyle,
           right: "0",
           bottom: "0",
           cursor: "nwse-resize",
@@ -27,7 +81,7 @@ export function ResizeHandles() {
       <div
         onMouseDown={(event) => startResize("bottom-left", event)}
         style={{
-          ...handleStyle,
+          ...cornerHandleStyle,
           left: "0",
           bottom: "0",
           cursor: "nesw-resize",
@@ -36,7 +90,7 @@ export function ResizeHandles() {
       <div
         onMouseDown={(event) => startResize("top-right", event)}
         style={{
-          ...handleStyle,
+          ...cornerHandleStyle,
           right: "0",
           top: "0",
           cursor: "nesw-resize",
@@ -45,7 +99,7 @@ export function ResizeHandles() {
       <div
         onMouseDown={(event) => startResize("top-left", event)}
         style={{
-          ...handleStyle,
+          ...cornerHandleStyle,
           left: "0",
           top: "0",
           cursor: "nwse-resize",

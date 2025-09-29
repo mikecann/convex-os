@@ -2,16 +2,36 @@ import { useEffect, useMemo } from "react";
 import { DesktopFileDoc } from "../desktop/files/DesktopFileIcon";
 import { useWindow } from "../common/components/window/WindowContext";
 
-type VideoPreviewWindowProps = {
+type VideoPreviewTaskProps = {
   file: DesktopFileDoc;
 };
 
-export function VideoPreviewWindow({ file }: VideoPreviewWindowProps) {
-  const { setTitle } = useWindow();
+export function VideoPreviewTask({ file }: VideoPreviewTaskProps) {
+  const {
+    setTitle,
+    setResizable,
+    setShowMaximizeButton,
+    setShowCloseButton,
+    setBodyStyle,
+    setStyle,
+  } = useWindow();
 
   useEffect(() => {
     setTitle(file.name);
   }, [file.name, setTitle]);
+
+  useEffect(() => {
+    setResizable(true);
+    setShowMaximizeButton(true);
+    setShowCloseButton(true);
+    setStyle({ minWidth: "320px", minHeight: "240px" });
+  }, [
+    setResizable,
+    setShowMaximizeButton,
+    setShowCloseButton,
+    setBodyStyle,
+    setStyle,
+  ]);
 
   const videoUrl = useMemo(() => {
     if (file.uploadState.kind === "uploaded") return file.uploadState.url;
@@ -29,7 +49,7 @@ export function VideoPreviewWindow({ file }: VideoPreviewWindowProps) {
           width: "100%",
           height: "100%",
           padding: "12px",
-          boxSizing: "border-box" as const,
+          boxSizing: "border-box",
         }}
       >
         <video

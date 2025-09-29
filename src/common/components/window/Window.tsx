@@ -4,6 +4,7 @@ import React, {
   useRef,
   useLayoutEffect,
   useMemo,
+  CSSProperties,
 } from "react";
 import { WindowContext } from "./WindowContext";
 import { TitleBar } from "./TitleBar";
@@ -35,15 +36,15 @@ export function Window({
   title: initialTitle,
   children,
   className = "",
-  style,
+  style: initialStyle,
   statusBar,
-  bodyStyle,
+  bodyStyle: initialBodyStyle,
   titleBarStyle,
   draggable = true,
   onClose,
-  showCloseButton = false,
-  resizable = false,
-  showMaximizeButton = resizable,
+  showCloseButton: initialShowCloseButton,
+  resizable: initialResizable,
+  showMaximizeButton: initialShowMaximizeButton,
   minWidth = 240,
   minHeight = 180,
   onFocus,
@@ -69,10 +70,29 @@ export function Window({
     startHeight: number;
     startLeft: number;
     startTop: number;
-    corner: "bottom-right" | "bottom-left" | "top-right" | "top-left";
+    corner:
+      | "bottom-right"
+      | "bottom-left"
+      | "top-right"
+      | "top-left"
+      | "top"
+      | "bottom"
+      | "left"
+      | "right";
   } | null>(null);
   const [isMaximized, setIsMaximized] = useState(false);
   const [title, setTitle] = useState(initialTitle);
+  const [style, setStyle] = useState<CSSProperties | undefined>(initialStyle);
+  const [bodyStyle, setBodyStyle] = useState<CSSProperties | undefined>(
+    initialBodyStyle,
+  );
+  const [resizable, setResizable] = useState(initialResizable ?? false);
+  const [showCloseButton, setShowCloseButton] = useState(
+    initialShowCloseButton ?? false,
+  );
+  const [showMaximizeButton, setShowMaximizeButton] = useState(
+    initialShowMaximizeButton ?? initialResizable ?? false,
+  );
   const previousStateRef = useRef<{
     position: { x: number; y: number };
     size: { width: number; height: number };
@@ -200,6 +220,24 @@ export function Window({
           newTop = origin.startTop + deltaY;
           break;
         }
+        case "top": {
+          newHeight = origin.startHeight - deltaY;
+          newTop = origin.startTop + deltaY;
+          break;
+        }
+        case "bottom": {
+          newHeight = origin.startHeight + deltaY;
+          break;
+        }
+        case "left": {
+          newWidth = origin.startWidth - deltaX;
+          newLeft = origin.startLeft + deltaX;
+          break;
+        }
+        case "right": {
+          newWidth = origin.startWidth + deltaX;
+          break;
+        }
         default:
           break;
       }
@@ -261,7 +299,15 @@ export function Window({
   }, [isMaximized]);
 
   const startResize = (
-    corner: "bottom-right" | "bottom-left" | "top-right" | "top-left",
+    corner:
+      | "bottom-right"
+      | "bottom-left"
+      | "top-right"
+      | "top-left"
+      | "top"
+      | "bottom"
+      | "left"
+      | "right",
     event: React.MouseEvent,
   ) => {
     if (!resizable || isMaximized) return;
@@ -333,6 +379,11 @@ export function Window({
       toggleMaximize,
       resizable,
       startResize,
+      setResizable,
+      setShowCloseButton,
+      setShowMaximizeButton,
+      setBodyStyle,
+      setStyle,
     }),
     [
       isActive,
