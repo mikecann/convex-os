@@ -28,7 +28,7 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
   return (
     <ErrorsContext.Provider value={value}>
       {children}
-      {errorState ? (
+      {/* {errorState ? (
         <Window
           title="Error"
           style={{
@@ -40,7 +40,6 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
         >
           <Vertical gap={16} style={{ padding: "16px" }}>
             <Horizontal gap={16} align="start">
-              {/* Error icon */}
               <img
                 src="/error-cross.png"
                 alt="Error"
@@ -54,13 +53,11 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
                 }}
               />
 
-              {/* Error message */}
               <div style={{ flex: 1, paddingTop: "4px", paddingLeft: "80px" }}>
                 {errorState.message}
               </div>
             </Horizontal>
 
-            {/* OK button */}
             <Horizontal justify="center" style={{ paddingTop: "8px" }}>
               <Button onClick={dismissError} style={{ minWidth: "75px" }}>
                 OK
@@ -68,7 +65,7 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
             </Horizontal>
           </Vertical>
         </Window>
-      ) : null}
+      ) : null} */}
     </ErrorsContext.Provider>
   );
 }

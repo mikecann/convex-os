@@ -1,4 +1,7 @@
 import { createContext, PropsWithChildren, useContext } from "react";
+import { TasksSystem } from "../common/tasks/TasksSystem";
+import { Desktop } from "../desktop/Desktop";
+import { Wallpaper } from "../common/components/Wallpaper";
 
 export interface OperatingSystemContextValue {
   // TODO: Define the shape of the OS context
@@ -24,7 +27,24 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
 
   return (
     <OperatingSystemContext.Provider value={value}>
-      {children}
+      <TasksSystem>
+        <div
+          style={{
+            width: "100vw",
+            height: "100vh",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            position: "relative",
+            top: 0,
+            left: 0,
+          }}
+        >
+          <Wallpaper fullScreen>
+            <Desktop>{children}</Desktop>
+          </Wallpaper>
+        </div>
+      </TasksSystem>
     </OperatingSystemContext.Provider>
   );
 }

@@ -9,20 +9,20 @@ import {
 } from "react";
 import type { DesktopFileDoc } from "../../desktop/files/DesktopFileIcon";
 
-type ImagePreviewTask = {
+type TaskBase = {
   id: string;
-  kind: "image_preview";
   title: string;
-  file: DesktopFileDoc;
   isMinimized: boolean;
 };
 
-type VideoPreviewTask = {
-  id: string;
-  kind: "video_preview";
-  title: string;
+type ImagePreviewTask = TaskBase & {
+  kind: "image_preview";
   file: DesktopFileDoc;
-  isMinimized: boolean;
+};
+
+type VideoPreviewTask = TaskBase & {
+  kind: "video_preview";
+  file: DesktopFileDoc;
 };
 
 export type Task = ImagePreviewTask | VideoPreviewTask;
@@ -39,7 +39,9 @@ type TasksSystemContextValue = {
   taskbarButtonRefs: { current: Map<string, HTMLElement | null> };
 };
 
-const TasksSystemContext = createContext<TasksSystemContextValue | undefined>(undefined);
+const TasksSystemContext = createContext<TasksSystemContextValue | undefined>(
+  undefined,
+);
 
 export function TasksSystem({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Array<Task>>([]);
@@ -237,7 +239,9 @@ export function TasksSystem({ children }: PropsWithChildren) {
   );
 
   return (
-    <TasksSystemContext.Provider value={value}>{children}</TasksSystemContext.Provider>
+    <TasksSystemContext.Provider value={value}>
+      {children}
+    </TasksSystemContext.Provider>
   );
 }
 

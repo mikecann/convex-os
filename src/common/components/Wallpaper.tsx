@@ -1,7 +1,7 @@
 import React from "react";
 
 interface WallpaperProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   fullScreen?: boolean;
   style?: React.CSSProperties;
   className?: string;

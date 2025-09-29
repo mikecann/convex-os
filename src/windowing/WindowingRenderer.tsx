@@ -5,7 +5,7 @@ import { Window } from "../common/components/window/Window";
 import { VideoPreviewTask } from "../tasks/VideoPreviewTask";
 import { exhaustiveCheck, iife } from "../../shared/misc";
 
-export function WindowingManager() {
+export function WindowingRenderer() {
   const {
     tasks,
     closeTask,
@@ -22,7 +22,7 @@ export function WindowingManager() {
   }, [tasks, activeTaskId]);
 
   return (
-    <Fragment>
+    <>
       {sortedTasks.map((task) => {
         const { id, isMinimized, title } = task;
 
@@ -51,6 +51,6 @@ export function WindowingManager() {
           </Window>
         );
       })}
-    </Fragment>
+    </>
   );
 }

@@ -2,10 +2,10 @@ import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { DesktopFiles } from "./files/DesktopFiles";
 import { Taskbar } from "./taskbar/Taskbar";
 import { StartMenu } from "./taskbar/StartMenu";
-import { WindowingManager } from "../windowing/WindowingManager";
+import { WindowingRenderer } from "../windowing/WindowingRenderer";
 import { DesktopContext } from "./DesktopContext";
 
-export function Desktop() {
+export function Desktop({ children }: { children?: React.ReactNode }) {
   const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);
   const desktopRef = useRef<HTMLDivElement>(null);
   const [desktopRect, setDesktopRect] = useState<DOMRect | null>(null);
@@ -43,11 +43,12 @@ export function Desktop() {
             position: "relative",
           }}
         >
-          <DesktopFiles />
-          <WindowingManager />
+          {/* <DesktopFiles /> */}
+          <WindowingRenderer />
+          {children}
         </div>
       </DesktopContext.Provider>
-      {isStartMenuVisible && (
+      {/* {isStartMenuVisible && (
         <StartMenu
           isOpen={isStartMenuVisible}
           onClose={() => setIsStartMenuVisible(false)}
@@ -55,7 +56,7 @@ export function Desktop() {
       )}
       <Taskbar
         onStartClick={() => setIsStartMenuVisible((current) => !current)}
-      />
+      /> */}
     </div>
   );
 }
