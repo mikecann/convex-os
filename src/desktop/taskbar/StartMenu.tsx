@@ -73,7 +73,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
       <div
         style={{
           position: "fixed",
-          bottom: "30px",
+          bottom: "35px",
           left: "2px",
           width: "385px",
           height: "425px",

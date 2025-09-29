@@ -6,7 +6,7 @@ import { WindowingRenderer } from "../windowing/WindowingRenderer";
 import { DesktopContext } from "./DesktopContext";
 
 export function Desktop({ children }: { children?: React.ReactNode }) {
-  const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);
+  
   const desktopRef = useRef<HTMLDivElement>(null);
   const [desktopRect, setDesktopRect] = useState<DOMRect | null>(null);
 
@@ -43,20 +43,12 @@ export function Desktop({ children }: { children?: React.ReactNode }) {
             position: "relative",
           }}
         >
-          {/* <DesktopFiles /> */}
+   
           <WindowingRenderer />
           {children}
         </div>
       </DesktopContext.Provider>
-      {/* {isStartMenuVisible && (
-        <StartMenu
-          isOpen={isStartMenuVisible}
-          onClose={() => setIsStartMenuVisible(false)}
-        />
-      )}
-      <Taskbar
-        onStartClick={() => setIsStartMenuVisible((current) => !current)}
-      /> */}
+   
     </div>
   );
 }

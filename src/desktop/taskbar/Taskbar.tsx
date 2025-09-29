@@ -23,6 +23,11 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         alignItems: "center",
         justifyContent: "flex-start",
         userSelect: "none",
+        position: "fixed",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        zIndex: 1000,
       }}
     >
       <StartButton onClick={onStartClick} />
