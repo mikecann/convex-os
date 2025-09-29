@@ -9,9 +9,10 @@ export function WindowingManager() {
   return (
     <Fragment>
       {tasks.map((task) => {
-        if (task.kind === "image_preview" && !task.isMinimized) {
-          const { id, file } = task;
+        if (task.kind === "image_preview") {
+          const { id, file, isMinimized } = task;
           return (
+            // Renders a window for an image preview task.
             <ImagePreviewWindow
               key={id}
               file={file}
@@ -25,6 +26,8 @@ export function WindowingManager() {
                 minimizeTask(id);
               }}
               isActive={activeTaskId === id}
+              isMinimized={isMinimized}
+              taskbarButtonRect={task.taskbarButtonEl?.getBoundingClientRect()}
             />
           );
         }

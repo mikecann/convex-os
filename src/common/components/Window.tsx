@@ -17,6 +17,8 @@ interface WindowProps {
   minHeight?: number;
   onFocus?: () => void;
   onMinimize?: () => void;
+  isMinimized?: boolean;
+  taskbarButtonRect?: DOMRect;
 }
 
 export function Window({
@@ -36,6 +38,8 @@ export function Window({
   minHeight = 180,
   onFocus,
   onMinimize,
+  isMinimized = false,
+  taskbarButtonRect,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -61,6 +65,24 @@ export function Window({
     position: { x: number; y: number };
     size: { width: number; height: number };
   } | null>(null);
+
+  useLayoutEffect(() => {
+    if (!windowRef.current) return;
+    let newTransformOrigin = "center bottom";
+    if (taskbarButtonRect) {
+      const windowRect = windowRef.current.getBoundingClientRect();
+      if (windowRect.width > 0) {
+        const originX =
+          taskbarButtonRect.left -
+          windowRect.left +
+          taskbarButtonRect.width / 2;
+        const originY =
+          taskbarButtonRect.top - windowRect.top + taskbarButtonRect.height / 2;
+        newTransformOrigin = `${originX}px ${originY}px`;
+      }
+    }
+    windowRef.current.style.transformOrigin = newTransformOrigin;
+  }, [taskbarButtonRect, position, size, isMinimized]);
 
   useEffect(() => {
     if (!draggable) setIsInitialized(true);
@@ -293,8 +315,15 @@ export function Window({
       display: "flex",
       flexDirection: "column",
       boxSizing: "border-box",
+      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
       ...(style || {}),
     };
+
+    if (isMinimized) {
+      baseStyle.transform = "scale(0)";
+      baseStyle.opacity = 0;
+      baseStyle.pointerEvents = "none";
+    }
 
     if (size.width !== null) baseStyle.width = `${size.width}px`;
     if (baseStyle.width === undefined && style?.width)

@@ -8,7 +8,8 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
-  const { tasks, activeTaskId, focusTask, minimizeTask } = useTasks();
+  const { tasks, activeTaskId, focusTask, minimizeTask, setTaskbarButtonRef } =
+    useTasks();
 
   return (
     <div
@@ -43,6 +44,9 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
           return (
             <button
               key={task.id}
+              ref={(element) => {
+                setTaskbarButtonRef(task.id, element);
+              }}
               onClick={() => {
                 if (isActive) {
                   minimizeTask(task.id);

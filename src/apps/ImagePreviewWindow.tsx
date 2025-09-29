@@ -8,6 +8,8 @@ type ImagePreviewWindowProps = {
   onFocus?: () => void;
   onMinimize?: () => void;
   isActive?: boolean;
+  isMinimized?: boolean; // Added for animation
+  taskbarButtonRect?: DOMRect;
 };
 
 export function ImagePreviewWindow({
@@ -16,6 +18,8 @@ export function ImagePreviewWindow({
   onFocus,
   onMinimize,
   isActive = false,
+  isMinimized = false,
+  taskbarButtonRect,
 }: ImagePreviewWindowProps) {
   const imageUrl = useMemo(() => {
     if (file.uploadState.kind === "uploaded") return file.uploadState.url;
@@ -51,6 +55,8 @@ export function ImagePreviewWindow({
       resizable
       onFocus={onFocus}
       onMinimize={onMinimize}
+      isMinimized={isMinimized}
+      taskbarButtonRect={taskbarButtonRect}
     >
       {imageUrl ? (
         <div style={containerStyle}>
