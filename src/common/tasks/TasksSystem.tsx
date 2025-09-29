@@ -27,11 +27,14 @@ type VideoPreviewTask = TaskBase & {
 
 export type Task = ImagePreviewTask | VideoPreviewTask;
 
+export type TaskDef =
+  | Omit<ImagePreviewTask, "id" | "title" | "isMinimized">
+  | Omit<VideoPreviewTask, "id" | "title" | "isMinimized">;
+
 type TasksSystemContextValue = {
   tasks: Array<Task>;
   activeTaskId: string | null;
-  openImagePreview: (file: DesktopFileDoc) => void;
-  openVideoPreview: (file: DesktopFileDoc) => void;
+  openTask: (taskDef: TaskDef) => Task;
   closeTask: (taskId: string) => void;
   focusTask: (taskId: string) => void;
   syncFiles: (files: Array<DesktopFileDoc>) => void;
@@ -48,74 +51,37 @@ export function TasksSystem({ children }: PropsWithChildren) {
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
 
-  const openImagePreview = useCallback((file: DesktopFileDoc) => {
-    let nextActiveId: string = file._id;
+  const openTask = useCallback((taskDef: TaskDef): Task => {
+    const { kind, file } = taskDef;
+    const task: Task = {
+      id: file._id,
+      ...taskDef,
+      title: file.name,
+      isMinimized: false,
+    };
+
     setTasks((current) => {
       const existingIndex = current.findIndex(
-        (task) => task.kind === "image_preview" && task.file._id === file._id,
+        (t) => t.kind === kind && "file" in t && t.file._id === file._id,
       );
 
       if (existingIndex !== -1) {
         const updated = [...current];
-        const existing = updated[existingIndex] as ImagePreviewTask;
-        const refreshedTask: ImagePreviewTask = {
+        const existing = updated[existingIndex];
+        const refreshedTask = {
           ...existing,
-          title: file.name,
-          file,
-          isMinimized: false,
+          ...task,
         };
         updated.splice(existingIndex, 1);
         updated.push(refreshedTask);
-        nextActiveId = refreshedTask.id;
         return updated;
       }
 
-      const newTask: ImagePreviewTask = {
-        id: file._id,
-        kind: "image_preview",
-        title: file.name,
-        file,
-        isMinimized: false,
-      };
-      nextActiveId = newTask.id;
-      return [...current, newTask];
+      return [...current, task];
     });
-    setActiveTaskId(nextActiveId);
-  }, []);
 
-  const openVideoPreview = useCallback((file: DesktopFileDoc) => {
-    let nextActiveId: string = file._id;
-    setTasks((current) => {
-      const existingIndex = current.findIndex(
-        (task) => task.kind === "video_preview" && task.file._id === file._id,
-      );
-
-      if (existingIndex !== -1) {
-        const updated = [...current];
-        const existing = updated[existingIndex] as VideoPreviewTask;
-        const refreshedTask: VideoPreviewTask = {
-          ...existing,
-          title: file.name,
-          file,
-          isMinimized: false,
-        };
-        updated.splice(existingIndex, 1);
-        updated.push(refreshedTask);
-        nextActiveId = refreshedTask.id;
-        return updated;
-      }
-
-      const newTask: VideoPreviewTask = {
-        id: file._id,
-        kind: "video_preview",
-        title: file.name,
-        file,
-        isMinimized: false,
-      };
-      nextActiveId = newTask.id;
-      return [...current, newTask];
-    });
-    setActiveTaskId(nextActiveId);
+    setActiveTaskId(task.id);
+    return task;
   }, []);
 
   const closeTask = useCallback((taskId: string) => {
@@ -218,8 +184,7 @@ export function TasksSystem({ children }: PropsWithChildren) {
     () => ({
       tasks,
       activeTaskId,
-      openImagePreview,
-      openVideoPreview,
+      openTask,
       closeTask,
       focusTask,
       syncFiles,
@@ -229,8 +194,7 @@ export function TasksSystem({ children }: PropsWithChildren) {
     [
       tasks,
       activeTaskId,
-      openImagePreview,
-      openVideoPreview,
+      openTask,
       closeTask,
       focusTask,
       syncFiles,
