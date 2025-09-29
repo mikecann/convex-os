@@ -27,7 +27,7 @@ type VideoPreviewTask = {
 
 export type Task = ImagePreviewTask | VideoPreviewTask;
 
-type TasksContextValue = {
+type TasksSystemContextValue = {
   tasks: Array<Task>;
   activeTaskId: string | null;
   openImagePreview: (file: DesktopFileDoc) => void;
@@ -39,9 +39,9 @@ type TasksContextValue = {
   taskbarButtonRefs: { current: Map<string, HTMLElement | null> };
 };
 
-const TasksContext = createContext<TasksContextValue | undefined>(undefined);
+const TasksSystemContext = createContext<TasksSystemContextValue | undefined>(undefined);
 
-export function TasksProvider({ children }: PropsWithChildren) {
+export function TasksSystem({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Array<Task>>([]);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
@@ -212,7 +212,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
     [activeTaskId],
   );
 
-  const value = useMemo<TasksContextValue>(
+  const value = useMemo<TasksSystemContextValue>(
     () => ({
       tasks,
       activeTaskId,
@@ -237,12 +237,12 @@ export function TasksProvider({ children }: PropsWithChildren) {
   );
 
   return (
-    <TasksContext.Provider value={value}>{children}</TasksContext.Provider>
+    <TasksSystemContext.Provider value={value}>{children}</TasksSystemContext.Provider>
   );
 }
 
 export function useTasks() {
-  const context = useContext(TasksContext);
+  const context = useContext(TasksSystemContext);
   if (!context) throw new Error("useTasks must be used within a TasksProvider");
   return context;
 }

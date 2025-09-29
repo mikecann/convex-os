@@ -3,16 +3,16 @@ import { Wallpaper } from "./common/components/Wallpaper";
 import SignInWindow from "./auth/SignInWindow";
 import ErrorsProvider from "./common/errors/ErrorsProvider";
 import { Desktop } from "./desktop/Desktop";
-import { TasksProvider } from "./common/tasks/TasksContext";
+import { TasksSystem } from "./common/tasks/TasksSystem";
 
 export default function App() {
   return (
     <ErrorsProvider>
       <Wallpaper fullScreen>
         <Authenticated>
-          <TasksProvider>
+          <TasksSystem>
             <Desktop />
-          </TasksProvider>
+          </TasksSystem>
         </Authenticated>
         <Unauthenticated>
           <SignInWindow />

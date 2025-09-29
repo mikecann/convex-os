@@ -9,7 +9,7 @@ import {
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
-import { useTasks } from "../../common/tasks/TasksContext";
+import { useTasks } from "../../common/tasks/TasksSystem";
 
 const IMAGE_EXTENSIONS: ReadonlySet<string> = new Set([
   "png",
