@@ -131,14 +131,11 @@ export function TasksProvider({ children }: PropsWithChildren) {
   }, []);
 
   const focusTask = useCallback((taskId: string) => {
-    setTasks((current) => {
-      const index = current.findIndex((task) => task.id === taskId);
-      if (index === -1) return current;
-      const updated = [...current];
-      const [task] = updated.splice(index, 1);
-      updated.push({ ...task, isMinimized: false });
-      return updated;
-    });
+    setTasks((current) =>
+      current.map((task) =>
+        task.id === taskId ? { ...task, isMinimized: false } : task,
+      ),
+    );
     setActiveTaskId(taskId);
   }, []);
 

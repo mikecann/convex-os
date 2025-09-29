@@ -10,6 +10,7 @@ import { WindowContext } from "./WindowContext";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
 import { iife } from "../../../../shared/misc";
+import { useDesktop } from "../../../desktop/DesktopContext";
 
 interface WindowProps {
   title: string;
@@ -94,10 +95,52 @@ export function Window({
   const [showMaximizeButton, setShowMaximizeButton] = useState(
     initialShowMaximizeButton ?? initialResizable ?? false,
   );
+  const { desktopRect } = useDesktop();
   const previousStateRef = useRef<{
     position: { x: number; y: number };
     size: { width: number; height: number };
   } | null>(null);
+
+  useEffect(() => {
+    if (!desktopRect || !windowRef.current) return;
+
+    const windowRect = windowRef.current.getBoundingClientRect();
+    let needsUpdate = false;
+    let newWidth = windowRect.width;
+    let newHeight = windowRect.height;
+    let newX = position.x;
+    let newY = position.y;
+
+    if (newWidth > desktopRect.width) {
+      needsUpdate = true;
+      newWidth = desktopRect.width;
+    }
+    if (newHeight > desktopRect.height) {
+      needsUpdate = true;
+      newHeight = desktopRect.height;
+    }
+    if (newX + newWidth > desktopRect.width) {
+      needsUpdate = true;
+      newX = desktopRect.width - newWidth;
+    }
+    if (newY + newHeight > desktopRect.height) {
+      needsUpdate = true;
+      newY = desktopRect.height - newHeight;
+    }
+    if (newX < 0) {
+      needsUpdate = true;
+      newX = 0;
+    }
+    if (newY < 0) {
+      needsUpdate = true;
+      newY = 0;
+    }
+
+    if (needsUpdate) {
+      setSize({ width: newWidth, height: newHeight });
+      setPosition({ x: newX, y: newY });
+    }
+  }, [desktopRect, size]);
 
   useLayoutEffect(() => {
     if (!windowRef.current) return;
@@ -122,23 +165,41 @@ export function Window({
   useLayoutEffect(() => {
     if (!draggable || isInitialized) return;
     if (!windowRef.current) return;
+    if (!desktopRect) return;
 
     const windowRect = windowRef.current.getBoundingClientRect();
-    const centerX = (window.innerWidth - windowRect.width) / 2;
-    const centerY = (window.innerHeight - windowRect.height) / 2;
+    const centerX = (desktopRect.width - windowRect.width) / 2;
+    const centerY = (desktopRect.height - windowRect.height) / 2;
 
     setPosition({ x: centerX, y: centerY });
     setIsInitialized(true);
-  }, [draggable, isInitialized]);
+  }, [draggable, isInitialized, desktopRect]);
 
   useEffect(() => {
     if (!draggable) return;
 
     const handleMouseMove = (event: MouseEvent) => {
       if (!isDragging) return;
+
+      let x = event.clientX - dragOffset.x;
+      let y = event.clientY - dragOffset.y;
+
+      if (desktopRect && windowRef.current) {
+        const windowWidth = windowRef.current.getBoundingClientRect().width;
+        const windowHeight = windowRef.current.getBoundingClientRect().height;
+        if (x < 0) x = 0;
+        if (y < 0) y = 0;
+        if (x + windowWidth > desktopRect.width) {
+          x = desktopRect.width - windowWidth;
+        }
+        if (y + windowHeight > desktopRect.height) {
+          y = desktopRect.height - windowHeight;
+        }
+      }
+
       setPosition({
-        x: event.clientX - dragOffset.x,
-        y: event.clientY - dragOffset.y,
+        x,
+        y,
       });
     };
 
@@ -155,7 +216,7 @@ export function Window({
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [draggable, isDragging, dragOffset]);
+  }, [draggable, isDragging, dragOffset, desktopRect]);
 
   const handleMouseDown = (event: React.MouseEvent) => {
     onFocus?.();
@@ -168,8 +229,8 @@ export function Window({
       if (!previous || previous.size.width === null) return;
 
       const restoredWidth = previous.size.width;
-      const dragHandleWidth =
-        restoredWidth * (event.clientX / window.innerWidth);
+      const clientWidth = desktopRect?.width ?? window.innerWidth;
+      const dragHandleWidth = restoredWidth * (event.clientX / clientWidth);
 
       setSize(previous.size);
       setPosition({ x: event.clientX - dragHandleWidth, y: 0 });
@@ -265,6 +326,23 @@ export function Window({
           break;
       }
 
+      if (desktopRect) {
+        if (newLeft < 0) {
+          newWidth += newLeft; // newLeft is negative, so this reduces width
+          newLeft = 0;
+        }
+        if (newTop < 0) {
+          newHeight += newTop; // newTop is negative, so this reduces height
+          newTop = 0;
+        }
+        if (newLeft + newWidth > desktopRect.width) {
+          newWidth = desktopRect.width - newLeft;
+        }
+        if (newTop + newHeight > desktopRect.height) {
+          newHeight = desktopRect.height - newTop;
+        }
+      }
+
       const clampedWidth = Math.max(minWidth, newWidth);
       const clampedHeight = Math.max(minHeight, newHeight);
 
@@ -297,7 +375,7 @@ export function Window({
       document.removeEventListener("mousemove", handleResizeMove);
       document.removeEventListener("mouseup", handleResizeUp);
     };
-  }, [isResizing, minWidth, minHeight]);
+  }, [isResizing, minWidth, minHeight, desktopRect]);
 
   useEffect(() => {
     if (!isMaximized) return;
@@ -335,6 +413,7 @@ export function Window({
   ) => {
     if (!resizable || isMaximized) return;
     if (!windowRef.current) return;
+    if (!desktopRect) return;
 
     event.preventDefault();
     event.stopPropagation();
@@ -358,8 +437,7 @@ export function Window({
 
     if (!isMaximized) {
       const rect = windowRef.current.getBoundingClientRect();
-      const parentRect =
-        windowRef.current.parentElement?.getBoundingClientRect();
+      const parentRect = desktopRect;
       const availableWidth = parentRect?.width ?? window.innerWidth;
       const availableHeight = parentRect?.height ?? window.innerHeight;
       previousStateRef.current = {
