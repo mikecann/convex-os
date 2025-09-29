@@ -11,6 +11,12 @@ export const windowViewStateValidator = v.union(
   }),
   v.object({
     kind: v.literal("maximized"),
+    restored: v.object({
+      x: v.number(),
+      y: v.number(),
+      width: v.number(),
+      height: v.number(),
+    }),
   }),
 );
 
