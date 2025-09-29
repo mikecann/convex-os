@@ -94,17 +94,6 @@ export function Window({
     windowRef.current.style.transformOrigin = newTransformOrigin;
   }, [taskbarButtonRect, position]);
 
-  const contextValue = useMemo(
-    () => ({
-      isActive,
-      setTitle,
-      onClose: onClose ?? (() => {}),
-      onMinimize: onMinimize ?? (() => {}),
-      onFocus: onFocus ?? (() => {}),
-    }),
-    [isActive, onClose, onMinimize, onFocus],
-  );
-
   useEffect(() => {
     if (!draggable) setIsInitialized(true);
   }, [draggable]);
@@ -327,6 +316,42 @@ export function Window({
     }
   };
 
+  const contextValue = useMemo(
+    () => ({
+      isActive,
+      title,
+      setTitle,
+      onClose: onClose ?? (() => {}),
+      onMinimize: onMinimize ?? (() => {}),
+      onFocus: onFocus ?? (() => {}),
+      draggable,
+      handleMouseDown,
+      titleBarStyle,
+      showCloseButton,
+      showMaximizeButton,
+      isMaximized,
+      toggleMaximize,
+      resizable,
+      startResize,
+    }),
+    [
+      isActive,
+      title,
+      onClose,
+      onMinimize,
+      onFocus,
+      draggable,
+      handleMouseDown,
+      titleBarStyle,
+      showCloseButton,
+      showMaximizeButton,
+      isMaximized,
+      toggleMaximize,
+      resizable,
+      startResize,
+    ],
+  );
+
   const windowStyle: React.CSSProperties = (() => {
     const baseStyle: React.CSSProperties = {
       position: "absolute",
@@ -368,18 +393,7 @@ export function Window({
       }}
     >
       <WindowContext.Provider value={contextValue}>
-        <TitleBar
-          title={title}
-          draggable={draggable}
-          handleMouseDown={handleMouseDown}
-          titleBarStyle={titleBarStyle}
-          showCloseButton={showCloseButton}
-          showMaximizeButton={showMaximizeButton}
-          isMaximized={isMaximized}
-          onClose={onClose}
-          onMinimize={onMinimize}
-          toggleMaximize={toggleMaximize}
-        />
+        <TitleBar />
         <div
           className="window-body"
           style={{
@@ -393,9 +407,7 @@ export function Window({
           {children}
         </div>
         {statusBar && <div className="status-bar">{statusBar}</div>}
-        {resizable && !isMaximized ? (
-          <ResizeHandles startResize={startResize} />
-        ) : null}
+        <ResizeHandles />
       </WindowContext.Provider>
     </div>
   );

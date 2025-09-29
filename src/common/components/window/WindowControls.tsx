@@ -1,22 +1,15 @@
 import React from "react";
+import { useWindow } from "./WindowContext";
 
-type WindowControlsProps = {
-  showCloseButton?: boolean;
-  showMaximizeButton?: boolean;
-  isMaximized?: boolean;
-  onClose?: () => void;
-  onMinimize?: () => void;
-  toggleMaximize: () => void;
-};
-
-export function WindowControls({
-  showCloseButton,
-  showMaximizeButton,
-  isMaximized,
-  onClose,
-  onMinimize,
-  toggleMaximize,
-}: WindowControlsProps) {
+export function WindowControls() {
+  const {
+    showCloseButton,
+    showMaximizeButton,
+    isMaximized,
+    onClose,
+    onMinimize,
+    toggleMaximize,
+  } = useWindow();
   return (
     <div className="title-bar-controls" style={{ display: "flex" }}>
       {onMinimize ? (

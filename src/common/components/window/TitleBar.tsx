@@ -1,31 +1,9 @@
 import React from "react";
 import { WindowControls } from "./WindowControls";
+import { useWindow } from "./WindowContext";
 
-type TitleBarProps = {
-  title: string;
-  draggable: boolean;
-  handleMouseDown: (event: React.MouseEvent) => void;
-  titleBarStyle?: React.CSSProperties;
-  showCloseButton?: boolean;
-  showMaximizeButton?: boolean;
-  isMaximized?: boolean;
-  onClose?: () => void;
-  onMinimize?: () => void;
-  toggleMaximize: () => void;
-};
-
-export function TitleBar({
-  title,
-  draggable,
-  handleMouseDown,
-  titleBarStyle,
-  showCloseButton,
-  showMaximizeButton,
-  isMaximized,
-  onClose,
-  onMinimize,
-  toggleMaximize,
-}: TitleBarProps) {
+export function TitleBar() {
+  const { title, draggable, handleMouseDown, titleBarStyle } = useWindow();
   return (
     <div
       className="title-bar"
@@ -39,14 +17,7 @@ export function TitleBar({
       <div className="title-bar-text" style={{ flex: 1 }}>
         {title}
       </div>
-      <WindowControls
-        showCloseButton={showCloseButton}
-        showMaximizeButton={showMaximizeButton}
-        isMaximized={isMaximized}
-        onClose={onClose}
-        onMinimize={onMinimize}
-        toggleMaximize={toggleMaximize}
-      />
+      <WindowControls />
     </div>
   );
 }

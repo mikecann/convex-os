@@ -1,11 +1,5 @@
 import React from "react";
-
-type ResizeHandlesProps = {
-  startResize: (
-    corner: "bottom-right" | "bottom-left" | "top-right" | "top-left",
-    event: React.MouseEvent,
-  ) => void;
-};
+import { useWindow } from "./WindowContext";
 
 const handleStyle: React.CSSProperties = {
   position: "absolute",
@@ -14,7 +8,11 @@ const handleStyle: React.CSSProperties = {
   background: "transparent",
 };
 
-export function ResizeHandles({ startResize }: ResizeHandlesProps) {
+export function ResizeHandles() {
+  const { startResize, resizable, isMaximized } = useWindow();
+
+  if (!resizable || isMaximized) return null;
+
   return (
     <>
       <div
