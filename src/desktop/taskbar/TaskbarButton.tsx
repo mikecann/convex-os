@@ -49,6 +49,7 @@ export function TaskbarButton({ task }: TaskbarButtonProps) {
           : "1px 1px 2px rgba(0,0,0,0.4)",
         cursor: "pointer",
         minWidth: "120px",
+        outline: "none",
       }}
     >
       <img
