@@ -484,6 +484,7 @@ export function Window({
       setShowCloseButton,
       setShowMaximizeButton,
       setBodyStyle,
+
       setStyle,
     }),
     [

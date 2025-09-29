@@ -1,5 +1,5 @@
 import { Authenticated, Unauthenticated } from "convex/react";
-import SignInWindow from "./auth/SignInWindow";
+import UnauthenticatedContent from "./auth/UnauthenticatedContent";
 import { Desktop } from "./desktop/Desktop";
 
 export default function App() {
@@ -9,7 +9,7 @@ export default function App() {
         <Desktop />
       </Authenticated> */}
       <Unauthenticated>
-        <SignInWindow />
+        <UnauthenticatedContent />
       </Unauthenticated>
     </>
   );

@@ -25,11 +25,16 @@ type VideoPreviewTask = TaskBase & {
   file: DesktopFileDoc;
 };
 
-export type Task = ImagePreviewTask | VideoPreviewTask;
+type SignInSignUpTask = TaskBase & {
+  kind: "sign_in_sign_up";
+};
+
+export type Task = ImagePreviewTask | VideoPreviewTask | SignInSignUpTask;
 
 export type TaskDef =
   | Omit<ImagePreviewTask, "id" | "title" | "isMinimized">
-  | Omit<VideoPreviewTask, "id" | "title" | "isMinimized">;
+  | Omit<VideoPreviewTask, "id" | "title" | "isMinimized">
+  | Omit<SignInSignUpTask, "id" | "title" | "isMinimized">;
 
 type TasksSystemContextValue = {
   tasks: Array<Task>;
@@ -52,25 +57,37 @@ export function TasksSystem({ children }: PropsWithChildren) {
   const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
 
   const openTask = useCallback((taskDef: TaskDef): Task => {
-    const { kind, file } = taskDef;
-    const task: Task = {
-      id: file._id,
-      ...taskDef,
-      title: file.name,
-      isMinimized: false,
-    };
+    let task: Task;
+    switch (taskDef.kind) {
+      case "image_preview":
+      case "video_preview":
+        task = {
+          id: taskDef.file._id,
+          ...taskDef,
+          title: taskDef.file.name,
+          isMinimized: false,
+        };
+        break;
+      case "sign_in_sign_up":
+        task = {
+          id: "sign_in_sign_up",
+          kind: "sign_in_sign_up",
+          title: "Sign In",
+          isMinimized: false,
+        };
+        break;
+    }
 
     setTasks((current) => {
-      const existingIndex = current.findIndex(
-        (t) => t.kind === kind && "file" in t && t.file._id === file._id,
-      );
+      const existingIndex = current.findIndex((t) => t.id === task.id);
 
       if (existingIndex !== -1) {
         const updated = [...current];
-        const existing = updated[existingIndex];
-        const refreshedTask = {
+        const existing = updated[existingIndex]! as Task;
+        const refreshedTask: Task = {
           ...existing,
           ...task,
+          isMinimized: false,
         };
         updated.splice(existingIndex, 1);
         updated.push(refreshedTask);

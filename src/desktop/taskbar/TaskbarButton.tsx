@@ -1,13 +1,14 @@
 import React from "react";
 import { Task, useTasks } from "../../common/tasks/TasksSystem";
 
-type TaskbarButtonProps = {
-  task: Task;
-};
-
-const ICONS_BY_TASK_KIND: Record<Task["kind"], string> = {
+const TASK_ICON_MAP: Record<Task["kind"], string> = {
   image_preview: "/xp/paint.png",
   video_preview: "/xp/mediaplayer.png",
+  sign_in_sign_up: "/xp/users.png",
+};
+
+type TaskbarButtonProps = {
+  task: Task;
 };
 
 export function TaskbarButton({ task }: TaskbarButtonProps) {
@@ -53,7 +54,7 @@ export function TaskbarButton({ task }: TaskbarButtonProps) {
       }}
     >
       <img
-        src={ICONS_BY_TASK_KIND[task.kind]}
+        src={TASK_ICON_MAP[task.kind]}
         alt=""
         style={{ width: "16px", height: "16px" }}
       />

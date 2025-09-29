@@ -57,7 +57,7 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const { openImagePreview, openVideoPreview, syncFiles } = useTasks();
+  const { openTask, syncFiles } = useTasks();
 
   useEffect(() => {
     syncFiles(files);
@@ -65,11 +65,11 @@ export function DesktopFiles() {
 
   const openFile = (file: DesktopFileDoc) => {
     if (isImageFile(file)) {
-      openImagePreview(file);
+      openTask({ kind: "image_preview", file });
       return;
     }
     if (isVideoFile(file)) {
-      openVideoPreview(file);
+      openTask({ kind: "video_preview", file });
       return;
     }
   };
