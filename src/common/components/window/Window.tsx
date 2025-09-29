@@ -25,6 +25,7 @@ interface WindowProps {
   showCloseButton?: boolean;
   resizable?: boolean;
   showMaximizeButton?: boolean;
+  showMinimiseButton?: boolean;
   minWidth?: number;
   minHeight?: number;
   onFocus?: () => void;
@@ -47,6 +48,7 @@ export function Window({
   showCloseButton: initialShowCloseButton,
   resizable: initialResizable,
   showMaximizeButton: initialShowMaximizeButton,
+  showMinimiseButton: initialShowMinimiseButton,
   minWidth = 240,
   minHeight = 180,
   onFocus,
@@ -94,6 +96,9 @@ export function Window({
   );
   const [showMaximizeButton, setShowMaximizeButton] = useState(
     initialShowMaximizeButton ?? initialResizable ?? false,
+  );
+  const [showMinimiseButton, setShowMinimiseButton] = useState(
+    initialShowMinimiseButton ?? true,
   );
   const { desktopRect } = useDesktop();
   const previousStateRef = useRef<{
@@ -476,6 +481,7 @@ export function Window({
       titleBarStyle,
       showCloseButton,
       showMaximizeButton,
+      showMinimiseButton,
       isMaximized,
       toggleMaximize,
       resizable,
@@ -483,6 +489,7 @@ export function Window({
       setResizable,
       setShowCloseButton,
       setShowMaximizeButton,
+      setShowMinimiseButton,
       setBodyStyle,
 
       setStyle,
@@ -498,6 +505,7 @@ export function Window({
       titleBarStyle,
       showCloseButton,
       showMaximizeButton,
+      showMinimiseButton,
       isMaximized,
       toggleMaximize,
       resizable,

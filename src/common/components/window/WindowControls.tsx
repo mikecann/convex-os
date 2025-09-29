@@ -1,5 +1,5 @@
 import React from "react";
-import { useWindow } from "./WindowContext";
+import { useWindow } from "./WindowContext.tsx";
 
 export function WindowControls() {
   const {
@@ -9,10 +9,11 @@ export function WindowControls() {
     onClose,
     onMinimize,
     toggleMaximize,
+    showMinimiseButton,
   } = useWindow();
   return (
     <div className="title-bar-controls" style={{ display: "flex" }}>
-      {onMinimize ? (
+      {showMinimiseButton && onMinimize ? (
         <button
           className="minimise"
           aria-label="Minimize"

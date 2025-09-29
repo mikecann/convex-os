@@ -32,6 +32,7 @@ export function SignInSignUpTask() {
     window.setResizable(false);
     window.setShowCloseButton(false);
     window.setShowMaximizeButton(false);
+    window.setShowMinimiseButton(false);
   }, []);
 
   return (

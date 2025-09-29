@@ -21,6 +21,8 @@ type WindowContextValue = {
   setShowCloseButton: (show: boolean) => void;
   showMaximizeButton?: boolean;
   setShowMaximizeButton: (show: boolean) => void;
+  showMinimiseButton?: boolean;
+  setShowMinimiseButton: (show: boolean) => void;
   isMaximized?: boolean;
   toggleMaximize: () => void;
   // For ResizeHandles
