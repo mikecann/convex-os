@@ -7,17 +7,19 @@ import { TasksSystem } from "./common/tasks/TasksSystem";
 
 export default function App() {
   return (
-    <ErrorsProvider>
-      <Wallpaper fullScreen>
-        <Authenticated>
-          <TasksSystem>
-            <Desktop />
-          </TasksSystem>
-        </Authenticated>
-        <Unauthenticated>
-          <SignInWindow />
-        </Unauthenticated>
-      </Wallpaper>
-    </ErrorsProvider>
+    <>
+      <ErrorsProvider>
+        <Wallpaper fullScreen>
+          <Authenticated>
+            <TasksSystem>
+              <Desktop />
+            </TasksSystem>
+          </Authenticated>
+          <Unauthenticated>
+            <SignInWindow />
+          </Unauthenticated>
+        </Wallpaper>
+      </ErrorsProvider>
+    </>
   );
 }

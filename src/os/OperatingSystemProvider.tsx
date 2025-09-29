@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, PropsWithChildren, useContext } from "react";
 
 export interface OperatingSystemContextValue {
   // TODO: Define the shape of the OS context
@@ -15,4 +15,16 @@ export function useOperatingSystem() {
     );
   }
   return context;
+}
+
+export function OperatingSystem({ children }: PropsWithChildren<{}>) {
+  const value: OperatingSystemContextValue = {
+    // TODO: Implement the OS provider
+  };
+
+  return (
+    <OperatingSystemContext.Provider value={value}>
+      {children}
+    </OperatingSystemContext.Provider>
+  );
 }
