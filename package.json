@@ -8,6 +8,7 @@
     "dev:frontend": "vite --open",
     "dev:backend": "convex dev",
     "dev:ts": "tsc -b --watch",
+    "typecheck": "tsc -b --noEmit",
     "predev": "convex dev --until-success && convex dev --once --run-sh \"node setup.mjs --once\" && convex dashboard",
     "build": "tsc -b && vite build",
     "lint": "tsc && eslint .  --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

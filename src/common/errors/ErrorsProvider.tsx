@@ -1,6 +1,6 @@
 import { PropsWithChildren, useState } from "react";
 import { ErrorsContext, ErrorsContextValue } from "./ErrorsContext";
-import { Window } from "../components/Window";
+import { Window } from "../components/window/Window";
 import Vertical from "../components/Vertical";
 import Horizontal from "../components/Horizontal";
 import { Button } from "../components/Button";
@@ -36,6 +36,7 @@ export default function ErrorsProvider({ children }: PropsWithChildren) {
           }}
           showCloseButton={true}
           onClose={dismissError}
+          isActive={true}
         >
           <Vertical gap={16} style={{ padding: "16px" }}>
             <Horizontal gap={16} align="start">

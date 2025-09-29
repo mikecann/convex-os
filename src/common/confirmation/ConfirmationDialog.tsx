@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import Horizontal from "../components/Horizontal";
 import Vertical from "../components/Vertical";
 import { Button } from "../components/Button";
-import { Window } from "../components/Window";
+import { Window } from "../components/window/Window";
 import { useKeydown } from "../hooks/useKeydown";
 
 type ConfirmationDialogProps = {
@@ -49,6 +49,7 @@ export function ConfirmationDialog({
       showCloseButton
       onClose={onCancel}
       style={{ minWidth: "280px" }}
+      isActive={true}
     >
       <Vertical gap={16} style={{ padding: "16px" }}>
         <div>{message}</div>

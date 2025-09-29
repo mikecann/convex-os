@@ -1,7 +1,14 @@
-import React, { useState, useEffect, useRef, useLayoutEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useLayoutEffect,
+  useMemo,
+} from "react";
+import { WindowContext } from "./WindowContext";
 
 interface WindowProps {
-  title?: string;
+  title: string;
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
@@ -19,10 +26,11 @@ interface WindowProps {
   onMinimize?: () => void;
   isMinimized?: boolean;
   taskbarButtonRect?: DOMRect;
+  isActive: boolean;
 }
 
 export function Window({
-  title,
+  title: initialTitle,
   children,
   className = "",
   style,
@@ -40,6 +48,7 @@ export function Window({
   onMinimize,
   isMinimized = false,
   taskbarButtonRect,
+  isActive,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -61,6 +70,7 @@ export function Window({
     corner: "bottom-right" | "bottom-left" | "top-right" | "top-left";
   } | null>(null);
   const [isMaximized, setIsMaximized] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
   const previousStateRef = useRef<{
     position: { x: number; y: number };
     size: { width: number; height: number };
@@ -81,6 +91,17 @@ export function Window({
     }
     windowRef.current.style.transformOrigin = newTransformOrigin;
   }, [taskbarButtonRect, position]);
+
+  const contextValue = useMemo(
+    () => ({
+      isActive,
+      setTitle,
+      onClose: onClose ?? (() => {}),
+      onMinimize: onMinimize ?? (() => {}),
+      onFocus: onFocus ?? (() => {}),
+    }),
+    [isActive, onClose, onMinimize, onFocus],
+  );
 
   useEffect(() => {
     if (!draggable) setIsInitialized(true);
@@ -344,130 +365,132 @@ export function Window({
         onFocus?.();
       }}
     >
-      {title && (
-        <div
-          className="title-bar"
-          style={{
-            userSelect: "none",
-            cursor: draggable ? "move" : "default",
-            ...titleBarStyle,
-          }}
-          onMouseDown={handleMouseDown}
-        >
-          <div className="title-bar-text" style={{ flex: 1 }}>
-            {title}
-          </div>
-          {(showCloseButton || showMaximizeButton) && (
-            <div className="title-bar-controls" style={{ display: "flex" }}>
-              {showMaximizeButton ? (
-                <button
-                  className={isMaximized ? "restore" : "maximise"}
-                  aria-label={isMaximized ? "Restore" : "Maximize"}
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    toggleMaximize();
-                  }}
-                  onMouseDown={(event) => event.stopPropagation()}
-                ></button>
-              ) : null}
-              {onMinimize ? (
-                <button
-                  className="minimise"
-                  aria-label="Minimize"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onMinimize();
-                  }}
-                  onMouseDown={(event) => event.stopPropagation()}
-                ></button>
-              ) : null}
-              {showCloseButton && onClose ? (
-                <button
-                  aria-label="Close"
-                  onClick={(event) => {
-                    event.stopPropagation();
-                    onClose();
-                  }}
-                  onMouseDown={(event) => event.stopPropagation()}
-                ></button>
-              ) : null}
+      <WindowContext.Provider value={contextValue}>
+        {title && (
+          <div
+            className="title-bar"
+            style={{
+              userSelect: "none",
+              cursor: draggable ? "move" : "default",
+              ...titleBarStyle,
+            }}
+            onMouseDown={handleMouseDown}
+          >
+            <div className="title-bar-text" style={{ flex: 1 }}>
+              {title}
             </div>
-          )}
+            {(showCloseButton || showMaximizeButton) && (
+              <div className="title-bar-controls" style={{ display: "flex" }}>
+                {showMaximizeButton ? (
+                  <button
+                    className={isMaximized ? "restore" : "maximise"}
+                    aria-label={isMaximized ? "Restore" : "Maximize"}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      toggleMaximize();
+                    }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                  ></button>
+                ) : null}
+                {onMinimize ? (
+                  <button
+                    className="minimise"
+                    aria-label="Minimize"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onMinimize();
+                    }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                  ></button>
+                ) : null}
+                {showCloseButton && onClose ? (
+                  <button
+                    aria-label="Close"
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      onClose();
+                    }}
+                    onMouseDown={(event) => event.stopPropagation()}
+                  ></button>
+                ) : null}
+              </div>
+            )}
+          </div>
+        )}
+        <div
+          className="window-body"
+          style={{
+            flex: "1 1 auto",
+            display: "flex",
+            flexDirection: "column",
+            overflow: "hidden",
+            ...bodyStyle,
+          }}
+        >
+          {children}
         </div>
-      )}
-      <div
-        className="window-body"
-        style={{
-          flex: "1 1 auto",
-          display: "flex",
-          flexDirection: "column",
-          overflow: "hidden",
-          ...bodyStyle,
-        }}
-      >
-        {children}
-      </div>
-      {statusBar && <div className="status-bar">{statusBar}</div>}
-      {resizable && !isMaximized ? (
-        <>
-          <div
-            onMouseDown={(event) => {
-              startResize("bottom-right", event);
-            }}
-            style={{
-              position: "absolute",
-              width: "12px",
-              height: "12px",
-              right: "0",
-              bottom: "0",
-              cursor: "nwse-resize",
-              background: "transparent",
-            }}
-          />
-          <div
-            onMouseDown={(event) => {
-              startResize("bottom-left", event);
-            }}
-            style={{
-              position: "absolute",
-              width: "12px",
-              height: "12px",
-              left: "0",
-              bottom: "0",
-              cursor: "nesw-resize",
-              background: "transparent",
-            }}
-          />
-          <div
-            onMouseDown={(event) => {
-              startResize("top-right", event);
-            }}
-            style={{
-              position: "absolute",
-              width: "12px",
-              height: "12px",
-              right: "0",
-              top: "0",
-              cursor: "nesw-resize",
-              background: "transparent",
-            }}
-          />
-          <div
-            onMouseDown={(event) => {
-              startResize("top-left", event);
-            }}
-            style={{
-              position: "absolute",
-              width: "12px",
-              height: "12px",
-              left: "0",
-              top: "0",
-              cursor: "nwse-resize",
-              background: "transparent",
-            }}
-          />
-        </>
-      ) : null}
+        {statusBar && <div className="status-bar">{statusBar}</div>}
+        {resizable && !isMaximized ? (
+          <>
+            <div
+              onMouseDown={(event) => {
+                startResize("bottom-right", event);
+              }}
+              style={{
+                position: "absolute",
+                width: "12px",
+                height: "12px",
+                right: "0",
+                bottom: "0",
+                cursor: "nwse-resize",
+                background: "transparent",
+              }}
+            />
+            <div
+              onMouseDown={(event) => {
+                startResize("bottom-left", event);
+              }}
+              style={{
+                position: "absolute",
+                width: "12px",
+                height: "12px",
+                left: "0",
+                bottom: "0",
+                cursor: "nesw-resize",
+                background: "transparent",
+              }}
+            />
+            <div
+              onMouseDown={(event) => {
+                startResize("top-right", event);
+              }}
+              style={{
+                position: "absolute",
+                width: "12px",
+                height: "12px",
+                right: "0",
+                top: "0",
+                cursor: "nesw-resize",
+                background: "transparent",
+              }}
+            />
+            <div
+              onMouseDown={(event) => {
+                startResize("top-left", event);
+              }}
+              style={{
+                position: "absolute",
+                width: "12px",
+                height: "12px",
+                left: "0",
+                top: "0",
+                cursor: "nwse-resize",
+                background: "transparent",
+              }}
+            />
+          </>
+        ) : null}
+      </WindowContext.Provider>
     </div>
   );
 }

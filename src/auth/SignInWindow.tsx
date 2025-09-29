@@ -2,7 +2,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useState } from "react";
 
 import { useErrorHandler } from "../common/errors/useErrorHandler";
-import { Window } from "../common/components/Window";
+import { Window } from "../common/components/window/Window";
 import Vertical from "../common/components/Vertical";
 import Horizontal from "../common/components/Horizontal";
 import { TextBox } from "../common/components/TextBox";
@@ -27,6 +27,7 @@ export default function SignInWindow() {
       title={windowTitleByFlow[flow]}
       style={{ width: "400px" }}
       bodyStyle={{ margin: "0px 3px 0px 3px" }}
+      isActive={true}
     >
       <Vertical gap={5}>
         <Vertical
