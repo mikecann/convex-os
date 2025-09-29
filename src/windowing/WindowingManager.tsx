@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useMemo } from "react";
 import { useTasks } from "../common/tasks/TasksContext";
 import { ImagePreviewTask } from "../tasks/ImagePreviewTask";
 import { Window } from "../common/components/window/Window";
@@ -15,9 +15,15 @@ export function WindowingManager() {
     taskbarButtonRefs,
   } = useTasks();
 
+  const sortedTasks = useMemo(() => {
+    const activeTask = tasks.find((task) => task.id === activeTaskId);
+    if (!activeTask) return tasks;
+    return [...tasks.filter((task) => task.id !== activeTaskId), activeTask];
+  }, [tasks, activeTaskId]);
+
   return (
     <Fragment>
-      {tasks.map((task) => {
+      {sortedTasks.map((task) => {
         const { id, isMinimized, title } = task;
 
         return (

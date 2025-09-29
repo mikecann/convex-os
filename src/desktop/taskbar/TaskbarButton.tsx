@@ -41,8 +41,8 @@ export function TaskbarButton({ task }: TaskbarButtonProps) {
         border: "1px solid rgba(0,0,0,0.4)",
         borderRadius: "4px",
         background: isActive
-          ? "linear-gradient(0deg, #1943b8 0%, #3370d3 100%)"
-          : "linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%)",
+          ? "linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%)"
+          : "linear-gradient(0deg, #1943b8 0%, #3370d3 100%)",
         color: "white",
         boxShadow: isActive
           ? "inset 1px 1px 1px rgba(255,255,255,0.4)"
