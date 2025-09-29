@@ -9,6 +9,7 @@ import React, {
 import { WindowContext } from "./WindowContext";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
+import { iife } from "../../../../shared/misc";
 
 interface WindowProps {
   title: string;
@@ -158,14 +159,36 @@ export function Window({
 
   const handleMouseDown = (event: React.MouseEvent) => {
     onFocus?.();
-    if (!draggable || !windowRef.current || isMaximized) return;
-    const windowRect = windowRef.current.getBoundingClientRect();
-    setDragOffset({
-      x: event.clientX - windowRect.left,
-      y: event.clientY - windowRect.top,
-    });
-    setIsDragging(true);
+    if (!draggable || !windowRef.current) return;
+
     event.preventDefault();
+
+    if (isMaximized) {
+      const previous = previousStateRef.current;
+      if (!previous || previous.size.width === null) return;
+
+      const restoredWidth = previous.size.width;
+      const dragHandleWidth =
+        restoredWidth * (event.clientX / window.innerWidth);
+
+      setSize(previous.size);
+      setPosition({ x: event.clientX - dragHandleWidth, y: 0 });
+      setIsMaximized(false);
+      previousStateRef.current = null;
+
+      setDragOffset({
+        x: dragHandleWidth,
+        y: event.clientY,
+      });
+      setIsDragging(true);
+    } else {
+      const windowRect = windowRef.current.getBoundingClientRect();
+      setDragOffset({
+        x: event.clientX - windowRect.left,
+        y: event.clientY - windowRect.top,
+      });
+      setIsDragging(true);
+    }
   };
 
   useLayoutEffect(() => {
@@ -403,42 +426,40 @@ export function Window({
     ],
   );
 
-  const windowStyle: React.CSSProperties = (() => {
-    const baseStyle: React.CSSProperties = {
-      position: "absolute",
-      left: position.x,
-      top: position.y,
-      zIndex: 1000,
-      display: "flex",
-      flexDirection: "column",
-      boxSizing: "border-box",
-      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
-      ...(style || {}),
-    };
-
-    if (isMinimized) {
-      baseStyle.transform = "scale(0)";
-      baseStyle.opacity = 0;
-      baseStyle.pointerEvents = "none";
-    }
-
-    if (size.width !== null) baseStyle.width = `${size.width}px`;
-    if (baseStyle.width === undefined && style?.width)
-      baseStyle.width = style.width;
-    if (size.height !== null) baseStyle.height = `${size.height}px`;
-    if (baseStyle.height === undefined && style?.height)
-      baseStyle.height = style.height;
-
-    if (!isInitialized) baseStyle.visibility = "hidden";
-
-    return baseStyle;
-  })();
-
   return (
     <div
       ref={windowRef}
       className={`window ${className}`}
-      style={{ ...windowStyle }}
+      style={iife(() => {
+        const baseStyle: React.CSSProperties = {
+          position: "absolute",
+          left: position.x,
+          top: position.y,
+          zIndex: 1000,
+          display: "flex",
+          flexDirection: "column",
+          boxSizing: "border-box",
+          transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
+          ...(style || {}),
+        };
+
+        if (isMinimized) {
+          baseStyle.transform = "scale(0)";
+          baseStyle.opacity = 0;
+          baseStyle.pointerEvents = "none";
+        }
+
+        if (size.width !== null) baseStyle.width = `${size.width}px`;
+        if (baseStyle.width === undefined && style?.width)
+          baseStyle.width = style.width;
+        if (size.height !== null) baseStyle.height = `${size.height}px`;
+        if (baseStyle.height === undefined && style?.height)
+          baseStyle.height = style.height;
+
+        if (!isInitialized) baseStyle.visibility = "hidden";
+
+        return baseStyle;
+      })}
       onMouseDown={() => {
         onFocus?.();
       }}
