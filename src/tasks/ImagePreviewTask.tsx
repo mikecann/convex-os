@@ -24,7 +24,12 @@ export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
     setResizable(true);
     setShowMaximizeButton(true);
     setShowCloseButton(true);
-    setStyle({ minWidth: "320px", minHeight: "240px" });
+    setStyle({
+      width: "640px",
+      height: "480px",
+      minWidth: "320px",
+      minHeight: "240px",
+    });
   }, [
     setResizable,
     setShowMaximizeButton,
