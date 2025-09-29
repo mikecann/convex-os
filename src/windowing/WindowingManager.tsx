@@ -3,8 +3,14 @@ import { useTasks } from "../common/tasks/TasksContext";
 import { ImagePreviewWindow } from "../apps/ImagePreviewWindow";
 
 export function WindowingManager() {
-  const { tasks, closeTask, focusTask, minimizeTask, activeTaskId } =
-    useTasks();
+  const {
+    tasks,
+    closeTask,
+    focusTask,
+    minimizeTask,
+    activeTaskId,
+    taskbarButtonRefs,
+  } = useTasks();
 
   return (
     <Fragment>
@@ -27,7 +33,9 @@ export function WindowingManager() {
               }}
               isActive={activeTaskId === id}
               isMinimized={isMinimized}
-              taskbarButtonRect={task.taskbarButtonEl?.getBoundingClientRect()}
+              taskbarButtonRect={taskbarButtonRefs.current
+                .get(id)
+                ?.getBoundingClientRect()}
             />
           );
         }

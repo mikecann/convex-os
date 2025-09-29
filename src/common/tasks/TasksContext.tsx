@@ -4,20 +4,17 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
 } from "react";
 import type { DesktopFileDoc } from "../../desktop/files/DesktopFileIcon";
 
-type TaskBase = {
+type ImagePreviewTask = {
   id: string;
-  title: string;
-  isMinimized: boolean;
-  taskbarButtonEl?: HTMLElement | null;
-};
-
-type ImagePreviewTask = TaskBase & {
   kind: "image_preview";
+  title: string;
   file: DesktopFileDoc;
+  isMinimized: boolean;
 };
 
 export type Task = ImagePreviewTask;
@@ -30,7 +27,7 @@ type TasksContextValue = {
   focusTask: (taskId: string) => void;
   syncFiles: (files: Array<DesktopFileDoc>) => void;
   minimizeTask: (taskId: string) => void;
-  setTaskbarButtonRef: (taskId: string, element: HTMLElement | null) => void;
+  taskbarButtonRefs: { current: Map<string, HTMLElement | null> };
 };
 
 const TasksContext = createContext<TasksContextValue | undefined>(undefined);
@@ -38,6 +35,7 @@ const TasksContext = createContext<TasksContextValue | undefined>(undefined);
 export function TasksProvider({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Array<Task>>([]);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
+  const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
 
   const openImagePreview = useCallback((file: DesktopFileDoc) => {
     let nextActiveId: string = file._id;
@@ -111,21 +109,6 @@ export function TasksProvider({ children }: PropsWithChildren) {
     );
   }, []);
 
-  const setTaskbarButtonRef = useCallback(
-    (taskId: string, element: HTMLElement | null) => {
-      setTasks((current) => {
-        const task = current.find((t) => t.id === taskId);
-        if (task && task.taskbarButtonEl === element) {
-          return current;
-        }
-        return current.map((task) =>
-          task.id === taskId ? { ...task, taskbarButtonEl: element } : task,
-        );
-      });
-    },
-    [],
-  );
-
   const syncFiles = useCallback(
     (files: Array<DesktopFileDoc>) => {
       const fileMap = new Map(files.map((file) => [file._id, file]));
@@ -197,7 +180,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
       focusTask,
       syncFiles,
       minimizeTask,
-      setTaskbarButtonRef,
+      taskbarButtonRefs,
     }),
     [
       tasks,
@@ -207,7 +190,6 @@ export function TasksProvider({ children }: PropsWithChildren) {
       focusTask,
       syncFiles,
       minimizeTask,
-      setTaskbarButtonRef,
     ],
   );
 

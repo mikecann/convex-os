@@ -70,19 +70,17 @@ export function Window({
     if (!windowRef.current) return;
     let newTransformOrigin = "center bottom";
     if (taskbarButtonRect) {
-      const windowRect = windowRef.current.getBoundingClientRect();
-      if (windowRect.width > 0) {
-        const originX =
-          taskbarButtonRect.left -
-          windowRect.left +
-          taskbarButtonRect.width / 2;
-        const originY =
-          taskbarButtonRect.top - windowRect.top + taskbarButtonRect.height / 2;
-        newTransformOrigin = `${originX}px ${originY}px`;
-      }
+      const windowLeft = position.x;
+      const windowTop = position.y;
+
+      const originX =
+        taskbarButtonRect.left - windowLeft + taskbarButtonRect.width / 2;
+      const originY =
+        taskbarButtonRect.top - windowTop + taskbarButtonRect.height / 2;
+      newTransformOrigin = `${originX}px ${originY}px`;
     }
     windowRef.current.style.transformOrigin = newTransformOrigin;
-  }, [taskbarButtonRect, position, size, isMinimized]);
+  }, [taskbarButtonRect, position]);
 
   useEffect(() => {
     if (!draggable) setIsInitialized(true);
