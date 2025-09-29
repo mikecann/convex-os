@@ -1,11 +1,16 @@
 import React from "react";
 import { StartButton } from "./StartButton";
 import { Clock } from "./Clock";
-import { useTasks } from "../../common/tasks/TasksContext";
+import { Task, useTasks } from "../../common/tasks/TasksContext";
 
 interface TaskbarProps {
   onStartClick?: () => void;
 }
+
+const ICONS_BY_TASK_KIND: Record<Task["kind"], string> = {
+  image_preview: "/xp/paint.png",
+  video_preview: "/xp/mediaplayer.png",
+};
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
   const { tasks, activeTaskId, focusTask, minimizeTask, taskbarButtonRefs } =
@@ -62,6 +67,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
               style={{
                 display: "flex",
                 alignItems: "center",
+                gap: "6px",
                 padding: "6px 12px",
                 border: "1px solid rgba(0,0,0,0.4)",
                 borderRadius: "4px",
@@ -76,6 +82,11 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
                 minWidth: "120px",
               }}
             >
+              <img
+                src={ICONS_BY_TASK_KIND[task.kind]}
+                alt=""
+                style={{ width: "16px", height: "16px" }}
+              />
               {task.title}
             </button>
           );

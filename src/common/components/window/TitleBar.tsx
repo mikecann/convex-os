@@ -3,7 +3,8 @@ import { WindowControls } from "./WindowControls";
 import { useWindow } from "./WindowContext";
 
 export function TitleBar() {
-  const { title, draggable, handleMouseDown, titleBarStyle } = useWindow();
+  const { title, draggable, handleMouseDown, titleBarStyle, toggleMaximize } =
+    useWindow();
   return (
     <div
       className="title-bar"
@@ -13,6 +14,7 @@ export function TitleBar() {
         ...titleBarStyle,
       }}
       onMouseDown={handleMouseDown}
+      onDoubleClick={toggleMaximize}
     >
       <div className="title-bar-text" style={{ flex: 1 }}>
         {title}
