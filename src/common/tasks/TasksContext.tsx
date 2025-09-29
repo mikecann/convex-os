@@ -17,12 +17,21 @@ type ImagePreviewTask = {
   isMinimized: boolean;
 };
 
-export type Task = ImagePreviewTask;
+type VideoPreviewTask = {
+  id: string;
+  kind: "video_preview";
+  title: string;
+  file: DesktopFileDoc;
+  isMinimized: boolean;
+};
+
+export type Task = ImagePreviewTask | VideoPreviewTask;
 
 type TasksContextValue = {
   tasks: Array<Task>;
   activeTaskId: string | null;
   openImagePreview: (file: DesktopFileDoc) => void;
+  openVideoPreview: (file: DesktopFileDoc) => void;
   closeTask: (taskId: string) => void;
   focusTask: (taskId: string) => void;
   syncFiles: (files: Array<DesktopFileDoc>) => void;
@@ -62,6 +71,41 @@ export function TasksProvider({ children }: PropsWithChildren) {
       const newTask: ImagePreviewTask = {
         id: file._id,
         kind: "image_preview",
+        title: file.name,
+        file,
+        isMinimized: false,
+      };
+      nextActiveId = newTask.id;
+      return [...current, newTask];
+    });
+    setActiveTaskId(nextActiveId);
+  }, []);
+
+  const openVideoPreview = useCallback((file: DesktopFileDoc) => {
+    let nextActiveId: string = file._id;
+    setTasks((current) => {
+      const existingIndex = current.findIndex(
+        (task) => task.kind === "video_preview" && task.file._id === file._id,
+      );
+
+      if (existingIndex !== -1) {
+        const updated = [...current];
+        const existing = updated[existingIndex] as VideoPreviewTask;
+        const refreshedTask: VideoPreviewTask = {
+          ...existing,
+          title: file.name,
+          file,
+          isMinimized: false,
+        };
+        updated.splice(existingIndex, 1);
+        updated.push(refreshedTask);
+        nextActiveId = refreshedTask.id;
+        return updated;
+      }
+
+      const newTask: VideoPreviewTask = {
+        id: file._id,
+        kind: "video_preview",
         title: file.name,
         file,
         isMinimized: false,
@@ -120,7 +164,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
         let localChanged = false;
 
         for (const task of current) {
-          if (task.kind === "image_preview") {
+          if (task.kind === "image_preview" || task.kind === "video_preview") {
             const updatedFile = fileMap.get(task.file._id);
             if (!updatedFile) {
               localChanged = true;
@@ -176,6 +220,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
       tasks,
       activeTaskId,
       openImagePreview,
+      openVideoPreview,
       closeTask,
       focusTask,
       syncFiles,
@@ -186,6 +231,7 @@ export function TasksProvider({ children }: PropsWithChildren) {
       tasks,
       activeTaskId,
       openImagePreview,
+      openVideoPreview,
       closeTask,
       focusTask,
       syncFiles,

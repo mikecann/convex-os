@@ -6,6 +6,8 @@ import React, {
   useMemo,
 } from "react";
 import { WindowContext } from "./WindowContext";
+import { TitleBar } from "./TitleBar";
+import { ResizeHandles } from "./ResizeHandles";
 
 interface WindowProps {
   title: string;
@@ -366,57 +368,18 @@ export function Window({
       }}
     >
       <WindowContext.Provider value={contextValue}>
-        {title && (
-          <div
-            className="title-bar"
-            style={{
-              userSelect: "none",
-              cursor: draggable ? "move" : "default",
-              ...titleBarStyle,
-            }}
-            onMouseDown={handleMouseDown}
-          >
-            <div className="title-bar-text" style={{ flex: 1 }}>
-              {title}
-            </div>
-            {(showCloseButton || showMaximizeButton) && (
-              <div className="title-bar-controls" style={{ display: "flex" }}>
-                {showMaximizeButton ? (
-                  <button
-                    className={isMaximized ? "restore" : "maximise"}
-                    aria-label={isMaximized ? "Restore" : "Maximize"}
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      toggleMaximize();
-                    }}
-                    onMouseDown={(event) => event.stopPropagation()}
-                  ></button>
-                ) : null}
-                {onMinimize ? (
-                  <button
-                    className="minimise"
-                    aria-label="Minimize"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onMinimize();
-                    }}
-                    onMouseDown={(event) => event.stopPropagation()}
-                  ></button>
-                ) : null}
-                {showCloseButton && onClose ? (
-                  <button
-                    aria-label="Close"
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      onClose();
-                    }}
-                    onMouseDown={(event) => event.stopPropagation()}
-                  ></button>
-                ) : null}
-              </div>
-            )}
-          </div>
-        )}
+        <TitleBar
+          title={title}
+          draggable={draggable}
+          handleMouseDown={handleMouseDown}
+          titleBarStyle={titleBarStyle}
+          showCloseButton={showCloseButton}
+          showMaximizeButton={showMaximizeButton}
+          isMaximized={isMaximized}
+          onClose={onClose}
+          onMinimize={onMinimize}
+          toggleMaximize={toggleMaximize}
+        />
         <div
           className="window-body"
           style={{
@@ -431,64 +394,7 @@ export function Window({
         </div>
         {statusBar && <div className="status-bar">{statusBar}</div>}
         {resizable && !isMaximized ? (
-          <>
-            <div
-              onMouseDown={(event) => {
-                startResize("bottom-right", event);
-              }}
-              style={{
-                position: "absolute",
-                width: "12px",
-                height: "12px",
-                right: "0",
-                bottom: "0",
-                cursor: "nwse-resize",
-                background: "transparent",
-              }}
-            />
-            <div
-              onMouseDown={(event) => {
-                startResize("bottom-left", event);
-              }}
-              style={{
-                position: "absolute",
-                width: "12px",
-                height: "12px",
-                left: "0",
-                bottom: "0",
-                cursor: "nesw-resize",
-                background: "transparent",
-              }}
-            />
-            <div
-              onMouseDown={(event) => {
-                startResize("top-right", event);
-              }}
-              style={{
-                position: "absolute",
-                width: "12px",
-                height: "12px",
-                right: "0",
-                top: "0",
-                cursor: "nesw-resize",
-                background: "transparent",
-              }}
-            />
-            <div
-              onMouseDown={(event) => {
-                startResize("top-left", event);
-              }}
-              style={{
-                position: "absolute",
-                width: "12px",
-                height: "12px",
-                left: "0",
-                top: "0",
-                cursor: "nwse-resize",
-                background: "transparent",
-              }}
-            />
-          </>
+          <ResizeHandles startResize={startResize} />
         ) : null}
       </WindowContext.Provider>
     </div>

@@ -21,11 +21,20 @@ const IMAGE_EXTENSIONS: ReadonlySet<string> = new Set([
   "webp",
 ]);
 
+const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set(["mp4", "webm", "ogg"]);
+
 function isImageFile(file: DesktopFileDoc) {
   if (file.type?.startsWith("image/")) return true;
   const extension = file.name.split(".").pop()?.toLowerCase();
   if (!extension) return false;
   return IMAGE_EXTENSIONS.has(extension);
+}
+
+function isVideoFile(file: DesktopFileDoc) {
+  if (file.type?.startsWith("video/")) return true;
+  const extension = file.name.split(".").pop()?.toLowerCase();
+  if (!extension) return false;
+  return VIDEO_EXTENSIONS.has(extension);
 }
 
 export function DesktopFiles() {
@@ -48,15 +57,21 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const { openImagePreview, syncFiles } = useTasks();
+  const { openImagePreview, openVideoPreview, syncFiles } = useTasks();
 
   useEffect(() => {
     syncFiles(files);
   }, [files, syncFiles]);
 
   const openFile = (file: DesktopFileDoc) => {
-    if (!isImageFile(file)) return;
-    openImagePreview(file);
+    if (isImageFile(file)) {
+      openImagePreview(file);
+      return;
+    }
+    if (isVideoFile(file)) {
+      openVideoPreview(file);
+      return;
+    }
   };
 
   useEffect(() => {
