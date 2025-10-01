@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import { processes } from "../processes/lib";
+import { processPropsUpdateValidator } from "../processes/schema";
 
 export const get = userQuery({
   args: {
@@ -29,7 +30,6 @@ export const minimize = userMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    console.log(`minimizing process ${processId}`);
     return processes.forProcess(processId).minimize(ctx.db);
   },
 });
@@ -39,7 +39,6 @@ export const focus = userMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    console.log(`focusing process ${processId}`);
     return processes.forProcess(processId).focus(ctx.db);
   },
 });
@@ -57,7 +56,6 @@ export const close = userMutation({
     processId: v.id("processes"),
   },
   handler: async (ctx, { processId }) => {
-    console.log(`closing process ${processId}`);
     const windows = await ctx.db
       .query("windows")
       .withIndex("by_processId", (q) => q.eq("processId", processId))
@@ -76,8 +74,22 @@ export const restore = userMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    console.log(`restoring process ${processId}`);
     return processes.forProcess(processId).focus(ctx.db);
+  },
+});
+
+export const updateProps = userMutation({
+  args: {
+    processId: v.id("processes"),
+    props: processPropsUpdateValidator,
+  },
+  handler: async (ctx, { processId, props }) => {
+    await processes
+      .forProcess(processId)
+      .withUser(ctx.userId)
+      .updateProps(ctx.db, {
+        props,
+      });
   },
 });
 

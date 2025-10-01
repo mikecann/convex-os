@@ -58,6 +58,10 @@ export const processes = {
           ) => {
             return await db.insert("processes", { ...process, userId });
           },
+
+          updateProps: async (db: DatabaseWriter, { props }: { props: Process["props"] }) => {
+            await db.patch(processId, { props });
+          },
         };
 
         return withUser;

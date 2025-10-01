@@ -97,12 +97,15 @@ export function DesktopFileIcon({
           x: event.clientX - (containerLeft + file.position.x),
           y: event.clientY - (containerTop + file.position.y),
         };
-        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.effectAllowed = "copyMove";
         event.dataTransfer.setData("application/x-desktop-file-id", file._id);
       }}
       onDragEnd={async (event) => {
         setIsDragging(false);
         if (isRenaming) return;
+
+        if (event.dataTransfer.dropEffect === "copy") return;
+
         const rect = containerRef.current?.getBoundingClientRect();
         const containerLeft = rect?.left ?? 0;
         const containerTop = rect?.top ?? 0;

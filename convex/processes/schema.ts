@@ -44,6 +44,11 @@ export const processCreationValidator = v.union(
   }),
 );
 
+export const processPropsUpdateValidator = v.union(
+  processDefinitions.image_preview.props,
+  processDefinitions.video_player.props,
+);
+
 export type ProcessKinds = Infer<typeof processValidator>["kind"];
 
 export type Process<TKind extends ProcessKinds = ProcessKinds> =
