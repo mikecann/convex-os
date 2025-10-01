@@ -10,7 +10,7 @@ import { WindowContext } from "./WindowContext";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
 import { iife } from "../../../../shared/misc";
-import { useDesktop } from "../../../desktop/DesktopContext";
+import { useOS } from "../../../os/OperatingSystem";
 
 interface WindowProps {
   title: string;
@@ -100,11 +100,15 @@ export function Window({
   const [showMinimiseButton, setShowMinimiseButton] = useState(
     initialShowMinimiseButton ?? true,
   );
-  const { desktopRect } = useDesktop();
+  const { desktopRect } = useOS();
   const previousStateRef = useRef<{
     position: { x: number; y: number };
     size: { width: number; height: number };
   } | null>(null);
+
+  useEffect(() => {
+    setTitle(initialTitle);
+  }, [initialTitle]);
 
   useEffect(() => {
     if (!desktopRect || !windowRef.current) return;

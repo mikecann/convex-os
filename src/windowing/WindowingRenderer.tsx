@@ -3,7 +3,7 @@ import { Task, useTasks } from "../common/tasks/TasksSystem";
 import { ImagePreviewTask } from "../tasks/ImagePreviewTask";
 import { Window } from "../common/components/window/Window";
 import { VideoPreviewTask } from "../tasks/VideoPreviewTask";
-import { SignInSignUpTask } from "../tasks/SignInSignUpTask";
+import { SignInSignUpWindow } from "../auth/SignInSignUpWindow";
 import { exhaustiveCheck, iife } from "../../shared/misc";
 
 export function WindowingRenderer() {
@@ -47,7 +47,7 @@ export function WindowingRenderer() {
               if (task.kind === "video_preview")
                 return <VideoPreviewTask file={task.file} />;
 
-              if (task.kind == "sign_in_sign_up") return <SignInSignUpTask />;
+              if (task.kind == "sign_in_sign_up") return <SignInSignUpWindow />;
 
               exhaustiveCheck(task);
             })}
