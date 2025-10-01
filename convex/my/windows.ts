@@ -1,55 +1,26 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
-import { processes } from "../processes/lib";
-import { processCreationValidator } from "../processes/schema";
+import {} from "../processes/schema";
+import { mapObj } from "../../shared/object";
+import { windows } from "../windows/lib";
 
 export const list = userQuery({
   args: {},
-  handler: (ctx) => processes.forUser(ctx.userId).list(ctx.db),
-});
-
-export const activeProcessId = userQuery({
-  args: {},
-  handler: (ctx) =>
-    processes
-      .forUser(ctx.userId)
-      .findActive(ctx.db)
-      .then((p) => p?._id ?? null),
+  handler: (ctx) => windows.forUser(ctx.userId).list(ctx.db),
 });
 
 export const minimize = userMutation({
   args: {
-    processId: v.id("processes"),
+    windowId: v.id("windows"),
   },
-  handler: (ctx, { processId }) =>
-    processes.forProcess(processId).minimize(ctx.db),
+  handler: (ctx, { windowId }) => windows.forWindow(windowId).minimize(ctx.db),
 });
 
 export const focus = userMutation({
   args: {
-    processId: v.id("processes"),
+    windowId: v.id("windows"),
   },
-  handler: (ctx, { processId }) =>
-    processes.forProcess(processId).focus(ctx.db),
-});
-
-export const findName = userQuery({
-  args: {
-    processId: v.id("processes"),
-  },
-  handler: (ctx, { processId }) =>
-    processes.forProcess(processId).findName(ctx.db),
-});
-
-export const create = userMutation({
-  args: {
-    process: processCreationValidator,
-  },
-  handler: (ctx, { process }) => {
-    return processes.forUser(ctx.userId).create(ctx.db, {
-      process,
-    });
-  },
+  handler: (ctx, { windowId }) => windows.forWindow(windowId).focus(ctx.db),
 });
 
 // export const create = userMutation({

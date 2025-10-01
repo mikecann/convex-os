@@ -1,14 +1,9 @@
-import { ConvexError, Infer, v } from "convex/values";
+import { ConvexError, Infer } from "convex/values";
 import { ensureFP } from "../../shared/ensure";
 import { Id } from "../_generated/dataModel";
-import { DatabaseReader, DatabaseWriter, query } from "../_generated/server";
-import {
-  Process,
-  processesTable,
-  processValidator,
-  ProcessWithWindow,
-} from "./schema";
-import { isNotNullOrUndefined } from "../../shared/filter";
+import { DatabaseReader, DatabaseWriter } from "../_generated/server";
+import { Process, processCreationValidator } from "./schema";
+import { windows } from "../windows/lib";
 
 export const processes = {
   forProcess(processId: Id<"processes">) {
@@ -23,6 +18,25 @@ export const processes = {
         );
       },
 
+      async minimize(db: DatabaseWriter) {
+        const wins = await windows.forProcess(processId).list(db);
+        for (const window of wins)
+          await windows.forWindow(window._id).minimize(db);
+      },
+
+      async focus(db: DatabaseWriter) {
+        const wins = await windows.forProcess(processId).list(db);
+        if (wins.length === 0) return;
+        for (const window of wins)
+          await windows.forWindow(window._id).activate(db);
+      },
+
+      async findName(db: DatabaseReader) {
+        const wins = await windows.forProcess(processId).list(db);
+        if (wins.length === 0) return null;
+        return wins[0].title;
+      },
+
       withUser(userId: Id<"users">) {
         const withUser = {
           get: async (db: DatabaseReader) => {
@@ -32,85 +46,6 @@ export const processes = {
                 `process ${processId} does not belong to user ${userId}`,
               );
             return process;
-          },
-
-          findWithWindow: async (
-            db: DatabaseReader,
-          ): Promise<ProcessWithWindow | null> => {
-            const process = await withUser.get(db);
-            if (!process.window) return null;
-            return process as ProcessWithWindow;
-          },
-
-          getWithWindow: async (
-            db: DatabaseReader,
-          ): Promise<ProcessWithWindow> => {
-            const process = await withUser.findWithWindow(db);
-            if (!process)
-              throw new Error(
-                `process ${processId} does not belong to user ${userId} or doesnt have a window`,
-              );
-            return process;
-          },
-
-          minimize: async (db: DatabaseWriter) => {
-            const proc = await withUser.get(db);
-            if (!proc.window) return;
-            if (proc.window.viewState.kind !== "open") return;
-            return await db.patch(processId, {
-              window: { ...proc.window, viewState: { kind: "minimized" } },
-            });
-          },
-
-          deactivate: async (db: DatabaseWriter) => {
-            const proc = await withUser.findWithWindow(db);
-            if (!proc) return;
-            return await db.patch(processId, {
-              window: { ...proc.window, viewState: { kind: "minimized" } },
-            });
-          },
-
-          activate: async (db: DatabaseWriter) => {
-            const active = await processes.forUser(userId).findActive(db);
-
-            // If window is already active, do nothing
-            if (active?._id === processId) return;
-
-            const proc = await withUser.getWithWindow(db);
-
-            if (proc.window.viewState.kind !== "open") return;
-
-            return await db.patch(processId, {
-              window: {
-                ...proc.window,
-                viewState: {
-                  ...proc.window.viewState,
-                  kind: "open",
-                  isActive: true,
-                },
-              },
-            });
-          },
-
-          bringToFront: async (db: DatabaseWriter) => {
-            const proc = await withUser.getWithWindow(db);
-            if (proc.window.viewState.kind !== "open") return;
-            return await db.patch(processId, {
-              window: {
-                ...proc.window,
-                viewState: {
-                  ...proc.window.viewState,
-                  kind: "open",
-                  isActive: true,
-                  viewStackOrder: proc.window.viewState.viewStackOrder + 1,
-                },
-              },
-            });
-          },
-
-          focus: async (db: DatabaseWriter) => {
-            await withUser.activate(db);
-            await withUser.bringToFront(db);
           },
 
           create: async (
@@ -132,53 +67,20 @@ export const processes = {
         return db
           .query("processes")
           .withIndex("by_user", (q) => q.eq("userId", userId))
-          .collect()
-          .then((docs) =>
-            docs.sort((a, b) => {
-              const aState = a.window?.viewState;
-              const bState = b.window?.viewState;
-
-              const aIsOpen = aState?.kind === "open";
-              const bIsOpen = bState?.kind === "open";
-
-              if (aIsOpen && bIsOpen)
-                return bState.viewStackOrder - aState.viewStackOrder;
-
-              if (aIsOpen) return -1;
-
-              if (bIsOpen) return 1;
-
-              return b._creationTime - a._creationTime;
-            }),
-          );
+          .collect();
       },
 
-      async listWithWindows(db: DatabaseReader) {
-        const procs = await this.list(db);
-        return procs
-          .filter((p) => {
-            if (!p.window) return null;
-            return p as ProcessWithWindow;
-          })
-          .filter(isNotNullOrUndefined) as ProcessWithWindow[];
+      async findActive(db: DatabaseReader) {
+        const activeWindow = await windows.forUser(userId).findActive(db);
+        if (!activeWindow) return null;
+        return await windows.forWindow(activeWindow._id).getProcess(db);
       },
 
-      async findActive(
-        db: DatabaseReader,
-      ): Promise<ProcessWithWindow | undefined> {
-        const procs = await this.listWithWindows(db);
-        return procs.find(
-          (p) =>
-            p.window?.viewState.kind == "open" && p.window?.viewState.isActive,
-        );
-      },
-
-      create: async (
+      async create(
         db: DatabaseWriter,
-        { process }: { process: Infer<typeof processValidator> },
-      ) => {
-        const processId = await db.insert("processes", { ...process, userId });
-        return processId;
+        { process }: { process: Infer<typeof processCreationValidator> },
+      ) {
+        return await db.insert("processes", { userId, ...process });
       },
     };
   },

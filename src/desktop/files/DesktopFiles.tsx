@@ -63,14 +63,24 @@ export function DesktopFiles() {
   // }, [files, syncFiles]);
 
   const openFile = (file: DesktopFileDoc) => {
-    // if (isImageFile(file)) {
-    //   openTask({ kind: "image_preview", file });
-    //   return;
-    // }
-    // if (isVideoFile(file)) {
-    //   openTask({ kind: "video_preview", file });
-    //   return;
-    // }
+    if (isImageFile(file)) {
+      startProcess({
+        process: {
+          kind: "image_preview",
+          props: { fileId: file._id },
+        },
+      });
+      return;
+    }
+    if (isVideoFile(file)) {
+      startProcess({
+        process: {
+          kind: "video_preview",
+          props: { fileId: file._id },
+        },
+      });
+      return;
+    }
   };
 
   useEffect(() => {

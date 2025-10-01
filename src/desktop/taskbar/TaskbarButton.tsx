@@ -1,34 +1,27 @@
-import React from "react";
 import { Doc } from "../../../convex/_generated/dataModel";
-import {
-  ProcessKinds,
-  ProcessWithWindow,
-} from "../../../convex/processes/schema";
+import { ProcessKinds } from "../../../convex/processes/schema";
 import { useOS } from "../../os/OperatingSystem";
-import { api, internal } from "../../../convex/_generated/api";
-import { useMutation } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
 
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
   video_preview: "/xp/mediaplayer.png",
-  sign_in_sign_up: "/xp/users.png",
 };
 
-export function TaskbarButton({ process }: { process: ProcessWithWindow }) {
-  // const {
-  //   activeprocessId,
-  //   focusprocess,
-  //   minimizeprocess,
-  //   processbarButtonRefs,
-  // } = useprocesss();
-
+export function TaskbarButton({
+  process,
+  isActive,
+}: {
+  process: Doc<"processes">;
+  isActive: boolean;
+}) {
   const { taskbarButtonRefs } = useOS();
   const minimize = useMutation(api.my.processes.minimize);
   const focus = useMutation(api.my.processes.focus);
-
-  const isActive =
-    process.window?.viewState.kind == "open" &&
-    process.window?.viewState.isActive;
+  const processName = useQuery(api.my.processes.findName, {
+    processId: process._id,
+  });
 
   return (
     <button
@@ -65,10 +58,9 @@ export function TaskbarButton({ process }: { process: ProcessWithWindow }) {
     >
       <img
         src={process_ICON_MAP[process.kind]}
-        alt=""
         style={{ width: "16px", height: "16px" }}
       />
-      {process.name}
+      {processName ?? `${process.kind} ${process._id}`}
     </button>
   );
 }

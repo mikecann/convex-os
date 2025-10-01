@@ -10,7 +10,8 @@ interface TaskbarProps {
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
-  const processes = useQuery(api.my.processes.listProcessWithWindows) ?? [];
+  const processes = useQuery(api.my.processes.list) ?? [];
+  const activeProcessId = useQuery(api.my.processes.activeProcessId);
   return (
     <div
       className="taskbar"
@@ -42,7 +43,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         }}
       >
         {processes.map((process) => (
-          <TaskbarButton key={process._id} process={process} />
+          <TaskbarButton key={process._id} process={process} isActive={process._id === activeProcessId} />
         ))}
       </div>
       <SystemTray />
