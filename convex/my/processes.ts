@@ -52,6 +52,35 @@ export const findName = userQuery({
     processes.forProcess(processId).findName(ctx.db),
 });
 
+export const close = userMutation({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: async (ctx, { processId }) => {
+    console.log(`closing process ${processId}`);
+    const windows = await ctx.db
+      .query("windows")
+      .withIndex("by_processId", (q) => q.eq("processId", processId))
+      .collect();
+
+    for (const window of windows) {
+      await ctx.db.delete(window._id);
+    }
+
+    await ctx.db.delete(processId);
+  },
+});
+
+export const restore = userMutation({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: (ctx, { processId }) => {
+    console.log(`restoring process ${processId}`);
+    return processes.forProcess(processId).focus(ctx.db);
+  },
+});
+
 // export const create = userMutation({
 //   args: {
 //     name: v.string(),
