@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import Horizontal from "../components/Horizontal";
 import Vertical from "../components/Vertical";
 import { Button } from "../components/Button";
-import { LocalWindow } from "../../windowing/LocalWindow";
+import { LocalWindow } from "../../os/windowing/LocalWindow";
 import { useKeydown } from "../hooks/useKeydown";
 
 type ConfirmationDialogProps = {

@@ -9,9 +9,8 @@ import {
 import "./index.css";
 import { OperatingSystem } from "./os/OperatingSystem.tsx";
 import ErrorsProvider from "./common/errors/ErrorsProvider.tsx";
-import { Wallpaper } from "./common/components/Wallpaper.tsx";
-import UnauthenticatedContent from "./auth/UnauthenticatedContent.tsx";
-import { AuthenticatedContent } from "./AuthenticatedContent.tsx";
+import UnauthenticatedContent from "./unauthenticated/UnauthenticatedContent.tsx";
+import { AuthenticatedContent } from "./authenticated/AuthenticatedContent.tsx";
 
 const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
 

@@ -1,7 +1,7 @@
 import { useQuery } from "convex/react";
-import { Process } from "../../../convex/processes/schema";
-import { api } from "../../../convex/_generated/api";
 import { ImagePreviewWindow } from "./ImagePreviewWindow";
+import { Process } from "../../../../convex/processes/schema";
+import { api } from "../../../../convex/_generated/api";
 
 export const ImagePreviewProcess = ({
   process,

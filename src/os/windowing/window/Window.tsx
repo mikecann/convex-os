@@ -1,9 +1,9 @@
 import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
-import { iife } from "../../../../shared/misc";
-import { useOS } from "../../../os/OperatingSystem";
 import { WindowViewState } from "../../../../convex/windows/schema";
+import { useOS } from "../../OperatingSystem";
+import { iife } from "../../../../shared/misc";
 
 export type ResizeCorner =
   | "bottom-right"

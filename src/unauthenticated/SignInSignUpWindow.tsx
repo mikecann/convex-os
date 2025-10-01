@@ -6,7 +6,7 @@ import Horizontal from "../common/components/Horizontal";
 import { TextBox } from "../common/components/TextBox";
 import Box from "../common/components/Box";
 import { Button } from "../common/components/Button";
-import { LocalWindow } from "../windowing/LocalWindow";
+import { LocalWindow } from "../os/windowing/LocalWindow";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signIn: "Sign in to Convex Desktop",

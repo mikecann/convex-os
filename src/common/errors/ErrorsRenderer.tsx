@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { ErrorsContext } from "./ErrorsProvider";
-import { LocalWindow } from "../../windowing/LocalWindow";
+import { LocalWindow } from "../../os/windowing/LocalWindow";
 import { Button } from "../components/Button";
 import Vertical from "../components/Vertical";
 import Horizontal from "../components/Horizontal";

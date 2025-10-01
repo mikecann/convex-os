@@ -1,8 +1,8 @@
-import { DesktopFiles } from "./desktop/files/DesktopFiles";
 import { useState } from "react";
-import { StartMenu } from "./desktop/taskbar/StartMenu";
-import { Taskbar } from "./desktop/taskbar/Taskbar";
-import { ProcessSystem } from "./os/ProcessSystem";
+import { DesktopFiles } from "./files/DesktopFiles";
+import { ProcessSystem } from "../os/ProcessSystem";
+import { StartMenu } from "./taskbar/StartMenu";
+import { Taskbar } from "./taskbar/Taskbar";
 
 export function AuthenticatedContent() {
   const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);

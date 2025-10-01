@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { Window, WindowProps } from "../common/components/window/Window";
-import { useOS } from "../os/OperatingSystem";
+import { Window, WindowProps } from "./window/Window";
+import { useOS } from "../OperatingSystem";
 
 export function LocalWindow({
   children,

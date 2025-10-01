@@ -1,7 +1,7 @@
-import { Process } from "../../../convex/processes/schema";
 import { VideoPlayerWindow } from "./VideoPlayerWindow";
 import { useQuery } from "convex/react";
-import { api } from "../../../convex/_generated/api";
+import { Process } from "../../../../convex/processes/schema";
+import { api } from "../../../../convex/_generated/api";
 
 export const VideoPlayerProcess = ({
   process,

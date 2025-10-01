@@ -1,9 +1,9 @@
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { ImagePreviewProcess } from "../processes/imagePreview/ImagePreviewProcess";
 import { Process } from "../../convex/processes/schema";
-import { VideoPlayerProcess } from "../processes/videoPlayer/VideoPlayerProcess";
 import { ProcessKinds } from "../../convex/processes/schema";
+import { ImagePreviewProcess } from "../authenticated/processes/imagePreview/ImagePreviewProcess";
+import { VideoPlayerProcess } from "../authenticated/processes/videoPlayer/VideoPlayerProcess";
 
 const processToComponentMap: {
   [K in ProcessKinds]: React.ComponentType<{ process: Process<K> }>;

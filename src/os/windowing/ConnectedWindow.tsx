@@ -1,8 +1,8 @@
-import { Doc } from "../../convex/_generated/dataModel";
-import { Window, WindowProps } from "../common/components/window/Window";
-import { api } from "../../convex/_generated/api";
+import { useOS } from "../OperatingSystem";
+import { Window, WindowProps } from "./window/Window";
 import { useMutation } from "convex/react";
-import { useOS } from "../os/OperatingSystem";
+import { api } from "../../../convex/_generated/api";
+import { Doc } from "../../../convex/_generated/dataModel";
 
 export function ConnectedWindow({
   window,
