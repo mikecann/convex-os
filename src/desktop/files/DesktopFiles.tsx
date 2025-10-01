@@ -56,7 +56,7 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const startProcess = useMutation(api.my.processes.create);
+  const startApp = useMutation(api.my.apps.start);
 
   // useEffect(() => {
   //   syncFiles(files);
@@ -64,23 +64,30 @@ export function DesktopFiles() {
 
   const openFile = (file: DesktopFileDoc) => {
     if (isImageFile(file)) {
-      startProcess({
-        process: {
+      startApp({
+        app: {
           kind: "image_preview",
           props: { fileId: file._id },
+          windowCreationParams: {
+            x: file.position.x,
+            y: file.position.y,
+            width: 480,
+            height: 320,
+            title: file.name,
+          },
         },
       });
       return;
     }
-    if (isVideoFile(file)) {
-      startProcess({
-        process: {
-          kind: "video_player",
-          props: { fileId: file._id },
-        },
-      });
-      return;
-    }
+    // if (isVideoFile(file)) {
+    //   startApp({
+    //     process: {
+    //       kind: "video_player",
+    //       props: { fileId: file._id },
+    //     },
+    //   });
+    //   return;
+    // }
   };
 
   useEffect(() => {

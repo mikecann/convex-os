@@ -2,6 +2,7 @@ import { ensureFP } from "../../shared/ensure";
 import { Doc, Id } from "../_generated/dataModel";
 import { DatabaseReader, DatabaseWriter } from "../_generated/server";
 import { processes } from "../processes/lib";
+import { WindowCreationParams } from "./schema";
 
 export const windows = {
   sortByViewStackOrder(windows: Doc<"windows">[]) {
@@ -128,6 +129,16 @@ export const windows = {
           .withIndex("by_processId", (q) => q.eq("processId", processId))
           .collect()
           .then(windows.sortByViewStackOrder);
+      },
+
+      create: async (
+        db: DatabaseWriter,
+        { params }: { params: WindowCreationParams },
+      ) => {
+        return await db.insert("windows", {
+          processId,
+          ...params,
+        });
       },
     };
   },

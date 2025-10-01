@@ -1,7 +1,14 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import { processes } from "../processes/lib";
-import { processCreationValidator } from "../processes/schema";
+
+export const get = userQuery({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: (ctx, { processId }) =>
+    processes.forProcess(processId).withUser(ctx.userId).get(ctx.db),
+});
 
 export const list = userQuery({
   args: {},
@@ -39,17 +46,6 @@ export const findName = userQuery({
   },
   handler: (ctx, { processId }) =>
     processes.forProcess(processId).findName(ctx.db),
-});
-
-export const create = userMutation({
-  args: {
-    process: processCreationValidator,
-  },
-  handler: (ctx, { process }) => {
-    return processes.forUser(ctx.userId).create(ctx.db, {
-      process,
-    });
-  },
 });
 
 // export const create = userMutation({

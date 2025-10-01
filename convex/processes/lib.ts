@@ -63,6 +63,8 @@ export const processes = {
 
   forUser(userId: Id<"users">) {
     return {
+      
+
       list(db: DatabaseReader) {
         return db
           .query("processes")
@@ -80,7 +82,11 @@ export const processes = {
         db: DatabaseWriter,
         { process }: { process: Infer<typeof processCreationValidator> },
       ) {
-        return await db.insert("processes", { userId, ...process });
+        return await db.insert("processes", {
+          userId,
+          kind: process.kind,
+          props: process.props,
+        });
       },
     };
   },

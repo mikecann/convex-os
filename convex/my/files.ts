@@ -8,6 +8,13 @@ export const list = userQuery({
   handler: (ctx) => files.listForUser(ctx.db, { userId: ctx.userId }),
 });
 
+export const get = userQuery({
+  args: {
+    fileId: v.id("files"),
+  },
+  handler: (ctx, { fileId }) => files.getForUser(ctx.db, { userId: ctx.userId, fileId }),
+});
+
 export const createAll = userMutation({
   args: {
     files: v.array(

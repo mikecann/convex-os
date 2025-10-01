@@ -1,7 +1,6 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import {} from "../processes/schema";
-import { mapObj } from "../../shared/object";
 import { windows } from "../windows/lib";
 
 export const list = userQuery({
@@ -21,6 +20,15 @@ export const focus = userMutation({
     windowId: v.id("windows"),
   },
   handler: (ctx, { windowId }) => windows.forWindow(windowId).focus(ctx.db),
+});
+
+export const close = userMutation({
+  args: {
+    windowId: v.id("windows"),
+  },
+  handler: (ctx, { windowId }) => {
+    // windows.forWindow(windowId).focus(ctx.db)
+  },
 });
 
 // export const create = userMutation({

@@ -33,6 +33,8 @@ export const windowValidator = v.object({
 
 export type Window = Infer<typeof windowValidator>;
 
+export type WindowCreationParams = Omit<Infer<typeof windowValidator>, "processId">;
+
 export const windowsTable = defineTable(windowValidator).index("by_processId", [
   "processId",
 ]);
