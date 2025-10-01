@@ -1,36 +1,41 @@
 import React from "react";
 import { Doc } from "../../../convex/_generated/dataModel";
+import { ProcessKinds } from "../../../convex/processes/schema";
+import { useOS } from "../../os/OperatingSystem";
+import { api, internal } from "../../../convex/_generated/api";
+import { useMutation } from "convex/react";
 
-const process_ICON_MAP: Record<process["kind"], string> = {
+const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
   video_preview: "/xp/mediaplayer.png",
   sign_in_sign_up: "/xp/users.png",
 };
 
-export function processbarButton({ process }: { process: Doc<"processes"> }) {
-  const {
-    activeprocessId,
-    focusprocess,
-    minimizeprocess,
-    processbarButtonRefs,
-  } = useprocesss();
+export function TaskbarButton({ process }: { process: Doc<"processes"> }) {
+  // const {
+  //   activeprocessId,
+  //   focusprocess,
+  //   minimizeprocess,
+  //   processbarButtonRefs,
+  // } = useprocesss();
 
-  const isActive = process._id === activeprocessId && !process.isMinimized;
-  
+  const { taskbarButtonRefs } = useOS();
+  const minimize = useMutation(api.my.processes.minimize);
+
+  const isActive =
+    process.window?.viewState.kind == "open" &&
+    process.window?.viewState.isActive;
+
   return (
     <button
       key={process._id}
       ref={(element) => {
-        const refs = processbarButtonRefs.current;
-        if (element) {
-          refs.set(process._id, element);
-        } else {
-          refs.delete(process._id);
-        }
+        if (element) taskbarButtonRefs.current.set(process._id, element);
+        else taskbarButtonRefs.current.delete(process._id);
       }}
       onClick={() => {
         if (isActive) {
-          minimizeprocess(process._id);
+          minimize({ processId: process._id });
           return;
         }
         focusprocess(process._id);

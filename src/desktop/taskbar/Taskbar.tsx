@@ -4,13 +4,14 @@ import { TaskbarButton } from "./TaskbarButton";
 import { SystemTray } from "./SystemTray";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { listProcessWithWindows } from "../../../convex/my/processes";
 
 interface TaskbarProps {
   onStartClick?: () => void;
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
-  const processes = useQuery(api.my.processes.list) ?? [];
+  const processes = useQuery(api.my.processes.listProcessWithWindows) ?? [];
   return (
     <div
       className="taskbar"

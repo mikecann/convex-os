@@ -1,10 +1,12 @@
 import { defineTable } from "convex/server";
 import { v, Infer } from "convex/values";
+import { Doc } from "../_generated/dataModel";
 
 export const windowViewStateValidator = v.union(
   v.object({
     kind: v.literal("open"),
     viewStackOrder: v.number(),
+    isActive: v.boolean(),
   }),
   v.object({
     kind: v.literal("minimized"),
@@ -59,12 +61,11 @@ export const processValidator = v.union(
 
 export type ProcessKinds = Infer<typeof processValidator>["kind"];
 
-export type Process<TKind extends ProcessKinds = ProcessKinds> = Infer<
-  typeof processValidator
-> & { kind: TKind };
+export type Process<TKind extends ProcessKinds = ProcessKinds> =
+  Doc<"processes"> & { kind: TKind };
 
 export type ProcessWithWindow<TKind extends ProcessKinds = ProcessKinds> =
-  Infer<typeof processValidator> & { kind: TKind; window: Window };
+  Process<TKind> & { window: Window };
 
 export const processesTable = defineTable(processValidator).index("by_user", [
   "userId",

@@ -8,6 +8,7 @@ import {
   windowValidator,
   ProcessWithWindow,
 } from "../processes/schema";
+import { isNotNullOrUndefined } from "../../shared/filter";
 
 export const list = userQuery({
   args: {},
@@ -35,7 +36,42 @@ export const listProcessWithWindows = userQuery({
     const procs = await processes.listForUser(ctx.db, {
       userId: ctx.userId,
     });
-    return procs.filter((p) => p.window !== null);
+    return procs
+      .filter((p) => {
+        if (!p.window) return null;
+        return p as ProcessWithWindow;
+      })
+      .filter(isNotNullOrUndefined) as ProcessWithWindow[];
+  },
+});
+
+export const activeProcessId = userQuery({
+  args: {},
+  handler: async (ctx) => {
+    return processes.findActiveForUser(ctx.db, {
+      userId: ctx.userId,
+    });
+  },
+});
+
+export const minimize = userMutation({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: async (ctx, { processId }) => {
+    return processes.minimizeForUser(ctx.db, {
+      userId: ctx.userId,
+      processId,
+    });
+  },
+});
+
+export const focus = userMutation({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: async (ctx, { processId }) => {
+    
   },
 });
 

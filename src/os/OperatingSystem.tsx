@@ -8,9 +8,13 @@ import {
   useMemo,
 } from "react";
 import { Wallpaper } from "../common/components/Wallpaper";
+import { Id } from "../../convex/_generated/dataModel";
+
+type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
 export interface OperatingSystemContextValue {
   desktopRect: DOMRect | null;
+  taskbarButtonRefs: { current: TaskbarButtonRefs };
 }
 
 export const OperatingSystemContext =
@@ -29,6 +33,7 @@ export function useOS() {
 export function OperatingSystem({ children }: PropsWithChildren<{}>) {
   const desktopRef = useRef<HTMLDivElement>(null);
   const [desktopRect, setDesktopRect] = useState<DOMRect | null>(null);
+  const taskbarButtonRefs = useRef<TaskbarButtonRefs>(new Map());
 
   useLayoutEffect(() => {
     const desktopEl = desktopRef.current;
@@ -43,7 +48,10 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
     }
   }, []);
 
-  const contextValue = useMemo(() => ({ desktopRect }), [desktopRect]);
+  const contextValue = useMemo(
+    () => ({ desktopRect, taskbarButtonRefs }),
+    [desktopRect, taskbarButtonRefs],
+  );
 
   return (
     <OperatingSystemContext.Provider value={contextValue}>
