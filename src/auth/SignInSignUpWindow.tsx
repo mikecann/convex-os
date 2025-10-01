@@ -6,7 +6,7 @@ import Horizontal from "../common/components/Horizontal";
 import { TextBox } from "../common/components/TextBox";
 import Box from "../common/components/Box";
 import { Button } from "../common/components/Button";
-import { Window } from "../common/components/window/Window";
+import { LocalWindow } from "../windowing/LocalWindow";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
   signIn: "Sign in to Convex Desktop",
@@ -22,14 +22,18 @@ export function SignInSignUpWindow() {
   const onError = useErrorHandler();
 
   return (
-    <Window
-      isActive={true}
+    <LocalWindow
       title={windowTitleByFlow[flow]}
       showCloseButton={false}
       showMaximizeButton={false}
       showMinimiseButton={false}
       bodyStyle={{ margin: "0px 3px 0px 3px" }}
       resizable={false}
+      viewState={{ kind: "open", viewStackOrder: 0, isActive: true }}
+      x={0}
+      y={0}
+      width={400}
+      height={300}
     >
       <Vertical gap={5}>
         <Vertical
@@ -128,6 +132,6 @@ export function SignInSignUpWindow() {
           </Vertical>
         </form>
       </Vertical>
-    </Window>
+    </LocalWindow>
   );
 }

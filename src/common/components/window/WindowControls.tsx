@@ -1,16 +1,24 @@
 import React from "react";
-import { useWindow } from "./WindowContext.tsx";
 
-export function WindowControls() {
-  const {
-    showCloseButton,
-    showMaximizeButton,
-    isMaximized,
-    onClose,
-    onMinimize,
-    toggleMaximize,
-    showMinimiseButton,
-  } = useWindow();
+interface WindowControlsProps {
+  showCloseButton?: boolean;
+  showMaximizeButton?: boolean;
+  showMinimiseButton?: boolean;
+  isMaximized?: boolean;
+  onClose?: () => void;
+  onMinimize?: () => void;
+  onToggleMaximize?: () => void;
+}
+
+export function WindowControls({
+  showCloseButton,
+  showMaximizeButton,
+  showMinimiseButton,
+  isMaximized,
+  onClose,
+  onMinimize,
+  onToggleMaximize,
+}: WindowControlsProps) {
   return (
     <div className="title-bar-controls" style={{ display: "flex" }}>
       {showMinimiseButton && onMinimize ? (
@@ -30,7 +38,7 @@ export function WindowControls() {
           aria-label={isMaximized ? "Restore" : "Maximize"}
           onClick={(event) => {
             event.stopPropagation();
-            toggleMaximize();
+            onToggleMaximize?.();
           }}
           onMouseDown={(event) => event.stopPropagation()}
         ></button>

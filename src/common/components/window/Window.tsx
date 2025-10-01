@@ -1,35 +1,19 @@
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  useLayoutEffect,
-  useMemo,
-  CSSProperties,
-} from "react";
-import { WindowContext } from "./WindowContext";
+import React, { useRef, useLayoutEffect, useState, useEffect } from "react";
 import { TitleBar } from "./TitleBar";
 import { ResizeHandles } from "./ResizeHandles";
 import { iife } from "../../../../shared/misc";
 import { useOS } from "../../../os/OperatingSystem";
+import { WindowViewState } from "../../../../convex/windows/schema";
 
-type WindowViewState =
-  | {
-      kind: "open";
-      viewStackOrder: number;
-      isActive: boolean;
-    }
-  | {
-      kind: "minimized";
-    }
-  | {
-      kind: "maximized";
-      restored: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-      };
-    };
+export type ResizeCorner =
+  | "bottom-right"
+  | "bottom-left"
+  | "top-right"
+  | "top-left"
+  | "top"
+  | "bottom"
+  | "left"
+  | "right";
 
 export interface WindowProps {
   title: string;
@@ -45,60 +29,56 @@ export interface WindowProps {
   resizable?: boolean;
   showMaximizeButton?: boolean;
   showMinimiseButton?: boolean;
-  minWidth?: number;
-  minHeight?: number;
   onFocus?: () => void;
   onMinimize?: () => void;
+  onToggleMaximize?: () => void;
   viewState: WindowViewState;
   taskbarButtonRect?: DOMRect;
-  isActive: boolean;
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  onGeometryUpdated?: (
-    position: { x: number; y: number },
-    size: { width: number; height: number },
-  ) => void;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  onGeometryChange?: (geometry: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  }) => void;
 }
 
 export function Window({
-  title: initialTitle,
+  title,
   children,
   className = "",
-  style: initialStyle,
+  style,
   statusBar,
-  bodyStyle: initialBodyStyle,
+  bodyStyle,
   titleBarStyle,
   draggable = true,
   onClose,
-  showCloseButton: initialShowCloseButton,
-  resizable: initialResizable,
-  showMaximizeButton: initialShowMaximizeButton,
-  showMinimiseButton: initialShowMinimiseButton,
-  minWidth = 240,
-  minHeight = 180,
+  showCloseButton = false,
+  resizable = false,
+  showMaximizeButton = false,
+  showMinimiseButton = true,
   onFocus,
   onMinimize,
+  onToggleMaximize,
   viewState,
   taskbarButtonRect,
-  isActive,
   x,
   y,
   width,
   height,
-  onGeometryUpdated,
+  onGeometryChange,
 }: WindowProps) {
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const windowRef = useRef<HTMLDivElement>(null);
-  const [isInitialized, setIsInitialized] = useState(!draggable);
-  const [size, setSize] = useState<{
-    width: number | null;
-    height: number | null;
-  }>({ width: null, height: null });
+  const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+
+  const currentPositionRef = useRef({ x, y });
+  const currentSizeRef = useRef({ width, height });
+
   const resizeOriginRef = useRef<{
     startX: number;
     startY: number;
@@ -106,257 +86,57 @@ export function Window({
     startHeight: number;
     startLeft: number;
     startTop: number;
-    corner:
-      | "bottom-right"
-      | "bottom-left"
-      | "top-right"
-      | "top-left"
-      | "top"
-      | "bottom"
-      | "left"
-      | "right";
+    corner: ResizeCorner;
   } | null>(null);
-  // Store current position/size in refs to avoid re-renders during drag/resize
-  const currentPositionRef = useRef({ x: 0, y: 0 });
-  const currentSizeRef = useRef<{
-    width: number | null;
-    height: number | null;
-  }>({ width: null, height: null });
-  const [title, setTitle] = useState(initialTitle);
-  const [style, setStyle] = useState<CSSProperties | undefined>(initialStyle);
-  const [bodyStyle, setBodyStyle] = useState<CSSProperties | undefined>(
-    initialBodyStyle,
-  );
-  const [resizable, setResizable] = useState(initialResizable ?? false);
-  const [showCloseButton, setShowCloseButton] = useState(
-    initialShowCloseButton ?? false,
-  );
-  const [showMaximizeButton, setShowMaximizeButton] = useState(
-    initialShowMaximizeButton ?? initialResizable ?? false,
-  );
-  const [showMinimiseButton, setShowMinimiseButton] = useState(
-    initialShowMinimiseButton ?? true,
-  );
+
   const { desktopRect } = useOS();
 
   const isMaximized = viewState.kind === "maximized";
   const isMinimized = viewState.kind === "minimized";
 
+  // Sync props to refs
   useEffect(() => {
-    setTitle(initialTitle);
-  }, [initialTitle]);
+    currentPositionRef.current = { x, y };
+    currentSizeRef.current = { width, height };
+  }, [x, y, width, height]);
 
-  // Sync external x/y props to state and refs
+  // Handle dragging
   useEffect(() => {
-    if (x !== undefined && y !== undefined) {
-      const newPosition = { x, y };
-      setPosition(newPosition);
-      currentPositionRef.current = newPosition;
-    }
-  }, [x, y]);
-
-  // Sync external width/height props to state and refs
-  useEffect(() => {
-    if (width !== undefined && height !== undefined) {
-      const newSize = { width, height };
-      setSize(newSize);
-      currentSizeRef.current = newSize;
-    }
-  }, [width, height]);
-
-  useEffect(() => {
-    if (!desktopRect || !windowRef.current) return;
-
-    const windowRect = windowRef.current.getBoundingClientRect();
-    let needsUpdate = false;
-    let newWidth = windowRect.width;
-    let newHeight = windowRect.height;
-    let newX = position.x;
-    let newY = position.y;
-
-    if (newWidth > desktopRect.width) {
-      needsUpdate = true;
-      newWidth = desktopRect.width;
-    }
-    if (newHeight > desktopRect.height) {
-      needsUpdate = true;
-      newHeight = desktopRect.height;
-    }
-    if (newX + newWidth > desktopRect.width) {
-      needsUpdate = true;
-      newX = desktopRect.width - newWidth;
-    }
-    if (newY + newHeight > desktopRect.height) {
-      needsUpdate = true;
-      newY = desktopRect.height - newHeight;
-    }
-    if (newX < 0) {
-      needsUpdate = true;
-      newX = 0;
-    }
-    if (newY < 0) {
-      needsUpdate = true;
-      newY = 0;
-    }
-
-    if (needsUpdate) {
-      setSize({ width: newWidth, height: newHeight });
-      setPosition({ x: newX, y: newY });
-    }
-  }, [desktopRect?.width, desktopRect?.height, position.x, position.y]);
-
-  useLayoutEffect(() => {
-    if (!windowRef.current) return;
-    let newTransformOrigin = "center bottom";
-    if (taskbarButtonRect) {
-      const windowLeft = position.x;
-      const windowTop = position.y;
-
-      const originX =
-        taskbarButtonRect.left - windowLeft + taskbarButtonRect.width / 2;
-      const originY =
-        taskbarButtonRect.top - windowTop + taskbarButtonRect.height / 2;
-      newTransformOrigin = `${originX}px ${originY}px`;
-    }
-    windowRef.current.style.transformOrigin = newTransformOrigin;
-  }, [taskbarButtonRect, position]);
-
-  useEffect(() => {
-    if (!draggable) setIsInitialized(true);
-  }, [draggable]);
-
-  useLayoutEffect(() => {
-    if (!draggable || isInitialized) return;
-    if (!windowRef.current) return;
-    if (!desktopRect) return;
-
-    const windowRect = windowRef.current.getBoundingClientRect();
-    const centerX = (desktopRect.width - windowRect.width) / 2;
-    const centerY = (desktopRect.height - windowRect.height) / 2;
-
-    setPosition({ x: centerX, y: centerY });
-    setIsInitialized(true);
-  }, [draggable, isInitialized, desktopRect]);
-
-  // Sync refs when state changes (only update if actually different to avoid infinite loops)
-  useEffect(() => {
-    if (
-      currentPositionRef.current.x !== position.x ||
-      currentPositionRef.current.y !== position.y
-    ) {
-      currentPositionRef.current = position;
-    }
-  }, [position.x, position.y]);
-
-  useEffect(() => {
-    if (
-      currentSizeRef.current.width !== size.width ||
-      currentSizeRef.current.height !== size.height
-    ) {
-      currentSizeRef.current = size;
-    }
-  }, [size.width, size.height]);
-
-  useEffect(() => {
-    if (!draggable) return;
+    if (!isDragging) return;
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!isDragging || !windowRef.current) return;
+      if (!windowRef.current) return;
 
-      let x = event.clientX - dragOffset.x;
-      let y = event.clientY - dragOffset.y;
+      const newX = event.clientX - dragOffset.x;
+      const newY = event.clientY - dragOffset.y;
 
-      if (desktopRect) {
-        const windowWidth = windowRef.current.getBoundingClientRect().width;
-        const windowHeight = windowRef.current.getBoundingClientRect().height;
-        if (x < 0) x = 0;
-        if (y < 0) y = 0;
-        if (x + windowWidth > desktopRect.width) {
-          x = desktopRect.width - windowWidth;
-        }
-        if (y + windowHeight > desktopRect.height) {
-          y = desktopRect.height - windowHeight;
-        }
-      }
-
-      // Update ref and DOM directly without triggering re-render
-      currentPositionRef.current = { x, y };
-      windowRef.current.style.left = `${x}px`;
-      windowRef.current.style.top = `${y}px`;
+      // Update DOM directly (no re-render)
+      currentPositionRef.current = { x: newX, y: newY };
+      windowRef.current.style.left = `${newX}px`;
+      windowRef.current.style.top = `${newY}px`;
     };
 
     const handleMouseUp = () => {
-      // Only update state once when dragging ends
-      const finalPosition = currentPositionRef.current;
-      const finalSize = currentSizeRef.current;
-      setPosition(finalPosition);
       setIsDragging(false);
-
-      if (onGeometryUpdated && windowRef.current) {
-        const rect = windowRef.current.getBoundingClientRect();
-        onGeometryUpdated(finalPosition, {
-          width: finalSize.width ?? rect.width,
-          height: finalSize.height ?? rect.height,
-        });
-      }
+      // Notify parent of final position
+      onGeometryChange?.({
+        x: currentPositionRef.current.x,
+        y: currentPositionRef.current.y,
+        width: currentSizeRef.current.width,
+        height: currentSizeRef.current.height,
+      });
     };
 
-    if (isDragging) {
-      document.addEventListener("mousemove", handleMouseMove);
-      document.addEventListener("mouseup", handleMouseUp);
-    }
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
 
     return () => {
       document.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseup", handleMouseUp);
     };
-  }, [draggable, isDragging, dragOffset, desktopRect]);
+  }, [isDragging, dragOffset, onGeometryChange]);
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    onFocus?.();
-    if (!draggable || !windowRef.current) return;
-
-    event.preventDefault();
-
-    if (isMaximized && viewState.kind === "maximized") {
-      const restored = viewState.restored;
-      const restoredWidth = restored.width;
-      const clientWidth = desktopRect?.width ?? window.innerWidth;
-      const dragHandleWidth = restoredWidth * (event.clientX / clientWidth);
-
-      const newPosition = { x: event.clientX - dragHandleWidth, y: 0 };
-      const newSize = { width: restored.width, height: restored.height };
-
-      setSize(newSize);
-      setPosition(newPosition);
-
-      setDragOffset({
-        x: dragHandleWidth,
-        y: event.clientY,
-      });
-      setIsDragging(true);
-    } else {
-      const windowRect = windowRef.current.getBoundingClientRect();
-      setDragOffset({
-        x: event.clientX - windowRect.left,
-        y: event.clientY - windowRect.top,
-      });
-      setIsDragging(true);
-    }
-  };
-
-  useLayoutEffect(() => {
-    if (!resizable) return;
-    if (!isInitialized) return;
-    if (!windowRef.current) return;
-
-    const rect = windowRef.current.getBoundingClientRect();
-    setSize((current) => ({
-      width: current.width ?? rect.width,
-      height: current.height ?? rect.height,
-    }));
-  }, [resizable, isInitialized]);
-
+  // Handle resizing
   useEffect(() => {
     if (!isResizing) return;
 
@@ -373,59 +153,50 @@ export function Window({
       let newTop = origin.startTop;
 
       switch (origin.corner) {
-        case "bottom-right": {
+        case "bottom-right":
           newWidth = origin.startWidth + deltaX;
           newHeight = origin.startHeight + deltaY;
           break;
-        }
-        case "bottom-left": {
+        case "bottom-left":
           newWidth = origin.startWidth - deltaX;
           newLeft = origin.startLeft + deltaX;
           newHeight = origin.startHeight + deltaY;
           break;
-        }
-        case "top-right": {
+        case "top-right":
           newWidth = origin.startWidth + deltaX;
           newHeight = origin.startHeight - deltaY;
           newTop = origin.startTop + deltaY;
           break;
-        }
-        case "top-left": {
+        case "top-left":
           newWidth = origin.startWidth - deltaX;
           newLeft = origin.startLeft + deltaX;
           newHeight = origin.startHeight - deltaY;
           newTop = origin.startTop + deltaY;
           break;
-        }
-        case "top": {
+        case "top":
           newHeight = origin.startHeight - deltaY;
           newTop = origin.startTop + deltaY;
           break;
-        }
-        case "bottom": {
+        case "bottom":
           newHeight = origin.startHeight + deltaY;
           break;
-        }
-        case "left": {
+        case "left":
           newWidth = origin.startWidth - deltaX;
           newLeft = origin.startLeft + deltaX;
           break;
-        }
-        case "right": {
+        case "right":
           newWidth = origin.startWidth + deltaX;
-          break;
-        }
-        default:
           break;
       }
 
+      // Apply desktop bounds
       if (desktopRect) {
         if (newLeft < 0) {
-          newWidth += newLeft; // newLeft is negative, so this reduces width
+          newWidth += newLeft;
           newLeft = 0;
         }
         if (newTop < 0) {
-          newHeight += newTop; // newTop is negative, so this reduces height
+          newHeight += newTop;
           newTop = 0;
         }
         if (newLeft + newWidth > desktopRect.width) {
@@ -436,50 +207,25 @@ export function Window({
         }
       }
 
-      const clampedWidth = Math.max(minWidth, newWidth);
-      const clampedHeight = Math.max(minHeight, newHeight);
-
-      if (
-        clampedWidth !== newWidth &&
-        (origin.corner === "top-left" || origin.corner === "bottom-left")
-      ) {
-        newLeft = origin.startLeft + (origin.startWidth - clampedWidth);
-      }
-      if (
-        clampedHeight !== newHeight &&
-        (origin.corner === "top-left" || origin.corner === "top-right")
-      ) {
-        newTop = origin.startTop + (origin.startHeight - clampedHeight);
-      }
-
-      // Update refs and DOM directly without triggering re-render
-      currentSizeRef.current = { width: clampedWidth, height: clampedHeight };
+      // Update DOM directly (no re-render)
+      currentSizeRef.current = { width: newWidth, height: newHeight };
       currentPositionRef.current = { x: newLeft, y: newTop };
-      windowRef.current.style.width = `${clampedWidth}px`;
-      windowRef.current.style.height = `${clampedHeight}px`;
+      windowRef.current.style.width = `${newWidth}px`;
+      windowRef.current.style.height = `${newHeight}px`;
       windowRef.current.style.left = `${newLeft}px`;
       windowRef.current.style.top = `${newTop}px`;
     };
 
     const handleResizeUp = () => {
-      // Only update state once when resizing ends
-      const finalSize = currentSizeRef.current;
-      const finalPosition = currentPositionRef.current;
-      setSize(finalSize);
-      setPosition(finalPosition);
       setIsResizing(false);
       resizeOriginRef.current = null;
-
-      if (
-        onGeometryUpdated &&
-        finalSize.width !== null &&
-        finalSize.height !== null
-      ) {
-        onGeometryUpdated(finalPosition, {
-          width: finalSize.width,
-          height: finalSize.height,
-        });
-      }
+      // Notify parent of final geometry
+      onGeometryChange?.({
+        x: currentPositionRef.current.x,
+        y: currentPositionRef.current.y,
+        width: currentSizeRef.current.width,
+        height: currentSizeRef.current.height,
+      });
     };
 
     document.addEventListener("mousemove", handleResizeMove);
@@ -489,126 +235,48 @@ export function Window({
       document.removeEventListener("mousemove", handleResizeMove);
       document.removeEventListener("mouseup", handleResizeUp);
     };
-  }, [isResizing, minWidth, minHeight, desktopRect]);
+  }, [isResizing, desktopRect, onGeometryChange]);
 
-  useEffect(() => {
-    if (!isMaximized) return;
+  const handleMouseDown = (event: React.MouseEvent) => {
+    onFocus?.();
+    if (!draggable) return;
+    event.preventDefault();
 
-    const handleWindowResize = () => {
-      if (!windowRef.current) {
-        setSize({ width: window.innerWidth, height: window.innerHeight });
-        setPosition({ x: 0, y: 0 });
-        return;
-      }
+    const rect = event.currentTarget.getBoundingClientRect();
+    setDragOffset({
+      x: event.clientX - rect.left,
+      y: event.clientY - rect.top,
+    });
+    setIsDragging(true);
+  };
 
-      const parentRect =
-        windowRef.current.parentElement?.getBoundingClientRect();
-      const availableWidth = parentRect?.width ?? window.innerWidth;
-      const availableHeight = parentRect?.height ?? window.innerHeight;
-      setSize({ width: availableWidth, height: availableHeight });
-      setPosition({ x: 0, y: 0 });
-    };
-
-    window.addEventListener("resize", handleWindowResize);
-    return () => window.removeEventListener("resize", handleWindowResize);
-  }, [isMaximized]);
-
-  const startResize = (
-    corner:
-      | "bottom-right"
-      | "bottom-left"
-      | "top-right"
-      | "top-left"
-      | "top"
-      | "bottom"
-      | "left"
-      | "right",
-    event: React.MouseEvent,
-  ) => {
+  const handleResizeStart = (corner: ResizeCorner, event: React.MouseEvent) => {
     if (!resizable || isMaximized) return;
-    if (!windowRef.current) return;
-    if (!desktopRect) return;
-
     event.preventDefault();
     event.stopPropagation();
 
-    const rect = windowRef.current.getBoundingClientRect();
     resizeOriginRef.current = {
       startX: event.clientX,
       startY: event.clientY,
-      startWidth: rect.width,
-      startHeight: rect.height,
-      startLeft: rect.left,
-      startTop: rect.top,
+      startWidth: width,
+      startHeight: height,
+      startLeft: x,
+      startTop: y,
       corner,
     };
     setIsResizing(true);
   };
 
-  const toggleMaximize = () => {
-    if (!resizable) return;
+  useLayoutEffect(() => {
     if (!windowRef.current) return;
-
-    if (!isMaximized) {
-      const rect = windowRef.current.getBoundingClientRect();
-      const parentRect = desktopRect;
-      const availableWidth = parentRect?.width ?? window.innerWidth;
-      const availableHeight = parentRect?.height ?? window.innerHeight;
-
-      setSize({ width: availableWidth, height: availableHeight });
-      setPosition({ x: 0, y: 0 });
-      setIsDragging(false);
-      setIsResizing(false);
-    } else if (viewState.kind === "maximized") {
-      const restored = viewState.restored;
-      setSize({ width: restored.width, height: restored.height });
-      setPosition({ x: restored.x, y: restored.y });
+    let newTransformOrigin = "center bottom";
+    if (taskbarButtonRect) {
+      const originX = taskbarButtonRect.left - x + taskbarButtonRect.width / 2;
+      const originY = taskbarButtonRect.top - y + taskbarButtonRect.height / 2;
+      newTransformOrigin = `${originX}px ${originY}px`;
     }
-  };
-
-  const contextValue = useMemo(
-    () => ({
-      isActive,
-      title,
-      setTitle,
-      onClose: onClose ?? (() => {}),
-      onMinimize: onMinimize ?? (() => {}),
-      onFocus: onFocus ?? (() => {}),
-      draggable,
-      handleMouseDown,
-      titleBarStyle,
-      showCloseButton,
-      showMaximizeButton,
-      showMinimiseButton,
-      isMaximized,
-      toggleMaximize,
-      resizable,
-      startResize,
-      setResizable,
-      setShowCloseButton,
-      setShowMaximizeButton,
-      setShowMinimiseButton,
-      setBodyStyle,
-      setStyle,
-    }),
-    [
-      isActive,
-      title,
-      onClose,
-      onMinimize,
-      onFocus,
-      draggable,
-      handleMouseDown,
-      titleBarStyle,
-      showCloseButton,
-      showMaximizeButton,
-      showMinimiseButton,
-      isMaximized,
-      toggleMaximize,
-      resizable,
-      startResize,
-    ],
-  );
+    windowRef.current.style.transformOrigin = newTransformOrigin;
+  }, [taskbarButtonRect, x, y]);
 
   return (
     <div
@@ -617,8 +285,10 @@ export function Window({
       style={iife(() => {
         const baseStyle: React.CSSProperties = {
           position: "absolute",
-          left: position.x,
-          top: position.y,
+          left: x,
+          top: y,
+          width,
+          height,
           zIndex: 1000,
           display: "flex",
           flexDirection: "column",
@@ -633,19 +303,13 @@ export function Window({
           baseStyle.pointerEvents = "none";
         }
 
-        baseStyle.filter = isActive ? "none" : "grayscale(100%)";
-
-        if (size.width !== null) baseStyle.width = `${size.width}px`;
-
-        if (baseStyle.width === undefined && style?.width)
-          baseStyle.width = style.width;
-
-        if (size.height !== null) baseStyle.height = `${size.height}px`;
-
-        if (baseStyle.height === undefined && style?.height)
-          baseStyle.height = style.height;
-
-        if (!isInitialized) baseStyle.visibility = "hidden";
+        baseStyle.filter = iife(() => {
+          if (viewState.kind == "open" && viewState.isActive) return true;
+          if (viewState.kind == "maximized") return true;
+          return false;
+        })
+          ? "none"
+          : "grayscale(100%)";
 
         return baseStyle;
       })}
@@ -653,23 +317,37 @@ export function Window({
         onFocus?.();
       }}
     >
-      <WindowContext.Provider value={contextValue}>
-        <TitleBar />
-        <div
-          className="window-body"
-          style={{
-            flex: "1 1 auto",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            ...bodyStyle,
-          }}
-        >
-          {children}
-        </div>
-        {statusBar && <div className="status-bar">{statusBar}</div>}
-        <ResizeHandles />
-      </WindowContext.Provider>
+      <TitleBar
+        title={title}
+        draggable={draggable}
+        handleMouseDown={handleMouseDown}
+        titleBarStyle={titleBarStyle}
+        onToggleMaximize={onToggleMaximize}
+        showCloseButton={showCloseButton}
+        showMaximizeButton={showMaximizeButton}
+        showMinimiseButton={showMinimiseButton}
+        isMaximized={isMaximized}
+        onClose={onClose}
+        onMinimize={onMinimize}
+      />
+      <div
+        className="window-body"
+        style={{
+          flex: "1 1 auto",
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+          ...bodyStyle,
+        }}
+      >
+        {children}
+      </div>
+      {statusBar && <div className="status-bar">{statusBar}</div>}
+      <ResizeHandles
+        startResize={handleResizeStart}
+        resizable={resizable}
+        isMaximized={isMaximized}
+      />
     </div>
   );
 }

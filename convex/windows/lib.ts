@@ -3,6 +3,7 @@ import { Doc, Id } from "../_generated/dataModel";
 import { DatabaseReader, DatabaseWriter } from "../_generated/server";
 import { processes } from "../processes/lib";
 import { WindowCreationParams } from "./schema";
+import { toggleMaximize } from "../my/windows";
 
 export const windows = {
   sortByViewStackOrder(windows: Doc<"windows">[]) {
@@ -144,6 +145,34 @@ export const windows = {
       async focus(db: DatabaseWriter) {
         await this.activate(db);
         await this.bringToFront(db);
+      },
+
+      async toggleMaximize(db: DatabaseWriter) {
+        const window = await this.get(db);
+        const userId = await this.getUserId(db);
+
+        if (window.viewState.kind == "maximized") {
+          const topmostViewStackOrder = await windows
+            .forUser(userId)
+            .getTopmostViewStackOrder(db);
+
+          return await db.patch(window._id, {
+            ...window,
+            viewState: {
+              ...window.viewState,
+              kind: "open",
+              isActive: true,
+              viewStackOrder: topmostViewStackOrder + 1,
+            },
+          });
+        }
+
+        if (window.viewState.kind == "open") {
+          return await db.patch(window._id, {
+            ...window,
+            viewState: { kind: "maximized" },
+          });
+        }
       },
     };
   },

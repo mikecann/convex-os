@@ -12,12 +12,6 @@ export const windowViewStateValidator = v.union(
   }),
   v.object({
     kind: v.literal("maximized"),
-    restored: v.object({
-      x: v.number(),
-      y: v.number(),
-      width: v.number(),
-      height: v.number(),
-    }),
   }),
 );
 
@@ -33,7 +27,12 @@ export const windowValidator = v.object({
 
 export type Window = Infer<typeof windowValidator>;
 
-export type WindowCreationParams = Omit<Infer<typeof windowValidator>, "processId">;
+export type WindowViewState = Infer<typeof windowViewStateValidator>;
+
+export type WindowCreationParams = Omit<
+  Infer<typeof windowValidator>,
+  "processId"
+>;
 
 export const windowsTable = defineTable(windowValidator).index("by_processId", [
   "processId",

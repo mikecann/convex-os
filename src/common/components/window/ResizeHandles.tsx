@@ -1,5 +1,5 @@
 import React from "react";
-import { useWindow } from "./WindowContext";
+import { ResizeCorner } from "./Window";
 
 const handleStyle: React.CSSProperties = {
   position: "absolute",
@@ -16,9 +16,17 @@ const edgeHandleStyle: React.CSSProperties = {
   ...handleStyle,
 };
 
-export function ResizeHandles() {
-  const { startResize, resizable, isMaximized } = useWindow();
+interface ResizeHandlesProps {
+  startResize: (corner: ResizeCorner, event: React.MouseEvent) => void;
+  resizable?: boolean;
+  isMaximized?: boolean;
+}
 
+export function ResizeHandles({
+  startResize,
+  resizable,
+  isMaximized,
+}: ResizeHandlesProps) {
   if (!resizable || isMaximized) return null;
 
   return (

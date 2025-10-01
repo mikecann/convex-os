@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import Horizontal from "../components/Horizontal";
 import Vertical from "../components/Vertical";
 import { Button } from "../components/Button";
-import { Window } from "../components/window/Window";
+import { LocalWindow } from "../../windowing/LocalWindow";
 import { useKeydown } from "../hooks/useKeydown";
 
 type ConfirmationDialogProps = {
@@ -44,12 +44,16 @@ export function ConfirmationDialog({
   if (!isOpen) return null;
 
   return (
-    <Window
+    <LocalWindow
       title={title}
       showCloseButton
       onClose={onCancel}
       style={{ minWidth: "280px" }}
-      isActive={true}
+      viewState={{ kind: "open", viewStackOrder: 999, isActive: true }}
+      x={0}
+      y={0}
+      width={320}
+      height={200}
     >
       <Vertical gap={16} style={{ padding: "16px" }}>
         <div>{message}</div>
@@ -79,6 +83,6 @@ export function ConfirmationDialog({
           </Button>
         </Horizontal>
       </Vertical>
-    </Window>
+    </LocalWindow>
   );
 }
