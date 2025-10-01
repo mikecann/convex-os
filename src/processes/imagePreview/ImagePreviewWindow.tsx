@@ -1,12 +1,12 @@
 import { useEffect, useMemo } from "react";
-import { DesktopFileDoc } from "../desktop/files/DesktopFileIcon";
-import { useWindow } from "../common/components/window/WindowContext";
+import { DesktopFileDoc } from "../../desktop/files/DesktopFileIcon";
+import { useWindow } from "../../common/components/window/WindowContext";
 
-type VideoPreviewTaskProps = {
+type ImagePreviewTaskProps = {
   file: DesktopFileDoc;
 };
 
-export function VideoPreviewTask({ file }: VideoPreviewTaskProps) {
+export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
   const {
     setTitle,
     setResizable,
@@ -38,12 +38,12 @@ export function VideoPreviewTask({ file }: VideoPreviewTaskProps) {
     setStyle,
   ]);
 
-  const videoUrl = useMemo(() => {
+  const imageUrl = useMemo(() => {
     if (file.uploadState.kind === "uploaded") return file.uploadState.url;
     return undefined;
   }, [file]);
 
-  if (videoUrl) {
+  if (imageUrl)
     return (
       <div
         style={{
@@ -57,18 +57,18 @@ export function VideoPreviewTask({ file }: VideoPreviewTaskProps) {
           boxSizing: "border-box",
         }}
       >
-        <video
-          src={videoUrl}
+        <img
+          src={imageUrl}
+          alt={file.name}
           style={{
             maxWidth: "100%",
             maxHeight: "100%",
+            objectFit: "contain",
             borderRadius: "4px",
           }}
-          controls
         />
       </div>
     );
-  }
 
   return (
     <div
@@ -83,7 +83,7 @@ export function VideoPreviewTask({ file }: VideoPreviewTaskProps) {
       }}
     >
       <p style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}>
-        Video preview is not available yet. Please wait for the upload to
+        Image preview is not available yet. Please wait for the upload to
         finish.
       </p>
     </div>

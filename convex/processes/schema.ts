@@ -7,17 +7,17 @@ const processCommon = {
   userId: v.id("users"),
 };
 
-const processKinds = produceLiteral(["image_preview", "video_preview"]);
+const processKinds = produceLiteral(["image_preview", "video_player"]);
 
 export const processDefinitions = {
   image_preview: {
-    kind: v.literal("image_preview"),
+    kind: v.literal(processKinds.image_preview),
     props: v.object({
       fileId: v.id("files"),
     }),
   },
-  video_preview: {
-    kind: v.literal("video_preview"),
+  video_player: {
+    kind: v.literal(processKinds.video_player),
     props: v.object({
       fileId: v.id("files"),
     }),
@@ -30,7 +30,7 @@ export const processValidator = v.union(
     ...processCommon,
   }),
   v.object({
-    ...processDefinitions.video_preview,
+    ...processDefinitions.video_player,
     ...processCommon,
   }),
 );
@@ -40,7 +40,7 @@ export const processCreationValidator = v.union(
     ...processDefinitions.image_preview,
   }),
   v.object({
-    ...processDefinitions.video_preview,
+    ...processDefinitions.video_player,
   }),
 );
 

@@ -2,11 +2,11 @@ import { useEffect, useMemo } from "react";
 import { DesktopFileDoc } from "../desktop/files/DesktopFileIcon";
 import { useWindow } from "../common/components/window/WindowContext";
 
-type ImagePreviewTaskProps = {
+type VideoPreviewTaskProps = {
   file: DesktopFileDoc;
 };
 
-export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
+export function VideoPlayerWindow({ file }: VideoPreviewTaskProps) {
   const {
     setTitle,
     setResizable,
@@ -38,12 +38,12 @@ export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
     setStyle,
   ]);
 
-  const imageUrl = useMemo(() => {
+  const videoUrl = useMemo(() => {
     if (file.uploadState.kind === "uploaded") return file.uploadState.url;
     return undefined;
   }, [file]);
 
-  if (imageUrl)
+  if (videoUrl) {
     return (
       <div
         style={{
@@ -57,18 +57,18 @@ export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
           boxSizing: "border-box",
         }}
       >
-        <img
-          src={imageUrl}
-          alt={file.name}
+        <video
+          src={videoUrl}
           style={{
             maxWidth: "100%",
             maxHeight: "100%",
-            objectFit: "contain",
             borderRadius: "4px",
           }}
+          controls
         />
       </div>
     );
+  }
 
   return (
     <div
@@ -83,7 +83,7 @@ export function ImagePreviewTask({ file }: ImagePreviewTaskProps) {
       }}
     >
       <p style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}>
-        Image preview is not available yet. Please wait for the upload to
+        Video preview is not available yet. Please wait for the upload to
         finish.
       </p>
     </div>
