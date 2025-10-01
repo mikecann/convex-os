@@ -1,7 +1,5 @@
 import { Fragment, useMemo } from "react";
-import { ImagePreviewTask } from "../processes/imagePreview/ImagePreviewWindow";
 import { Window } from "../common/components/window/Window";
-import { VideoPreviewTask } from "../processes/VideoPreviewTask";
 import { SignInSignUpWindow } from "../auth/SignInSignUpWindow";
 import { exhaustiveCheck, iife } from "../../shared/misc";
 

@@ -6,5 +6,6 @@ export const VideoPlayerProcess = ({
 }: {
   process: Process<"video_player">;
 }) => {
-  return <VideoPlayerWindow process={process} />;
+  //return <VideoPlayerWindow process={process} />;
+  return null;
 };

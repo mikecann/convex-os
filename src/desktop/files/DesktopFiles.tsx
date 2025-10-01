@@ -75,7 +75,7 @@ export function DesktopFiles() {
     if (isVideoFile(file)) {
       startProcess({
         process: {
-          kind: "video_preview",
+          kind: "video_player",
           props: { fileId: file._id },
         },
       });

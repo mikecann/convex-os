@@ -6,7 +6,7 @@ import { useMutation, useQuery } from "convex/react";
 
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
-  video_preview: "/xp/mediaplayer.png",
+  video_player: "/xp/mediaplayer.png",
 };
 
 export function TaskbarButton({
