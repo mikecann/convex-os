@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
-import { ErrorsContext } from "./ErrorsContext";
 import { ConvexError } from "convex/values";
+import { ErrorsContext } from "./ErrorsProvider";
 
 export function useErrorHandler() {
   const context = useContext(ErrorsContext);

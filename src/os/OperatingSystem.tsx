@@ -9,6 +9,7 @@ import {
 } from "react";
 import { Wallpaper } from "../common/components/Wallpaper";
 import { Id } from "../../convex/_generated/dataModel";
+import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
 
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
@@ -84,6 +85,7 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
                 position: "relative",
               }}
             >
+              <ErrorsRenderer />
               {children}
             </div>
           </div>

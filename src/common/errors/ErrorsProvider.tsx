@@ -1,71 +1,35 @@
-import { PropsWithChildren, useState } from "react";
-import { ErrorsContext, ErrorsContextValue } from "./ErrorsContext";
-import { Window } from "../components/window/Window";
-import Vertical from "../components/Vertical";
-import Horizontal from "../components/Horizontal";
-import { Button } from "../components/Button";
+import { createContext, PropsWithChildren, useState } from "react";
 
 type ErrorState = {
   message: string;
 };
 
+export type ErrorsContextValue = {
+  error: ErrorState | null;
+  showError: (message: string) => void;
+  dismissError: () => void;
+};
+
+export const ErrorsContext = createContext<ErrorsContextValue | undefined>(
+  undefined,
+);
+
 export default function ErrorsProvider({ children }: PropsWithChildren) {
-  const [errorState, setErrorState] = useState<ErrorState | null>(null);
-
-  const dismissError = () => {
-    setErrorState(null);
-  };
-
-  const showError = (message: string) => {
-    setErrorState({ message });
-  };
-
-  const value: ErrorsContextValue = {
-    showError,
-    dismissError,
-  };
+  const [error, setError] = useState<ErrorState | null>(null);
 
   return (
-    <ErrorsContext.Provider value={value}>
+    <ErrorsContext.Provider
+      value={{
+        error,
+        showError: (message) => {
+          setError({ message });
+        },
+        dismissError: () => {
+          setError(null);
+        },
+      }}
+    >
       {children}
-      {/* {errorState ? (
-        <Window
-          title="Error"
-          style={{
-            width: "400px",
-          }}
-          showCloseButton={true}
-          onClose={dismissError}
-          isActive={true}
-        >
-          <Vertical gap={16} style={{ padding: "16px" }}>
-            <Horizontal gap={16} align="start">
-              <img
-                src="/error-cross.png"
-                alt="Error"
-                style={{
-                  position: "absolute",
-                  top: "40px",
-                  left: "20px",
-                  width: "64px",
-                  height: "64px",
-                  flexShrink: 0,
-                }}
-              />
-
-              <div style={{ flex: 1, paddingTop: "4px", paddingLeft: "80px" }}>
-                {errorState.message}
-              </div>
-            </Horizontal>
-
-            <Horizontal justify="center" style={{ paddingTop: "8px" }}>
-              <Button onClick={dismissError} style={{ minWidth: "75px" }}>
-                OK
-              </Button>
-            </Horizontal>
-          </Vertical>
-        </Window>
-      ) : null} */}
     </ErrorsContext.Provider>
   );
 }
