@@ -61,5 +61,6 @@ export const toggleMaximize = userMutation({
   args: {
     windowId: v.id("windows"),
   },
-  handler: (ctx, { windowId }) => windows.forWindow(windowId).toggleMaximize(ctx.db),
+  handler: (ctx, { windowId }) =>
+    windows.forWindow(windowId).toggleMaximize(ctx.db),
 });

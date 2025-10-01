@@ -91,9 +91,6 @@ export function Window({
 
   const { desktopRect } = useOS();
 
-  const isMaximized = viewState.kind === "maximized";
-  const isMinimized = viewState.kind === "minimized";
-
   // Sync props to refs
   useEffect(() => {
     currentPositionRef.current = { x, y };
@@ -251,7 +248,7 @@ export function Window({
   };
 
   const handleResizeStart = (corner: ResizeCorner, event: React.MouseEvent) => {
-    if (!resizable || isMaximized) return;
+    if (!resizable || viewState.kind == "maximized") return;
     event.preventDefault();
     event.stopPropagation();
 
@@ -285,11 +282,21 @@ export function Window({
       style={iife(() => {
         const baseStyle: React.CSSProperties = {
           position: "absolute",
-          left: x,
-          top: y,
-          width,
-          height,
-          zIndex: 1000,
+          left: viewState.kind == "maximized" ? 0 : x,
+          top: viewState.kind == "maximized" ? 0 : y,
+          width:
+            viewState.kind == "maximized" && desktopRect
+              ? desktopRect.width
+              : width,
+          height:
+            viewState.kind == "maximized" && desktopRect
+              ? desktopRect.height
+              : height,
+          zIndex: iife(() => {
+            if (viewState.kind == "maximized") return 9999;
+            if (viewState.kind == "open")
+              return 1000 + viewState.viewStackOrder;
+          }),
           display: "flex",
           flexDirection: "column",
           boxSizing: "border-box",
@@ -297,7 +304,7 @@ export function Window({
           ...(style || {}),
         };
 
-        if (isMinimized) {
+        if (viewState.kind == "minimized") {
           baseStyle.transform = "scale(0)";
           baseStyle.opacity = 0;
           baseStyle.pointerEvents = "none";
@@ -326,7 +333,7 @@ export function Window({
         showCloseButton={showCloseButton}
         showMaximizeButton={showMaximizeButton}
         showMinimiseButton={showMinimiseButton}
-        isMaximized={isMaximized}
+        isMaximized={viewState.kind == "maximized"}
         onClose={onClose}
         onMinimize={onMinimize}
       />
@@ -346,7 +353,7 @@ export function Window({
       <ResizeHandles
         startResize={handleResizeStart}
         resizable={resizable}
-        isMaximized={isMaximized}
+        isMaximized={viewState.kind == "maximized"}
       />
     </div>
   );

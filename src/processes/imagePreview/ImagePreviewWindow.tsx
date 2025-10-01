@@ -16,7 +16,6 @@ export function ImagePreviewWindow({
   return (
     <ConnectedWindow
       window={window}
-      style={{ width: "640px", height: "480px" }}
       showCloseButton
       showMaximizeButton
       showMinimiseButton

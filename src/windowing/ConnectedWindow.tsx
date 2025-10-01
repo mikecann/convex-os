@@ -42,6 +42,10 @@ export function ConnectedWindow({
     });
   };
 
+  const handleToggleMaximize = () => {
+    toggleMaximize({ windowId: window._id });
+  };
+
   return (
     <Window
       {...rest}
@@ -54,7 +58,7 @@ export function ConnectedWindow({
       onClose={() => closeWindow({ windowId: window._id })}
       onFocus={() => focusWindow({ windowId: window._id })}
       onMinimize={() => minimizeWindow({ windowId: window._id })}
-      onToggleMaximize={() => toggleMaximize({ windowId: window._id })}
+      onToggleMaximize={handleToggleMaximize}
       onGeometryChange={handleGeometryChange}
       taskbarButtonRect={os.taskbarButtonRefs.current
         .get(window.processId)
