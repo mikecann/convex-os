@@ -37,6 +37,10 @@ export const processes = {
         return wins[0].title;
       },
 
+      async delete(db: DatabaseWriter) {
+        await db.delete(processId);
+      },
+
       withUser(userId: Id<"users">) {
         const withUser = {
           get: async (db: DatabaseReader) => {

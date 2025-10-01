@@ -53,7 +53,7 @@ export const close = userMutation({
     windowId: v.id("windows"),
   },
   handler: (ctx, { windowId }) => {
-    // windows.forWindow(windowId).focus(ctx.db)
+    windows.forWindow(windowId).close(ctx.db);
   },
 });
 

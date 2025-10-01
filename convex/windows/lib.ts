@@ -52,6 +52,18 @@ export const windows = {
         return process.userId;
       },
 
+      delete(db: DatabaseWriter) {
+        return db.delete(windowId);
+      },
+
+      async close(db: DatabaseWriter) {
+        const process = await windows.forWindow(windowId).getProcess(db);
+        await this.delete(db);
+        const allWindows = await windows.forProcess(process._id).list(db);
+        if (allWindows.length === 0)
+          await processes.forProcess(process._id).delete(db);
+      },
+
       async minimize(db: DatabaseWriter) {
         const window = await this.get(db);
         if (window.viewState.kind !== "open") return;

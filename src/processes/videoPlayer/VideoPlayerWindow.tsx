@@ -1,82 +1,82 @@
 import { useEffect, useMemo } from "react";
 import { DesktopFileDoc } from "../../desktop/files/DesktopFileIcon";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
+import { ConnectedWindow } from "../../windowing/ConnectedWindow";
+import { iife } from "../../../shared/misc";
+import { Process } from "../../../convex/processes/schema";
+import { Doc } from "../../../convex/_generated/dataModel";
 
-type VideoPreviewTaskProps = {
-  file: DesktopFileDoc;
-};
+export function VideoPlayerWindow({
+  process,
+  window,
+}: {
+  process: Process<"video_player">;
+  window: Doc<"windows">;
+}) {
+  const file = useQuery(api.my.files.get, { fileId: process.props.fileId });
 
-export function VideoPlayerWindow({ file }: VideoPreviewTaskProps) {
-  // useEffect(() => {
-  //   setTitle(file.name);
-  // }, [file.name, setTitle]);
+  return (
+    <ConnectedWindow
+      window={window}
+      showCloseButton
+      showMaximizeButton
+      showMinimiseButton
+      resizable
+    >
+      {iife(() => {
+        if (!file) return null;
 
-  // useEffect(() => {
-  //   setResizable(true);
-  //   setShowMaximizeButton(true);
-  //   setShowCloseButton(true);
-  //   setStyle({
-  //     width: "640px",
-  //     height: "480px",
-  //     minWidth: "320px",
-  //     minHeight: "240px",
-  //   });
-  // }, [
-  //   setResizable,
-  //   setShowMaximizeButton,
-  //   setShowCloseButton,
-  //   setBodyStyle,
-  //   setStyle,
-  // ]);
+        if (file.uploadState.kind != "uploaded")
+          return (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                padding: "16px",
+                textAlign: "center",
+              }}
+            >
+              <p
+                style={{
+                  color: "white",
+                  textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+                }}
+              >
+                Video preview is not available yet. Please wait for the upload
+                to finish.
+              </p>
+            </div>
+          );
 
-  // const videoUrl = useMemo(() => {
-  //   if (file.uploadState.kind === "uploaded") return file.uploadState.url;
-  //   return undefined;
-  // }, [file]);
-
-  // if (videoUrl) {
-  //   return (
-  //     <div
-  //       style={{
-  //         display: "flex",
-  //         alignItems: "center",
-  //         justifyContent: "center",
-  //         backgroundColor: "#1a1a1a",
-  //         width: "100%",
-  //         height: "100%",
-  //         padding: "12px",
-  //         boxSizing: "border-box",
-  //       }}
-  //     >
-  //       <video
-  //         src={videoUrl}
-  //         style={{
-  //           maxWidth: "100%",
-  //           maxHeight: "100%",
-  //           borderRadius: "4px",
-  //         }}
-  //         controls
-  //       />
-  //     </div>
-  //   );
-  // }
-
-  // return (
-  //   <div
-  //     style={{
-  //       display: "flex",
-  //       alignItems: "center",
-  //       justifyContent: "center",
-  //       width: "100%",
-  //       height: "100%",
-  //       padding: "16px",
-  //       textAlign: "center",
-  //     }}
-  //   >
-  //     <p style={{ color: "white", textShadow: "0 1px 2px rgba(0,0,0,0.6)" }}>
-  //       Video preview is not available yet. Please wait for the upload to
-  //       finish.
-  //     </p>
-  //   </div>
-  // );
-  return null;
+        return (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: "#1a1a1a",
+              width: "100%",
+              height: "100%",
+              padding: "12px",
+              boxSizing: "border-box",
+            }}
+          >
+            <video
+              src={file.uploadState.url}
+              style={{
+                maxWidth: "100%",
+                maxHeight: "100%",
+                borderRadius: "4px",
+              }}
+              controls
+            />
+          </div>
+        );
+      })}
+    </ConnectedWindow>
+  );
 }

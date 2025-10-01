@@ -58,10 +58,6 @@ export function DesktopFiles() {
   const hasDraggedRef = useRef(false);
   const startApp = useMutation(api.my.apps.start);
 
-  // useEffect(() => {
-  //   syncFiles(files);
-  // }, [files, syncFiles]);
-
   const openFile = (file: DesktopFileDoc) => {
     if (isImageFile(file)) {
       startApp({
@@ -79,15 +75,23 @@ export function DesktopFiles() {
       });
       return;
     }
-    // if (isVideoFile(file)) {
-    //   startApp({
-    //     process: {
-    //       kind: "video_player",
-    //       props: { fileId: file._id },
-    //     },
-    //   });
-    //   return;
-    // }
+
+    if (isVideoFile(file)) {
+      startApp({
+        app: {
+          kind: "video_player",
+          props: { fileId: file._id },
+          windowCreationParams: {
+            x: file.position.x,
+            y: file.position.y,
+            width: 480,
+            height: 320,
+            title: file.name,
+          },
+        },
+      });
+      return;
+    }
   };
 
   useEffect(() => {

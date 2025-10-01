@@ -4,6 +4,7 @@ import { DatabaseWriter } from "../_generated/server";
 import { appStartingValidator } from "./schema";
 import { processes } from "../processes/lib";
 import { windows } from "../windows/lib";
+import { exhaustiveCheck } from "../../shared/misc";
 
 export const apps = {
   forUser(userId: Id<"users">) {
@@ -24,7 +25,15 @@ export const apps = {
             },
           });
           await windows.forWindow(windowId).activate(db);
-        }
+        } else if (app.kind === "video_player") {
+          const windowId = await windows.forProcess(processId).create(db, {
+            params: {
+              ...app.windowCreationParams,
+              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+            },
+          });
+          await windows.forWindow(windowId).activate(db);
+        } else exhaustiveCheck(app);
 
         return processId;
       },
