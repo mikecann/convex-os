@@ -9,32 +9,7 @@ import {
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
-
-const IMAGE_EXTENSIONS: ReadonlySet<string> = new Set([
-  "png",
-  "jpg",
-  "jpeg",
-  "gif",
-  "bmp",
-  "svg",
-  "webp",
-]);
-
-const VIDEO_EXTENSIONS: ReadonlySet<string> = new Set(["mp4", "webm", "ogg"]);
-
-function isImageFile(file: DesktopFileDoc) {
-  if (file.type?.startsWith("image/")) return true;
-  const extension = file.name.split(".").pop()?.toLowerCase();
-  if (!extension) return false;
-  return IMAGE_EXTENSIONS.has(extension);
-}
-
-function isVideoFile(file: DesktopFileDoc) {
-  if (file.type?.startsWith("video/")) return true;
-  const extension = file.name.split(".").pop()?.toLowerCase();
-  if (!extension) return false;
-  return VIDEO_EXTENSIONS.has(extension);
-}
+import { getProcessStartingParams } from "./openFileHelpers";
 
 export function DesktopFiles() {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -56,43 +31,6 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const startApp = useMutation(api.my.apps.start);
-
-  const openFile = (file: DesktopFileDoc) => {
-    if (isImageFile(file)) {
-      startApp({
-        app: {
-          kind: "image_preview",
-          props: { fileId: file._id },
-          windowCreationParams: {
-            x: file.position.x,
-            y: file.position.y,
-            width: 480,
-            height: 320,
-            title: file.name,
-          },
-        },
-      });
-      return;
-    }
-
-    if (isVideoFile(file)) {
-      startApp({
-        app: {
-          kind: "video_player",
-          props: { fileId: file._id },
-          windowCreationParams: {
-            x: file.position.x,
-            y: file.position.y,
-            width: 480,
-            height: 320,
-            title: file.name,
-          },
-        },
-      });
-      return;
-    }
-  };
 
   useEffect(() => {
     const handleGlobalDragEnd = () => {
@@ -291,7 +229,6 @@ export function DesktopFiles() {
                 return [...current, file._id];
               });
             }}
-            onOpen={openFile}
           />
         ))}
         {isDragOver ? (

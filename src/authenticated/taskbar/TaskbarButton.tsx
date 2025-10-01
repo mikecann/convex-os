@@ -9,6 +9,7 @@ import { TaskbarContextMenu } from "./TaskbarContextMenu";
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
   video_player: "/xp/mediaplayer.png",
+  text_preview: "/xp/doc.png",
 };
 
 export function TaskbarButton({

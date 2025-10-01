@@ -11,12 +11,13 @@ import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "./DesktopFileImage";
+import { getProcessStartingParams } from "./openFileHelpers";
 
 export type DesktopFileDoc = Doc<"files">;
 
 type DesktopFileIconProps = {
   file: DesktopFileDoc;
-  onOpen?: (file: DesktopFileDoc) => void;
+
   containerRef: RefObject<HTMLDivElement | null>;
   registerNode: (element: HTMLDivElement | null) => void;
   isSelected: boolean;
@@ -25,7 +26,7 @@ type DesktopFileIconProps = {
 
 export function DesktopFileIcon({
   file,
-  onOpen,
+
   containerRef,
   registerNode,
   isSelected,
@@ -40,6 +41,7 @@ export function DesktopFileIcon({
   const [isRenaming, setIsRenaming] = useState(false);
   const [nameDraft, setNameDraft] = useState(file.name);
   const renamedDuringSessionRef = useRef(false);
+  const startApp = useMutation(api.my.processes.start);
 
   useEffect(() => {
     if (!isRenaming) return;
@@ -124,7 +126,14 @@ export function DesktopFileIcon({
         }
       }}
       onDoubleClick={() => {
-        if (onOpen) onOpen(file);
+        const process = getProcessStartingParams(file);
+        if (!process) {
+          onError(
+            new Error("Cannot start process for file of type " + file.type),
+          );
+          return;
+        }
+        startApp({ process });
       }}
       onKeyDown={(event) => {
         if (event.key === "Escape" && isRenaming) {

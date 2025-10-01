@@ -2,8 +2,13 @@ import { ConvexError, Infer } from "convex/values";
 import { ensureFP } from "../../shared/ensure";
 import { Id } from "../_generated/dataModel";
 import { DatabaseReader, DatabaseWriter } from "../_generated/server";
-import { Process, processCreationValidator } from "./schema";
+import {
+  Process,
+  processCreationValidator,
+  processStartingValidator,
+} from "./schema";
 import { windows } from "../windows/lib";
+import { exhaustiveCheck } from "../../shared/misc";
 
 export const processes = {
   forProcess(processId: Id<"processes">) {
@@ -41,6 +46,15 @@ export const processes = {
         await db.delete(processId);
       },
 
+      async close(db: DatabaseWriter) {
+        const wins = await windows.forProcess(processId).list(db);
+
+        for (const window of wins)
+          await windows.forWindow(window._id).delete(db);
+
+        await this.delete(db);
+      },
+
       withUser(userId: Id<"users">) {
         const withUser = {
           get: async (db: DatabaseReader) => {
@@ -59,7 +73,10 @@ export const processes = {
             return await db.insert("processes", { ...process, userId });
           },
 
-          updateProps: async (db: DatabaseWriter, { props }: { props: Process["props"] }) => {
+          updateProps: async (
+            db: DatabaseWriter,
+            { props }: { props: Process["props"] },
+          ) => {
             await db.patch(processId, { props });
           },
         };
@@ -78,6 +95,16 @@ export const processes = {
           .collect();
       },
 
+      async listWithWindows(db: DatabaseReader) {
+        const procs = await this.list(db);
+        return await Promise.all(
+          procs.map(async (proc) => {
+            const wins = await windows.forProcess(proc._id).list(db);
+            return { process: proc, windows: wins };
+          }),
+        );
+      },
+
       async findActive(db: DatabaseReader) {
         const activeWindow = await windows.forUser(userId).findActive(db);
         if (!activeWindow) return null;
@@ -94,42 +121,43 @@ export const processes = {
           props: process.props,
         });
       },
+
+      async start(
+        db: DatabaseWriter,
+        { process }: { process: Infer<typeof processStartingValidator> },
+      ) {
+        const processId = await this.create(db, {
+          process: process,
+        });
+
+        if (process.kind === "image_preview") {
+          const windowId = await windows.forProcess(processId).create(db, {
+            params: {
+              ...process.windowCreationParams,
+              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+            },
+          });
+          await windows.forWindow(windowId).activate(db);
+        } else if (process.kind === "video_player") {
+          const windowId = await windows.forProcess(processId).create(db, {
+            params: {
+              ...process.windowCreationParams,
+              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+            },
+          });
+          await windows.forWindow(windowId).activate(db);
+        } else if (process.kind === "text_preview") {
+          const windowId = await windows.forProcess(processId).create(db, {
+            params: {
+              ...process.windowCreationParams,
+              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+            },
+          });
+          await windows.forWindow(windowId).activate(db);
+        } else exhaustiveCheck(process);
+
+        return processId;
+      },
     };
   },
-
-  // async getWindows(db: DatabaseReader, { userId }: { userId: Id<"users"> }) {
-  //   const allProcesses = await processes.listForUser(db, { userId });
-  //   return allProcesses.filter(
-  //     (p): p is Process & { window: NonNullable<Process["window"]> } =>
-  //       !!p.window,
-  //   );
-  // },
-
-  // async getMaxViewStackOrder(
-  //   db: DatabaseReader,
-  //   { userId }: { userId: Id<"users"> },
-  // ): Promise<number> {
-  //   const windows = await processes.getWindows(db, { userId });
-  //   return windows.reduce((max, p) => {
-  //     if (p.window.kind === "open" || p.window.kind === "maximized") {
-  //       return Math.max(max, p.window.viewStackOrder);
-  //     }
-  //     return max;
-  //   }, -1);
-  // },
-
-  // async getProcessesToRenumber(
-  //   db: DatabaseReader,
-  //   {
-  //     userId,
-  //     aboveViewStackOrder,
-  //   }: { userId: Id<"users">; aboveViewStackOrder: number },
-  // ) {
-  //   const windows = await processes.getWindows(db, { userId });
-  //   return windows.filter(
-  //     (p) =>
-  //       (p.window.kind === "open" || p.window.kind === "maximized") &&
-  //       p.window.viewStackOrder > aboveViewStackOrder,
-  //   );
-  // },
 };
