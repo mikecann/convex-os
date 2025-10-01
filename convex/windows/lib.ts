@@ -66,7 +66,11 @@ export const windows = {
 
       async minimize(db: DatabaseWriter) {
         const window = await this.get(db);
-        if (window.viewState.kind !== "open") return;
+        if (
+          window.viewState.kind !== "open" &&
+          window.viewState.kind !== "maximized"
+        )
+          return;
         return await db.patch(window._id, {
           ...window,
           viewState: { kind: "minimized" },

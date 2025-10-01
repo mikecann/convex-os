@@ -10,6 +10,7 @@ import {
 import { Wallpaper } from "../common/components/Wallpaper";
 import { Id } from "../../convex/_generated/dataModel";
 import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
+import { Cheffy } from "./cheffy/Cheffy";
 
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
@@ -87,6 +88,7 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
             >
               <ErrorsRenderer />
               {children}
+              <Cheffy />
             </div>
           </div>
         </Wallpaper>
