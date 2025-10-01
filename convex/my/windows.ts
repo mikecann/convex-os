@@ -2,10 +2,18 @@ import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import {} from "../processes/schema";
 import { windows } from "../windows/lib";
+import { windowViewStateValidator } from "../windows/schema";
 
 export const list = userQuery({
   args: {},
   handler: (ctx) => windows.forUser(ctx.userId).list(ctx.db),
+});
+
+export const listForProcess = userQuery({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: (ctx, { processId }) => windows.forProcess(processId).list(ctx.db),
 });
 
 export const minimize = userMutation({

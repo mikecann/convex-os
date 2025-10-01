@@ -12,7 +12,26 @@ import { ResizeHandles } from "./ResizeHandles";
 import { iife } from "../../../../shared/misc";
 import { useOS } from "../../../os/OperatingSystem";
 
-interface WindowProps {
+type WindowViewState =
+  | {
+      kind: "open";
+      viewStackOrder: number;
+      isActive: boolean;
+    }
+  | {
+      kind: "minimized";
+    }
+  | {
+      kind: "maximized";
+      restored: {
+        x: number;
+        y: number;
+        width: number;
+        height: number;
+      };
+    };
+
+export interface WindowProps {
   title: string;
   children: React.ReactNode;
   className?: string;
@@ -30,7 +49,7 @@ interface WindowProps {
   minHeight?: number;
   onFocus?: () => void;
   onMinimize?: () => void;
-  isMinimized?: boolean;
+  viewState: WindowViewState;
   taskbarButtonRect?: DOMRect;
   isActive: boolean;
   x?: number;
@@ -61,7 +80,7 @@ export function Window({
   minHeight = 180,
   onFocus,
   onMinimize,
-  isMinimized = false,
+  viewState,
   taskbarButtonRect,
   isActive,
   x,
@@ -103,7 +122,6 @@ export function Window({
     width: number | null;
     height: number | null;
   }>({ width: null, height: null });
-  const [isMaximized, setIsMaximized] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [style, setStyle] = useState<CSSProperties | undefined>(initialStyle);
   const [bodyStyle, setBodyStyle] = useState<CSSProperties | undefined>(
@@ -120,10 +138,9 @@ export function Window({
     initialShowMinimiseButton ?? true,
   );
   const { desktopRect } = useOS();
-  const previousStateRef = useRef<{
-    position: { x: number; y: number };
-    size: { width: number; height: number };
-  } | null>(null);
+
+  const isMaximized = viewState.kind === "maximized";
+  const isMinimized = viewState.kind === "minimized";
 
   useEffect(() => {
     setTitle(initialTitle);
@@ -301,18 +318,17 @@ export function Window({
 
     event.preventDefault();
 
-    if (isMaximized) {
-      const previous = previousStateRef.current;
-      if (!previous || previous.size.width === null) return;
-
-      const restoredWidth = previous.size.width;
+    if (isMaximized && viewState.kind === "maximized") {
+      const restored = viewState.restored;
+      const restoredWidth = restored.width;
       const clientWidth = desktopRect?.width ?? window.innerWidth;
       const dragHandleWidth = restoredWidth * (event.clientX / clientWidth);
 
-      setSize(previous.size);
-      setPosition({ x: event.clientX - dragHandleWidth, y: 0 });
-      setIsMaximized(false);
-      previousStateRef.current = null;
+      const newPosition = { x: event.clientX - dragHandleWidth, y: 0 };
+      const newSize = { width: restored.width, height: restored.height };
+
+      setSize(newSize);
+      setPosition(newPosition);
 
       setDragOffset({
         x: dragHandleWidth,
@@ -538,26 +554,15 @@ export function Window({
       const parentRect = desktopRect;
       const availableWidth = parentRect?.width ?? window.innerWidth;
       const availableHeight = parentRect?.height ?? window.innerHeight;
-      previousStateRef.current = {
-        position,
-        size: {
-          width: size.width ?? rect.width,
-          height: size.height ?? rect.height,
-        },
-      };
+
       setSize({ width: availableWidth, height: availableHeight });
       setPosition({ x: 0, y: 0 });
-      setIsMaximized(true);
       setIsDragging(false);
       setIsResizing(false);
-    } else {
-      const previous = previousStateRef.current;
-      if (previous) {
-        setSize(previous.size);
-        setPosition(previous.position);
-      }
-      setIsMaximized(false);
-      previousStateRef.current = null;
+    } else if (viewState.kind === "maximized") {
+      const restored = viewState.restored;
+      setSize({ width: restored.width, height: restored.height });
+      setPosition({ x: restored.x, y: restored.y });
     }
   };
 

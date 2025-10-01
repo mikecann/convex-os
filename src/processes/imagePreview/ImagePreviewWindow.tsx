@@ -4,46 +4,35 @@ import { Process } from "../../../convex/processes/schema";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
+import { ConnectedWindow } from "../../windowing/ConnectedWindow";
 
-export function ImagePreview({
+export function ImagePreviewWindow({
   process,
   window,
 }: {
   process: Process<"image_preview">;
   window: Doc<"windows">;
 }) {
+  return (
+    <ConnectedWindow
+      window={window}
+      style={{ width: "640px", height: "480px" }}
+      showCloseButton
+      showMaximizeButton
+      showMinimiseButton
+      resizable
+    >
+      <ImagePreviewWindowInner process={process} />
+    </ConnectedWindow>
+  );
+}
+
+function ImagePreviewWindowInner({
+  process,
+}: {
+  process: Process<"image_preview">;
+}) {
   const file = useQuery(api.my.files.get, { fileId: process.props.fileId });
-
-  const {
-    setTitle,
-    setResizable,
-    setShowMaximizeButton,
-    setShowCloseButton,
-    setBodyStyle,
-    setStyle,
-  } = useWindow();
-
-  // useEffect(() => {
-  //   setTitle(file.name);
-  // }, [file.name, setTitle]);
-
-  useEffect(() => {
-    setResizable(true);
-    setShowMaximizeButton(true);
-    setShowCloseButton(true);
-    setStyle({
-      width: "640px",
-      height: "480px",
-      minWidth: "320px",
-      minHeight: "240px",
-    });
-  }, [
-    setResizable,
-    setShowMaximizeButton,
-    setShowCloseButton,
-    setBodyStyle,
-    setStyle,
-  ]);
 
   if (!file) return null;
 

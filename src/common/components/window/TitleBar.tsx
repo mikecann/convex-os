@@ -5,6 +5,7 @@ import { useWindow } from "./WindowContext";
 export function TitleBar() {
   const { title, draggable, handleMouseDown, titleBarStyle, toggleMaximize } =
     useWindow();
+
   return (
     <div
       className="title-bar"

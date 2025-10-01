@@ -1,13 +1,19 @@
 import { Doc } from "../../convex/_generated/dataModel";
-import { Window } from "../common/components/window/Window";
+import { Window, WindowProps } from "../common/components/window/Window";
 import { SignInSignUpWindow } from "../auth/SignInSignUpWindow";
 import { exhaustiveCheck, iife } from "../../shared/misc";
 import { api } from "../../convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useOS } from "../os/OperatingSystem";
-import { ImagePreview } from "../processes/imagePreview/ImagePreview";
 
-export function ConnectedWindow({ window }: { window: Doc<"windows"> }) {
+export function ConnectedWindow({
+  window,
+  children,
+  ...rest
+}: { window: Doc<"windows"> } & Omit<
+  WindowProps,
+  "title" | "viewState" | "isActive"
+>) {
   const os = useOS();
   const process = useQuery(api.my.processes.get, {
     processId: window.processId,
@@ -27,26 +33,25 @@ export function ConnectedWindow({ window }: { window: Doc<"windows"> }) {
       y={window.y}
       width={window.width}
       height={window.height}
+      viewState={window.viewState}
       onClose={() => closeWindow({ windowId: window._id })}
       onFocus={() => focusWindow({ windowId: window._id })}
       onMinimize={() => minimizeWindow({ windowId: window._id })}
       onGeometryUpdated={(position, size) =>
         updatePosition({ windowId: window._id, position, size })
       }
-      isActive={window.viewState.kind === "open" && window.viewState.isActive}
-      isMinimized={window.viewState.kind === "minimized"}
+      isActive={iife(() => {
+        if (window.viewState.kind === "open" && window.viewState.isActive)
+          return true;
+        if (window.viewState.kind == "maximized") return true;
+        return false;
+      })}
       taskbarButtonRect={os.taskbarButtonRefs.current
         .get(window.processId)
         ?.getBoundingClientRect()}
+      {...rest}
     >
-      {iife(() => {
-        if (process.kind === "image_preview")
-          return <ImagePreview process={process} window={window} />;
-
-        if (process.kind === "video_player") return null;
-
-        exhaustiveCheck(process);
-      })}
+      {children}
     </Window>
   );
 }
