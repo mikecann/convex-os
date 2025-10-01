@@ -28,6 +28,8 @@ export const windowValidator = v.object({
   viewState: windowViewStateValidator,
 });
 
+export type Window = Infer<typeof windowValidator>;
+
 const processCommon = {
   userId: v.id("users"),
   name: v.string(),
@@ -60,6 +62,9 @@ export type ProcessKinds = Infer<typeof processValidator>["kind"];
 export type Process<TKind extends ProcessKinds = ProcessKinds> = Infer<
   typeof processValidator
 > & { kind: TKind };
+
+export type ProcessWithWindow<TKind extends ProcessKinds = ProcessKinds> =
+  Infer<typeof processValidator> & { kind: TKind; window: Window };
 
 export const processesTable = defineTable(processValidator).index("by_user", [
   "userId",

@@ -6,14 +6,15 @@ import {
   processValidator,
   windowViewStateValidator,
   windowValidator,
+  ProcessWithWindow,
 } from "../processes/schema";
 
 export const list = userQuery({
   args: {},
   handler: async (ctx) => {
-    // const userProcesses = await processes.listForUser(ctx.db, {
-    //   userId: ctx.userId,
-    // });
+    return processes.listForUser(ctx.db, {
+      userId: ctx.userId,
+    });
     // return userProcesses.sort((a, b) => {
     //   const aOrder =
     //     a.window?.kind === "open" || a.window?.kind === "maximized"
@@ -25,6 +26,16 @@ export const list = userQuery({
     //       : -1;
     //   return aOrder - bOrder;
     // });
+  },
+});
+
+export const listProcessWithWindows = userQuery({
+  args: {},
+  handler: async (ctx): Promise<ProcessWithWindow[]> => {
+    const procs = await processes.listForUser(ctx.db, {
+      userId: ctx.userId,
+    });
+    return procs.filter((p) => p.window !== null);
   },
 });
 

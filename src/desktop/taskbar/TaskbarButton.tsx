@@ -1,38 +1,39 @@
 import React from "react";
-import { Task, useTasks } from "../../common/tasks/TasksSystem";
+import { Doc } from "../../../convex/_generated/dataModel";
 
-const TASK_ICON_MAP: Record<Task["kind"], string> = {
+const process_ICON_MAP: Record<process["kind"], string> = {
   image_preview: "/xp/paint.png",
   video_preview: "/xp/mediaplayer.png",
   sign_in_sign_up: "/xp/users.png",
 };
 
-type TaskbarButtonProps = {
-  task: Task;
-};
+export function processbarButton({ process }: { process: Doc<"processes"> }) {
+  const {
+    activeprocessId,
+    focusprocess,
+    minimizeprocess,
+    processbarButtonRefs,
+  } = useprocesss();
 
-export function TaskbarButton({ task }: TaskbarButtonProps) {
-  const { activeTaskId, focusTask, minimizeTask, taskbarButtonRefs } =
-    useTasks();
-  const isActive = task.id === activeTaskId && !task.isMinimized;
-
+  const isActive = process._id === activeprocessId && !process.isMinimized;
+  
   return (
     <button
-      key={task.id}
+      key={process._id}
       ref={(element) => {
-        const refs = taskbarButtonRefs.current;
+        const refs = processbarButtonRefs.current;
         if (element) {
-          refs.set(task.id, element);
+          refs.set(process._id, element);
         } else {
-          refs.delete(task.id);
+          refs.delete(process._id);
         }
       }}
       onClick={() => {
         if (isActive) {
-          minimizeTask(task.id);
+          minimizeprocess(process._id);
           return;
         }
-        focusTask(task.id);
+        focusprocess(process._id);
       }}
       style={{
         display: "flex",
@@ -54,11 +55,11 @@ export function TaskbarButton({ task }: TaskbarButtonProps) {
       }}
     >
       <img
-        src={TASK_ICON_MAP[task.kind]}
+        src={process_ICON_MAP[process.kind]}
         alt=""
         style={{ width: "16px", height: "16px" }}
       />
-      {task.title}
+      {process.title}
     </button>
   );
 }

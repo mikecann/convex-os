@@ -9,7 +9,6 @@ import {
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
-import { useTasks } from "../../common/tasks/TasksSystem";
 
 const IMAGE_EXTENSIONS: ReadonlySet<string> = new Set([
   "png",
@@ -57,21 +56,21 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  const { openTask, syncFiles } = useTasks();
+  // const { openTask, syncFiles } = useTasks();
 
-  useEffect(() => {
-    syncFiles(files);
-  }, [files, syncFiles]);
+  // useEffect(() => {
+  //   syncFiles(files);
+  // }, [files, syncFiles]);
 
   const openFile = (file: DesktopFileDoc) => {
-    if (isImageFile(file)) {
-      openTask({ kind: "image_preview", file });
-      return;
-    }
-    if (isVideoFile(file)) {
-      openTask({ kind: "video_preview", file });
-      return;
-    }
+    // if (isImageFile(file)) {
+    //   openTask({ kind: "image_preview", file });
+    //   return;
+    // }
+    // if (isVideoFile(file)) {
+    //   openTask({ kind: "video_preview", file });
+    //   return;
+    // }
   };
 
   useEffect(() => {

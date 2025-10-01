@@ -226,8 +226,8 @@ export function TasksSystem({ children }: PropsWithChildren) {
   );
 }
 
-export function useTasks() {
-  const context = useContext(TasksSystemContext);
-  if (!context) throw new Error("useTasks must be used within a TasksProvider");
-  return context;
-}
+// export function useTasks() {
+//   const context = useContext(TasksSystemContext);
+//   if (!context) throw new Error("useTasks must be used within a TasksProvider");
+//   return context;
+// }

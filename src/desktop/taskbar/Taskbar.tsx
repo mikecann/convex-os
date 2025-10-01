@@ -1,16 +1,16 @@
 import React from "react";
 import { StartButton } from "./StartButton";
-import { useTasks } from "../../common/tasks/TasksSystem";
 import { TaskbarButton } from "./TaskbarButton";
 import { SystemTray } from "./SystemTray";
+import { useQuery } from "convex/react";
+import { api } from "../../../convex/_generated/api";
 
 interface TaskbarProps {
   onStartClick?: () => void;
 }
 
 export function Taskbar({ onStartClick }: TaskbarProps) {
-  const { tasks } = useTasks();
-
+  const processes = useQuery(api.my.processes.list) ?? [];
   return (
     <div
       className="taskbar"
@@ -41,8 +41,8 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
           paddingRight: "8px",
         }}
       >
-        {tasks.map((task) => (
-          <TaskbarButton key={task.id} task={task} />
+        {processes.map((process) => (
+          <TaskbarButton key={process._id} process={process} />
         ))}
       </div>
       <SystemTray />
