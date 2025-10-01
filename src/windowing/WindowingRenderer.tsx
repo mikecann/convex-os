@@ -28,7 +28,7 @@ export function WindowingRenderer() {
   return (
     <>
       {windows?.map((window) => {
-        return <ConnectedWindow window={window} />;
+        return <ConnectedWindow key={window._id} window={window} />;
       })}
     </>
   );

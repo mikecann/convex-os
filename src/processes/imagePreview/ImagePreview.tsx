@@ -14,40 +14,40 @@ export function ImagePreview({
 }) {
   const file = useQuery(api.my.files.get, { fileId: process.props.fileId });
 
-  // const {
-  //   setTitle,
-  //   setResizable,
-  //   setShowMaximizeButton,
-  //   setShowCloseButton,
-  //   setBodyStyle,
-  //   setStyle,
-  // } = useWindow();
-
-  // // useEffect(() => {
-  // //   setTitle(file.name);
-  // // }, [file.name, setTitle]);
+  const {
+    setTitle,
+    setResizable,
+    setShowMaximizeButton,
+    setShowCloseButton,
+    setBodyStyle,
+    setStyle,
+  } = useWindow();
 
   // useEffect(() => {
-  //   setResizable(true);
-  //   setShowMaximizeButton(true);
-  //   setShowCloseButton(true);
-  //   setStyle({
-  //     width: "640px",
-  //     height: "480px",
-  //     minWidth: "320px",
-  //     minHeight: "240px",
-  //   });
-  // }, [
-  //   setResizable,
-  //   setShowMaximizeButton,
-  //   setShowCloseButton,
-  //   setBodyStyle,
-  //   setStyle,
-  // ]);
+  //   setTitle(file.name);
+  // }, [file.name, setTitle]);
+
+  useEffect(() => {
+    setResizable(true);
+    setShowMaximizeButton(true);
+    setShowCloseButton(true);
+    setStyle({
+      width: "640px",
+      height: "480px",
+      minWidth: "320px",
+      minHeight: "240px",
+    });
+  }, [
+    setResizable,
+    setShowMaximizeButton,
+    setShowCloseButton,
+    setBodyStyle,
+    setStyle,
+  ]);
 
   if (!file) return null;
 
-  if (file.uploadState.kind != "uploading")
+  if (file.uploadState.kind != "uploaded")
     return (
       <div
         style={{
@@ -81,7 +81,7 @@ export function ImagePreview({
       }}
     >
       <img
-        src={file.uploadState.uploadUrl}
+        src={file.uploadState.url}
         alt={file.name}
         style={{
           maxWidth: "100%",

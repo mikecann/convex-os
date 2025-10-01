@@ -28,7 +28,7 @@ export const processes = {
         const wins = await windows.forProcess(processId).list(db);
         if (wins.length === 0) return;
         for (const window of wins)
-          await windows.forWindow(window._id).activate(db);
+          await windows.forWindow(window._id).focus(db);
       },
 
       async findName(db: DatabaseReader) {
@@ -63,8 +63,6 @@ export const processes = {
 
   forUser(userId: Id<"users">) {
     return {
-      
-
       list(db: DatabaseReader) {
         return db
           .query("processes")

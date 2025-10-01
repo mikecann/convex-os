@@ -28,16 +28,20 @@ export const minimize = userMutation({
   args: {
     processId: v.id("processes"),
   },
-  handler: (ctx, { processId }) =>
-    processes.forProcess(processId).minimize(ctx.db),
+  handler: (ctx, { processId }) => {
+    console.log(`minimizing process ${processId}`);
+    return processes.forProcess(processId).minimize(ctx.db);
+  },
 });
 
 export const focus = userMutation({
   args: {
     processId: v.id("processes"),
   },
-  handler: (ctx, { processId }) =>
-    processes.forProcess(processId).focus(ctx.db),
+  handler: (ctx, { processId }) => {
+    console.log(`focusing process ${processId}`);
+    return processes.forProcess(processId).focus(ctx.db);
+  },
 });
 
 export const findName = userQuery({

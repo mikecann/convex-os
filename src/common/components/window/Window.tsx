@@ -214,6 +214,8 @@ export function Window({
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      console.log("handleMouseUp", position);
+      //onPositionChange?.({ x: position.x, y: position.y });
     };
 
     if (isDragging) {
@@ -495,7 +497,6 @@ export function Window({
       setShowMaximizeButton,
       setShowMinimiseButton,
       setBodyStyle,
-
       setStyle,
     }),
     [

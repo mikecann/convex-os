@@ -3,6 +3,7 @@ import { useState } from "react";
 import { StartMenu } from "./desktop/taskbar/StartMenu";
 import { Taskbar } from "./desktop/taskbar/Taskbar";
 import { ProcessSystem } from "./os/ProcessSystem";
+import { WindowingRenderer } from "./windowing/WindowingRenderer";
 
 export function AuthenticatedContent() {
   const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);
@@ -10,6 +11,7 @@ export function AuthenticatedContent() {
     <>
       <DesktopFiles />
       <ProcessSystem />
+      <WindowingRenderer />
       {isStartMenuVisible && (
         <StartMenu
           isOpen={isStartMenuVisible}

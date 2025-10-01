@@ -14,13 +14,13 @@ export const windows = {
       const bIsOpen = bState.kind === "open";
 
       if (aIsOpen && bIsOpen)
-        return bState.viewStackOrder - aState.viewStackOrder;
+        return aState.viewStackOrder - bState.viewStackOrder;
 
-      if (aIsOpen) return -1;
+      if (aIsOpen) return 1;
 
-      if (bIsOpen) return 1;
+      if (bIsOpen) return -1;
 
-      return b._creationTime - a._creationTime;
+      return a._creationTime - b._creationTime;
     });
   },
 
@@ -60,6 +60,18 @@ export const windows = {
         });
       },
 
+      async updatePosition(
+        db: DatabaseWriter,
+        {
+          position,
+        }: {
+          position: { x: number; y: number };
+        },
+      ) {
+        const window = await this.get(db);
+        return await db.patch(window._id, { x: position.x, y: position.y });
+      },
+
       async activate(db: DatabaseWriter) {
         const { window, process } = await this.getWithProcess(db);
 
@@ -67,18 +79,21 @@ export const windows = {
           .forUser(process.userId)
           .findActiveWithProcess(db);
 
-        // If window is already active, do nothing
-        if (active && active.process._id === process._id) return;
+        if (active) {
+          // If window is already active, do nothing
+          if (active.process._id === process._id) return;
 
-        // If the window isnt open, we cant activate it
-        if (window.viewState.kind !== "open") return;
+          // Deactivate the active window
+          await windows.forWindow(active.window._id).deactivate(db);
+        }
 
+        // Activate
         return await db.patch(window._id, {
           ...window,
           viewState: {
-            ...window.viewState,
             kind: "open",
             isActive: true,
+            viewStackOrder: 0,
           },
         });
       },
@@ -153,24 +168,7 @@ export const windows = {
           }),
         )
           .then((windows) => windows.flat())
-          .then((docs) =>
-            docs.sort((a, b) => {
-              const aState = a.viewState;
-              const bState = b.viewState;
-
-              const aIsOpen = aState.kind === "open";
-              const bIsOpen = bState.kind === "open";
-
-              if (aIsOpen && bIsOpen)
-                return bState.viewStackOrder - aState.viewStackOrder;
-
-              if (aIsOpen) return -1;
-
-              if (bIsOpen) return 1;
-
-              return b._creationTime - a._creationTime;
-            }),
-          );
+          .then(windows.sortByViewStackOrder);
       },
 
       async findActive(db: DatabaseReader) {

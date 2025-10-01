@@ -15,6 +15,18 @@ export const minimize = userMutation({
   handler: (ctx, { windowId }) => windows.forWindow(windowId).minimize(ctx.db),
 });
 
+export const updatePosition = userMutation({
+  args: {
+    windowId: v.id("windows"),
+    position: v.object({
+      x: v.number(),
+      y: v.number(),
+    }),
+  },
+  handler: (ctx, { windowId, position }) =>
+    windows.forWindow(windowId).updatePosition(ctx.db, { position }),
+});
+
 export const focus = userMutation({
   args: {
     windowId: v.id("windows"),

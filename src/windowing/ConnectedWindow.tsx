@@ -15,6 +15,7 @@ export function ConnectedWindow({ window }: { window: Doc<"windows"> }) {
   const focusWindow = useMutation(api.my.windows.focus);
   const closeWindow = useMutation(api.my.windows.close);
   const minimizeWindow = useMutation(api.my.windows.minimize);
+  const updatePosition = useMutation(api.my.windows.updatePosition);
 
   if (!process) return null;
 
@@ -35,8 +36,7 @@ export function ConnectedWindow({ window }: { window: Doc<"windows"> }) {
         if (process.kind === "image_preview")
           return <ImagePreview process={process} window={window} />;
 
-        if (process.kind === "video_player")
-          return null;
+        if (process.kind === "video_player") return null;
 
         exhaustiveCheck(process);
       })}
