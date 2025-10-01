@@ -1,30 +1,25 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import { processes } from "../processes/lib";
+import { processDefinitions, processValidator } from "../processes/schema";
+import {mapObj} from '../../shared/object';
 
 export const list = userQuery({
   args: {},
-  handler: (ctx) =>
-    processes.listForUser(ctx.db, {
-      userId: ctx.userId,
-    }),
+  handler: (ctx) => processes.forUser(ctx.userId).list(ctx.db),
 });
 
 export const listProcessWithWindows = userQuery({
   args: {},
-  handler: (ctx) =>
-    processes.listForUserWithWindows(ctx.db, {
-      userId: ctx.userId,
-    }),
+  handler: (ctx) => processes.forUser(ctx.userId).listWithWindows(ctx.db),
 });
 
 export const activeProcessId = userQuery({
   args: {},
   handler: (ctx) =>
     processes
-      .findActiveForUser(ctx.db, {
-        userId: ctx.userId,
-      })
+      .forUser(ctx.userId)
+      .findActive(ctx.db)
       .then((p) => p?._id ?? null),
 });
 
@@ -33,10 +28,7 @@ export const minimize = userMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) =>
-    processes.minimizeForUser(ctx.db, {
-      userId: ctx.userId,
-      processId,
-    }),
+    processes.forProcess(processId).withUser(ctx.userId).minimize(ctx.db),
 });
 
 export const focus = userMutation({
@@ -44,10 +36,20 @@ export const focus = userMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) =>
-    processes.focusForUser(ctx.db, {
-      userId: ctx.userId,
-      processId,
-    }),
+    processes.forProcess(processId).withUser(ctx.userId).focus(ctx.db),
+});
+
+export const create = userMutation({
+  args: {
+    process: v.union(
+      mapObj(processDefinitions, (_, o) => v.object({ ...o })),
+    ),
+  },
+  handler: (ctx, { process }) => {
+    return processes.forUser(ctx.userId).create(ctx.db, {
+      process,
+    });
+  },
 });
 
 // export const create = userMutation({

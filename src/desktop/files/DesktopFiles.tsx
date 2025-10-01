@@ -56,7 +56,7 @@ export function DesktopFiles() {
     new Map<Id<"files">, { element: HTMLDivElement; file: DesktopFileDoc }>(),
   );
   const hasDraggedRef = useRef(false);
-  // const { openTask, syncFiles } = useTasks();
+  const startProcess = useMutation(api.my.processes.create);
 
   // useEffect(() => {
   //   syncFiles(files);

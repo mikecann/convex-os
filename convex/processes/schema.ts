@@ -1,6 +1,7 @@
 import { defineTable } from "convex/server";
 import { v, Infer } from "convex/values";
 import { Doc } from "../_generated/dataModel";
+import { produceLiteral } from "../../shared/misc";
 
 export const windowViewStateValidator = v.union(
   v.object({
@@ -38,24 +39,33 @@ const processCommon = {
   window: v.optional(windowValidator),
 };
 
-export const processValidator = v.union(
-  v.object({
+const processKinds = produceLiteral(["image_preview", "video_preview"]);
+
+export const processDefinitions = {
+  image_preview: {
     kind: v.literal("image_preview"),
     props: v.object({
       file: v.id("files"),
     }),
-    ...processCommon,
-  }),
-  v.object({
+  },
+  video_preview: {
     kind: v.literal("video_preview"),
     props: v.object({
       file: v.id("files"),
     }),
+  },
+} satisfies Record<keyof typeof processKinds, any>;
+
+export const processValidator = v.union(
+  v.object({
+    ...processDefinitions.image_preview,
     ...processCommon,
+    window: windowValidator,
   }),
   v.object({
-    kind: v.literal("sign_in_sign_up"),
+    ...processDefinitions.video_preview,
     ...processCommon,
+    window: windowValidator,
   }),
 );
 
