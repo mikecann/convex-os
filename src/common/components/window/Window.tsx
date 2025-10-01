@@ -33,7 +33,7 @@ export interface WindowProps {
   onMinimize?: () => void;
   onToggleMaximize?: () => void;
   viewState: WindowViewState;
-  taskbarButtonRect?: DOMRect;
+  getTaskbarButtonRect?: () => DOMRect | null | undefined;
   x: number;
   y: number;
   width: number;
@@ -64,7 +64,7 @@ export function Window({
   onMinimize,
   onToggleMaximize,
   viewState,
-  taskbarButtonRect,
+  getTaskbarButtonRect,
   x,
   y,
   width,
@@ -267,13 +267,14 @@ export function Window({
   useLayoutEffect(() => {
     if (!windowRef.current) return;
     let newTransformOrigin = "center bottom";
+    const taskbarButtonRect = getTaskbarButtonRect?.();
     if (taskbarButtonRect) {
       const originX = taskbarButtonRect.left - x + taskbarButtonRect.width / 2;
       const originY = taskbarButtonRect.top - y + taskbarButtonRect.height / 2;
       newTransformOrigin = `${originX}px ${originY}px`;
     }
     windowRef.current.style.transformOrigin = newTransformOrigin;
-  }, [taskbarButtonRect, x, y]);
+  }, [x, y]);
 
   return (
     <div

@@ -61,7 +61,7 @@ export const windows = {
         });
       },
 
-      async updatePosition(
+      async updateGeometry(
         db: DatabaseWriter,
         {
           position,

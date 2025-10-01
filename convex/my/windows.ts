@@ -23,7 +23,7 @@ export const minimize = userMutation({
   handler: (ctx, { windowId }) => windows.forWindow(windowId).minimize(ctx.db),
 });
 
-export const updatePosition = userMutation({
+export const updateGeometry = userMutation({
   args: {
     windowId: v.id("windows"),
     position: v.object({
@@ -38,7 +38,7 @@ export const updatePosition = userMutation({
     ),
   },
   handler: (ctx, { windowId, position, size }) =>
-    windows.forWindow(windowId).updatePosition(ctx.db, { position, size }),
+    windows.forWindow(windowId).updateGeometry(ctx.db, { position, size }),
 });
 
 export const focus = userMutation({

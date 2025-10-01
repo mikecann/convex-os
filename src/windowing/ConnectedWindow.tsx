@@ -27,24 +27,7 @@ export function ConnectedWindow({
   const closeWindow = useMutation(api.my.windows.close);
   const minimizeWindow = useMutation(api.my.windows.minimize);
   const toggleMaximize = useMutation(api.my.windows.toggleMaximize);
-  const updatePosition = useMutation(api.my.windows.updatePosition);
-
-  const handleGeometryChange = (geometry: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  }) => {
-    updatePosition({
-      windowId: window._id,
-      position: { x: geometry.x, y: geometry.y },
-      size: { width: geometry.width, height: geometry.height },
-    });
-  };
-
-  const handleToggleMaximize = () => {
-    toggleMaximize({ windowId: window._id });
-  };
+  const updateGeometry = useMutation(api.my.windows.updateGeometry);
 
   return (
     <Window
@@ -58,11 +41,21 @@ export function ConnectedWindow({
       onClose={() => closeWindow({ windowId: window._id })}
       onFocus={() => focusWindow({ windowId: window._id })}
       onMinimize={() => minimizeWindow({ windowId: window._id })}
-      onToggleMaximize={handleToggleMaximize}
-      onGeometryChange={handleGeometryChange}
-      taskbarButtonRect={os.taskbarButtonRefs.current
-        .get(window.processId)
-        ?.getBoundingClientRect()}
+      onToggleMaximize={() => {
+        toggleMaximize({ windowId: window._id });
+      }}
+      onGeometryChange={(geometry) =>
+        updateGeometry({
+          windowId: window._id,
+          position: { x: geometry.x, y: geometry.y },
+          size: { width: geometry.width, height: geometry.height },
+        })
+      }
+      getTaskbarButtonRect={() =>
+        os.taskbarButtonRefs.current
+          .get(window.processId)
+          ?.getBoundingClientRect()
+      }
     >
       {children}
     </Window>
