@@ -56,11 +56,22 @@ export const processes = {
       .withIndex("by_user", (q) => q.eq("userId", userId))
       .collect()
       .then((docs) =>
-        docs.sort(
-          (a, b) => {
-         
-          }            
-        ),
+        docs.sort((a, b) => {
+          const aState = a.window?.viewState;
+          const bState = b.window?.viewState;
+
+          const aIsOpen = aState?.kind === "open";
+          const bIsOpen = bState?.kind === "open";
+
+          if (aIsOpen && bIsOpen)
+            return bState.viewStackOrder - aState.viewStackOrder;
+
+          if (aIsOpen) return -1;
+
+          if (bIsOpen) return 1;
+
+          return b._creationTime - a._creationTime;
+        }),
       ),
 
   listForUserWithWindows: async (

@@ -1,78 +1,53 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import { processes } from "../processes/lib";
-import {
-  Process,
-  processValidator,
-  windowViewStateValidator,
-  windowValidator,
-  ProcessWithWindow,
-} from "../processes/schema";
-import { isNotNullOrUndefined } from "../../shared/filter";
 
 export const list = userQuery({
   args: {},
-  handler: async (ctx) => {
-    return processes.listForUser(ctx.db, {
+  handler: (ctx) =>
+    processes.listForUser(ctx.db, {
       userId: ctx.userId,
-    });
-    // return userProcesses.sort((a, b) => {
-    //   const aOrder =
-    //     a.window?.kind === "open" || a.window?.kind === "maximized"
-    //       ? a.window.viewStackOrder
-    //       : -1;
-    //   const bOrder =
-    //     b.window?.kind === "open" || b.window?.kind === "maximized"
-    //       ? b.window.viewStackOrder
-    //       : -1;
-    //   return aOrder - bOrder;
-    // });
-  },
+    }),
 });
 
 export const listProcessWithWindows = userQuery({
   args: {},
-  handler: async (ctx): Promise<ProcessWithWindow[]> => {
-    const procs = await processes.listForUser(ctx.db, {
+  handler: (ctx) =>
+    processes.listForUserWithWindows(ctx.db, {
       userId: ctx.userId,
-    });
-    return procs
-      .filter((p) => {
-        if (!p.window) return null;
-        return p as ProcessWithWindow;
-      })
-      .filter(isNotNullOrUndefined) as ProcessWithWindow[];
-  },
+    }),
 });
 
 export const activeProcessId = userQuery({
   args: {},
-  handler: async (ctx) => {
-    return processes.findActiveForUser(ctx.db, {
-      userId: ctx.userId,
-    });
-  },
+  handler: (ctx) =>
+    processes
+      .findActiveForUser(ctx.db, {
+        userId: ctx.userId,
+      })
+      .then((p) => p?._id ?? null),
 });
 
 export const minimize = userMutation({
   args: {
     processId: v.id("processes"),
   },
-  handler: async (ctx, { processId }) => {
-    return processes.minimizeForUser(ctx.db, {
+  handler: (ctx, { processId }) =>
+    processes.minimizeForUser(ctx.db, {
       userId: ctx.userId,
       processId,
-    });
-  },
+    }),
 });
 
 export const focus = userMutation({
   args: {
     processId: v.id("processes"),
   },
-  handler: async (ctx, { processId }) => {
-    
-  },
+  handler: (ctx, { processId }) =>
+    processes.focusForUser(ctx.db, {
+      userId: ctx.userId,
+      processId,
+    }),
 });
 
 // export const create = userMutation({

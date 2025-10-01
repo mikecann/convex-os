@@ -1,6 +1,9 @@
 import React from "react";
 import { Doc } from "../../../convex/_generated/dataModel";
-import { ProcessKinds } from "../../../convex/processes/schema";
+import {
+  ProcessKinds,
+  ProcessWithWindow,
+} from "../../../convex/processes/schema";
 import { useOS } from "../../os/OperatingSystem";
 import { api, internal } from "../../../convex/_generated/api";
 import { useMutation } from "convex/react";
@@ -11,7 +14,7 @@ const process_ICON_MAP: Record<ProcessKinds, string> = {
   sign_in_sign_up: "/xp/users.png",
 };
 
-export function TaskbarButton({ process }: { process: Doc<"processes"> }) {
+export function TaskbarButton({ process }: { process: ProcessWithWindow }) {
   // const {
   //   activeprocessId,
   //   focusprocess,
@@ -21,6 +24,7 @@ export function TaskbarButton({ process }: { process: Doc<"processes"> }) {
 
   const { taskbarButtonRefs } = useOS();
   const minimize = useMutation(api.my.processes.minimize);
+  const focus = useMutation(api.my.processes.focus);
 
   const isActive =
     process.window?.viewState.kind == "open" &&
@@ -38,7 +42,7 @@ export function TaskbarButton({ process }: { process: Doc<"processes"> }) {
           minimize({ processId: process._id });
           return;
         }
-        focusprocess(process._id);
+        focus({ processId: process._id });
       }}
       style={{
         display: "flex",
@@ -64,7 +68,7 @@ export function TaskbarButton({ process }: { process: Doc<"processes"> }) {
         alt=""
         style={{ width: "16px", height: "16px" }}
       />
-      {process.title}
+      {process.name}
     </button>
   );
 }
