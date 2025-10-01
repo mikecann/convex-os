@@ -22,9 +22,15 @@ export const updatePosition = userMutation({
       x: v.number(),
       y: v.number(),
     }),
+    size: v.optional(
+      v.object({
+        width: v.number(),
+        height: v.number(),
+      }),
+    ),
   },
-  handler: (ctx, { windowId, position }) =>
-    windows.forWindow(windowId).updatePosition(ctx.db, { position }),
+  handler: (ctx, { windowId, position, size }) =>
+    windows.forWindow(windowId).updatePosition(ctx.db, { position, size }),
 });
 
 export const focus = userMutation({

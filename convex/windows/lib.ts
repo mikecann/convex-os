@@ -64,12 +64,24 @@ export const windows = {
         db: DatabaseWriter,
         {
           position,
+          size,
         }: {
           position: { x: number; y: number };
+          size?: { width: number; height: number };
         },
       ) {
         const window = await this.get(db);
-        return await db.patch(window._id, { x: position.x, y: position.y });
+        const updates: {
+          x: number;
+          y: number;
+          width?: number;
+          height?: number;
+        } = { x: position.x, y: position.y };
+        if (size) {
+          updates.width = size.width;
+          updates.height = size.height;
+        }
+        return await db.patch(window._id, updates);
       },
 
       async activate(db: DatabaseWriter) {

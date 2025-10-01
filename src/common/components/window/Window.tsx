@@ -33,6 +33,14 @@ interface WindowProps {
   isMinimized?: boolean;
   taskbarButtonRect?: DOMRect;
   isActive: boolean;
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  onGeometryUpdated?: (
+    position: { x: number; y: number },
+    size: { width: number; height: number },
+  ) => void;
 }
 
 export function Window({
@@ -56,6 +64,11 @@ export function Window({
   isMinimized = false,
   taskbarButtonRect,
   isActive,
+  x,
+  y,
+  width,
+  height,
+  onGeometryUpdated,
 }: WindowProps) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -84,6 +97,12 @@ export function Window({
       | "left"
       | "right";
   } | null>(null);
+  // Store current position/size in refs to avoid re-renders during drag/resize
+  const currentPositionRef = useRef({ x: 0, y: 0 });
+  const currentSizeRef = useRef<{
+    width: number | null;
+    height: number | null;
+  }>({ width: null, height: null });
   const [isMaximized, setIsMaximized] = useState(false);
   const [title, setTitle] = useState(initialTitle);
   const [style, setStyle] = useState<CSSProperties | undefined>(initialStyle);
@@ -109,6 +128,24 @@ export function Window({
   useEffect(() => {
     setTitle(initialTitle);
   }, [initialTitle]);
+
+  // Sync external x/y props to state and refs
+  useEffect(() => {
+    if (x !== undefined && y !== undefined) {
+      const newPosition = { x, y };
+      setPosition(newPosition);
+      currentPositionRef.current = newPosition;
+    }
+  }, [x, y]);
+
+  // Sync external width/height props to state and refs
+  useEffect(() => {
+    if (width !== undefined && height !== undefined) {
+      const newSize = { width, height };
+      setSize(newSize);
+      currentSizeRef.current = newSize;
+    }
+  }, [width, height]);
 
   useEffect(() => {
     if (!desktopRect || !windowRef.current) return;
@@ -149,7 +186,7 @@ export function Window({
       setSize({ width: newWidth, height: newHeight });
       setPosition({ x: newX, y: newY });
     }
-  }, [desktopRect, size]);
+  }, [desktopRect?.width, desktopRect?.height, position.x, position.y]);
 
   useLayoutEffect(() => {
     if (!windowRef.current) return;
@@ -184,16 +221,35 @@ export function Window({
     setIsInitialized(true);
   }, [draggable, isInitialized, desktopRect]);
 
+  // Sync refs when state changes (only update if actually different to avoid infinite loops)
+  useEffect(() => {
+    if (
+      currentPositionRef.current.x !== position.x ||
+      currentPositionRef.current.y !== position.y
+    ) {
+      currentPositionRef.current = position;
+    }
+  }, [position.x, position.y]);
+
+  useEffect(() => {
+    if (
+      currentSizeRef.current.width !== size.width ||
+      currentSizeRef.current.height !== size.height
+    ) {
+      currentSizeRef.current = size;
+    }
+  }, [size.width, size.height]);
+
   useEffect(() => {
     if (!draggable) return;
 
     const handleMouseMove = (event: MouseEvent) => {
-      if (!isDragging) return;
+      if (!isDragging || !windowRef.current) return;
 
       let x = event.clientX - dragOffset.x;
       let y = event.clientY - dragOffset.y;
 
-      if (desktopRect && windowRef.current) {
+      if (desktopRect) {
         const windowWidth = windowRef.current.getBoundingClientRect().width;
         const windowHeight = windowRef.current.getBoundingClientRect().height;
         if (x < 0) x = 0;
@@ -206,16 +262,26 @@ export function Window({
         }
       }
 
-      setPosition({
-        x,
-        y,
-      });
+      // Update ref and DOM directly without triggering re-render
+      currentPositionRef.current = { x, y };
+      windowRef.current.style.left = `${x}px`;
+      windowRef.current.style.top = `${y}px`;
     };
 
     const handleMouseUp = () => {
+      // Only update state once when dragging ends
+      const finalPosition = currentPositionRef.current;
+      const finalSize = currentSizeRef.current;
+      setPosition(finalPosition);
       setIsDragging(false);
-      console.log("handleMouseUp", position);
-      //onPositionChange?.({ x: position.x, y: position.y });
+
+      if (onGeometryUpdated && windowRef.current) {
+        const rect = windowRef.current.getBoundingClientRect();
+        onGeometryUpdated(finalPosition, {
+          width: finalSize.width ?? rect.width,
+          height: finalSize.height ?? rect.height,
+        });
+      }
     };
 
     if (isDragging) {
@@ -280,7 +346,7 @@ export function Window({
 
     const handleResizeMove = (event: MouseEvent) => {
       const origin = resizeOriginRef.current;
-      if (!origin) return;
+      if (!origin || !windowRef.current) return;
 
       const deltaX = event.clientX - origin.startX;
       const deltaY = event.clientY - origin.startY;
@@ -370,13 +436,34 @@ export function Window({
         newTop = origin.startTop + (origin.startHeight - clampedHeight);
       }
 
-      setSize({ width: clampedWidth, height: clampedHeight });
-      setPosition({ x: newLeft, y: newTop });
+      // Update refs and DOM directly without triggering re-render
+      currentSizeRef.current = { width: clampedWidth, height: clampedHeight };
+      currentPositionRef.current = { x: newLeft, y: newTop };
+      windowRef.current.style.width = `${clampedWidth}px`;
+      windowRef.current.style.height = `${clampedHeight}px`;
+      windowRef.current.style.left = `${newLeft}px`;
+      windowRef.current.style.top = `${newTop}px`;
     };
 
     const handleResizeUp = () => {
+      // Only update state once when resizing ends
+      const finalSize = currentSizeRef.current;
+      const finalPosition = currentPositionRef.current;
+      setSize(finalSize);
+      setPosition(finalPosition);
       setIsResizing(false);
       resizeOriginRef.current = null;
+
+      if (
+        onGeometryUpdated &&
+        finalSize.width !== null &&
+        finalSize.height !== null
+      ) {
+        onGeometryUpdated(finalPosition, {
+          width: finalSize.width,
+          height: finalSize.height,
+        });
+      }
     };
 
     document.addEventListener("mousemove", handleResizeMove);

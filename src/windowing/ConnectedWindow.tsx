@@ -23,9 +23,16 @@ export function ConnectedWindow({ window }: { window: Doc<"windows"> }) {
     <Window
       key={window._id}
       title={window.title}
+      x={window.x}
+      y={window.y}
+      width={window.width}
+      height={window.height}
       onClose={() => closeWindow({ windowId: window._id })}
       onFocus={() => focusWindow({ windowId: window._id })}
       onMinimize={() => minimizeWindow({ windowId: window._id })}
+      onGeometryUpdated={(position, size) =>
+        updatePosition({ windowId: window._id, position, size })
+      }
       isActive={window.viewState.kind === "open" && window.viewState.isActive}
       isMinimized={window.viewState.kind === "minimized"}
       taskbarButtonRect={os.taskbarButtonRefs.current
