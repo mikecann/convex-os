@@ -1,18 +1,23 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 
 interface ChatWindowInputBoxProps {
+  message: string;
+  onMessageChange: (message: string) => void;
   onSend: (message: string) => void;
 }
 
-export function ChatWindowInputBox({ onSend }: ChatWindowInputBoxProps) {
-  const [message, setMessage] = useState("");
+export function ChatWindowInputBox({
+  message,
+  onMessageChange,
+  onSend,
+}: ChatWindowInputBoxProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
       onSend(message);
-      setMessage("");
+      onMessageChange("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
       }
@@ -27,7 +32,7 @@ export function ChatWindowInputBox({ onSend }: ChatWindowInputBoxProps) {
   };
 
   const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setMessage(e.target.value);
+    onMessageChange(e.target.value);
     // Auto-resize textarea
     e.target.style.height = "auto";
     e.target.style.height = e.target.scrollHeight + "px";

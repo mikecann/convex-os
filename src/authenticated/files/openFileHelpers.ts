@@ -6,7 +6,11 @@ import {
   isTextFile,
 } from "../../../shared/fileTypes";
 import { api } from "../../../convex/_generated/api";
-import { createProcessStartParams } from "../processes/startProcessHelpers";
+import {
+  startImagePreview,
+  startVideoPlayer,
+  startTextPreview,
+} from "../processes/startProcessHelpers";
 
 type FileWithNameTypeAndPosition = {
   _id: Id<"files">;
@@ -21,7 +25,7 @@ export function getProcessStartingParams(
   file: FileWithNameTypeAndPosition,
 ): AppStartParams | null {
   if (isImageFile(file)) {
-    return createProcessStartParams("image_preview", {
+    return startImagePreview({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,
@@ -30,7 +34,7 @@ export function getProcessStartingParams(
   }
 
   if (isVideoFile(file)) {
-    return createProcessStartParams("video_player", {
+    return startVideoPlayer({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,
@@ -39,7 +43,7 @@ export function getProcessStartingParams(
   }
 
   if (isTextFile(file)) {
-    return createProcessStartParams("text_preview", {
+    return startTextPreview({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,

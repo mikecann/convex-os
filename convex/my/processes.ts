@@ -82,6 +82,7 @@ export const updateProps = userMutation({
     props: processPropsUpdateValidator,
   },
   handler: async (ctx, { processId, props }) => {
+    console.log("updateProps", processId, props);
     await processes
       .forProcess(processId)
       .withUser(ctx.userId)

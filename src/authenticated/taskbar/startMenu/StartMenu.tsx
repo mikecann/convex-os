@@ -9,7 +9,12 @@ import { StartMenuLeftColumn } from "./StartMenuLeftColumn";
 import { StartMenuRightColumn } from "./StartMenuRightColumn";
 import { StartMenuBottomButtons } from "./StartMenuBottomButtons";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
-import { createProcessStartParams } from "../../processes/startProcessHelpers";
+import {
+  startImagePreview,
+  startVideoPlayer,
+  startTextPreview,
+  startCheffyChat,
+} from "../../processes/startProcessHelpers";
 
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
@@ -27,9 +32,20 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
     }
 
     if (item.processKind) {
-      void startProcess({
-        process: createProcessStartParams(item.processKind),
-      }).catch(onError);
+      let processParams;
+      if (item.processKind === "image_preview") {
+        processParams = startImagePreview();
+      } else if (item.processKind === "video_player") {
+        processParams = startVideoPlayer();
+      } else if (item.processKind === "text_preview") {
+        processParams = startTextPreview();
+      } else if (item.processKind === "cheffy_chat") {
+        processParams = startCheffyChat();
+      }
+
+      if (processParams) {
+        void startProcess({ process: processParams }).catch(onError);
+      }
 
       onClose();
       return;

@@ -77,7 +77,7 @@ export const processes = {
             db: DatabaseWriter,
             { props }: { props: Process["props"] },
           ) => {
-            await db.patch(processId, { props });
+            await db.patch(processId, { props: props as any });
           },
         };
 
@@ -118,7 +118,7 @@ export const processes = {
         return await db.insert("processes", {
           userId,
           kind: process.kind,
-          props: process.props,
+          props: process.props as any,
         });
       },
 

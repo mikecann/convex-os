@@ -35,85 +35,101 @@ const processConfigs: Record<ProcessKinds, ProcessConfig> = {
   },
 } as const;
 
-export function getProcessConfig(kind: ProcessKinds): ProcessConfig {
-  return processConfigs[kind];
-}
-
-type ProcessStartParams<K extends ProcessKinds = ProcessKinds> = K extends
-  | "image_preview"
-  | "video_player"
-  | "text_preview"
-  ? {
-      kind: K;
-      props: { fileId?: Id<"files"> };
-      windowCreationParams: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        title: string;
-        icon: string;
-      };
-    }
-  : {
-      kind: K;
-      props: {};
-      windowCreationParams: {
-        x: number;
-        y: number;
-        width: number;
-        height: number;
-        title: string;
-        icon: string;
-      };
-    };
-
-export function createProcessStartParams<K extends ProcessKinds>(
-  kind: K,
-  overrides?: {
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-    title?: string;
-    icon?: string;
-    fileId?: Id<"files">;
-    fileName?: string;
-  },
-): ProcessStartParams<K> {
-  const config = getProcessConfig(kind);
-
-  const title =
-    overrides?.title ??
-    (overrides?.fileName
-      ? `${overrides.fileName} - ${config.title}`
-      : config.title);
-
-  const baseParams = {
-    kind,
-    windowCreationParams: {
-      x: overrides?.x ?? 100,
-      y: overrides?.y ?? 100,
-      width: overrides?.width ?? config.defaultWidth,
-      height: overrides?.height ?? config.defaultHeight,
-      title,
-      icon: overrides?.icon ?? config.icon,
-    },
-  };
-
-  if (
-    kind === "image_preview" ||
-    kind === "video_player" ||
-    kind === "text_preview"
-  ) {
-    return {
-      ...baseParams,
-      props: overrides?.fileId ? { fileId: overrides.fileId } : {},
-    } as ProcessStartParams<K>;
-  }
+export function startImagePreview(options?: {
+  x?: number;
+  y?: number;
+  fileId?: Id<"files">;
+  fileName?: string;
+}) {
+  const config = processConfigs.image_preview;
+  const title = options?.fileName
+    ? `${options.fileName} - ${config.title}`
+    : config.title;
 
   return {
-    ...baseParams,
-    props: {},
-  } as ProcessStartParams<K>;
+    kind: "image_preview" as const,
+    props: options?.fileId ? { fileId: options.fileId } : {},
+    windowCreationParams: {
+      x: options?.x ?? 100,
+      y: options?.y ?? 100,
+      width: config.defaultWidth,
+      height: config.defaultHeight,
+      title,
+      icon: config.icon,
+    },
+  };
+}
+
+export function startVideoPlayer(options?: {
+  x?: number;
+  y?: number;
+  fileId?: Id<"files">;
+  fileName?: string;
+}) {
+  const config = processConfigs.video_player;
+  const title = options?.fileName
+    ? `${options.fileName} - ${config.title}`
+    : config.title;
+
+  return {
+    kind: "video_player" as const,
+    props: options?.fileId ? { fileId: options.fileId } : {},
+    windowCreationParams: {
+      x: options?.x ?? 100,
+      y: options?.y ?? 100,
+      width: config.defaultWidth,
+      height: config.defaultHeight,
+      title,
+      icon: config.icon,
+    },
+  };
+}
+
+export function startTextPreview(options?: {
+  x?: number;
+  y?: number;
+  fileId?: Id<"files">;
+  fileName?: string;
+}) {
+  const config = processConfigs.text_preview;
+  const title = options?.fileName
+    ? `${options.fileName} - ${config.title}`
+    : config.title;
+
+  return {
+    kind: "text_preview" as const,
+    props: options?.fileId ? { fileId: options.fileId } : {},
+    windowCreationParams: {
+      x: options?.x ?? 100,
+      y: options?.y ?? 100,
+      width: config.defaultWidth,
+      height: config.defaultHeight,
+      title,
+      icon: config.icon,
+    },
+  };
+}
+
+export function startCheffyChat(options?: {
+  x?: number;
+  y?: number;
+  input?: {
+    text: string;
+    attachments: Array<Id<"files">>;
+  };
+}) {
+  const config = processConfigs.cheffy_chat;
+
+  return {
+    kind: "cheffy_chat" as const,
+    props: options?.input ? { input: options.input } : {},
+    windowCreationParams: {
+      x: options?.x ?? 100,
+      y: options?.y ?? 100,
+      width: config.defaultWidth,
+      height: config.defaultHeight,
+      title: config.title,
+      icon: config.icon,
+    },
+  };
 }
