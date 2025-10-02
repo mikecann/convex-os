@@ -1,11 +1,10 @@
-import { ConvexError, v } from "convex/values";
+import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
 import { files } from "../files/lib";
-import { clamp } from "../../shared/num";
 
 export const list = userQuery({
   args: {},
-  handler: (ctx) => files.listForUser(ctx.db, { userId: ctx.userId }),
+  handler: (ctx) => files.forUser(ctx.userId).list(ctx.db),
 });
 
 export const get = userQuery({
@@ -13,7 +12,7 @@ export const get = userQuery({
     fileId: v.id("files"),
   },
   handler: (ctx, { fileId }) =>
-    files.getForUser(ctx.db, { userId: ctx.userId, fileId }),
+    files.forUser(ctx.userId).forFile(fileId).get(ctx.db),
 });
 
 export const createAll = userMutation({
@@ -30,38 +29,16 @@ export const createAll = userMutation({
       }),
     ),
   },
-  handler: async (ctx, args) => {
-    return Promise.all(
-      args.files.map((f) => files.create(ctx.db, { userId: ctx.userId, ...f })),
-    );
-  },
+  handler: async (ctx, args) =>
+    files.forUser(ctx.userId).createAll(ctx.db, { files: args.files }),
 });
 
 export const startUpload = userMutation({
   args: {
     fileId: v.id("files"),
   },
-  handler: async (ctx, { fileId }) => {
-    const file = await files.getForUser(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-
-    if (file.uploadState.kind != "created")
-      throw new ConvexError(`File ${fileId} is not in a created state`);
-
-    const uploadUrl = await ctx.storage.generateUploadUrl();
-
-    await ctx.db.patch(fileId, {
-      uploadState: {
-        kind: "uploading",
-        progress: 0,
-        uploadUrl,
-      },
-    });
-
-    return { uploadUrl };
-  },
+  handler: async (ctx, { fileId }) =>
+    files.forUser(ctx.userId).forFile(fileId).startUpload(ctx),
 });
 
 export const updateUploadProgress = userMutation({
@@ -69,22 +46,11 @@ export const updateUploadProgress = userMutation({
     fileId: v.id("files"),
     progress: v.number(),
   },
-  handler: async (ctx, { fileId, progress }) => {
-    const file = await files.getForUser(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-
-    if (file.uploadState.kind != "uploading")
-      throw new ConvexError(`File ${fileId} is not in a uploading state`);
-
-    await ctx.db.patch(fileId, {
-      uploadState: {
-        ...file.uploadState,
-        progress: clamp(progress, 0, 100),
-      },
-    });
-  },
+  handler: async (ctx, { fileId, progress }) =>
+    files
+      .forUser(ctx.userId)
+      .forFile(fileId)
+      .updateUploadProgress(ctx.db, { progress }),
 });
 
 export const completeUpload = userMutation({
@@ -92,29 +58,11 @@ export const completeUpload = userMutation({
     fileId: v.id("files"),
     storageId: v.id("_storage"),
   },
-  handler: async (ctx, { fileId, storageId }) => {
-    const file = await files.getForUser(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-
-    if (file.uploadState.kind != "uploading")
-      throw new ConvexError(`File ${fileId} is not in a uploading state`);
-
-    const url = await ctx.storage.getUrl(storageId);
-    if (!url)
-      throw new ConvexError(
-        `Download URL for storageId '${storageId}' could not be generated`,
-      );
-
-    await ctx.db.patch(fileId, {
-      uploadState: {
-        kind: "uploaded",
-        storageId,
-        url,
-      },
-    });
-  },
+  handler: async (ctx, { fileId, storageId }) =>
+    files
+      .forUser(ctx.userId)
+      .forFile(fileId)
+      .completeUpload(ctx, { storageId }),
 });
 
 export const setUploadError = userMutation({
@@ -122,23 +70,11 @@ export const setUploadError = userMutation({
     fileId: v.id("files"),
     message: v.string(),
   },
-
-  handler: async (ctx, { fileId, message }) => {
-    const file = await files.getForUser(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-
-    if (file.uploadState.kind != "uploading")
-      throw new ConvexError(`File ${fileId} is not in a uploading state`);
-
-    await ctx.db.patch(fileId, {
-      uploadState: {
-        kind: "errored",
-        message,
-      },
-    });
-  },
+  handler: async (ctx, { fileId, message }) =>
+    files
+      .forUser(ctx.userId)
+      .forFile(fileId)
+      .setUploadError(ctx.db, { message }),
 });
 
 export const updatePosition = userMutation({
@@ -149,13 +85,11 @@ export const updatePosition = userMutation({
       y: v.number(),
     }),
   },
-  handler: async (ctx, { fileId, position }) => {
-    await files.ensureUserOwnsFile(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-    await ctx.db.patch(fileId, { position });
-  },
+  handler: async (ctx, { fileId, position }) =>
+    files
+      .forUser(ctx.userId)
+      .forFile(fileId)
+      .updatePosition(ctx.db, { position }),
 });
 
 export const updatePositions = userMutation({
@@ -170,15 +104,8 @@ export const updatePositions = userMutation({
       }),
     ),
   },
-  returns: v.null(),
   handler: async (ctx, { updates }) => {
-    for (const { fileId, position } of updates) {
-      await files.ensureUserOwnsFile(ctx.db, {
-        userId: ctx.userId,
-        fileId,
-      });
-      await ctx.db.patch(fileId, { position });
-    }
+    await files.forUser(ctx.userId).updatePositions(ctx.db, { updates });
     return null;
   },
 });
@@ -188,37 +115,14 @@ export const rename = userMutation({
     fileId: v.id("files"),
     name: v.string(),
   },
-  handler: async (ctx, { fileId, name }) => {
-    const trimmedName = name.trim();
-    if (trimmedName.length === 0)
-      throw new ConvexError(
-        `File name for '${fileId}' could not be updated because the provided name is empty`,
-      );
-
-    await files.ensureUserOwnsFile(ctx.db, {
-      userId: ctx.userId,
-      fileId,
-    });
-
-    await ctx.db.patch(fileId, { name: trimmedName });
-  },
+  handler: async (ctx, { fileId, name }) =>
+    files.forUser(ctx.userId).forFile(fileId).rename(ctx.db, { name }),
 });
 
 export const deleteAll = userMutation({
   args: {
     fileIds: v.array(v.id("files")),
   },
-  handler: async (ctx, { fileIds }) => {
-    for (const fileId of fileIds) {
-      const file = await files.getForUser(ctx.db, {
-        userId: ctx.userId,
-        fileId,
-      });
-
-      if (file.uploadState.kind === "uploaded")
-        await ctx.storage.delete(file.uploadState.storageId);
-
-      await ctx.db.delete(fileId);
-    }
-  },
+  handler: async (ctx, { fileIds }) =>
+    files.forUser(ctx.userId).deleteAll(ctx, { fileIds }),
 });

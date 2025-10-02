@@ -17,19 +17,19 @@ export const processDefinitions = {
   image_preview: {
     kind: v.literal(processKinds.image_preview),
     props: v.object({
-      fileId: v.id("files"),
+      fileId: v.optional(v.id("files")),
     }),
   },
   video_player: {
     kind: v.literal(processKinds.video_player),
     props: v.object({
-      fileId: v.id("files"),
+      fileId: v.optional(v.id("files")),
     }),
   },
   text_preview: {
     kind: v.literal(processKinds.text_preview),
     props: v.object({
-      fileId: v.id("files"),
+      fileId: v.optional(v.id("files")),
     }),
   },
 } satisfies Record<keyof typeof processKinds, any>;

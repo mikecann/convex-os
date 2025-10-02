@@ -18,7 +18,10 @@ export function VideoPlayerWindow({
   process: Process<"video_player">;
   window: Doc<"windows">;
 }) {
-  const file = useQuery(api.my.files.get, { fileId: process.props.fileId });
+  const file = useQuery(
+    api.my.files.get,
+    process.props.fileId ? { fileId: process.props.fileId } : "skip",
+  );
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const onError = useErrorHandler();
 
@@ -48,7 +51,31 @@ export function VideoPlayerWindow({
         }}
       >
         {iife(() => {
-          if (!file) return null;
+          if (!file) {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "100%",
+                  padding: "16px",
+                  textAlign: "center",
+                  backgroundColor: "#1a1a1a",
+                }}
+              >
+                <p
+                  style={{
+                    color: "white",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  Drop a video file here to play it.
+                </p>
+              </div>
+            );
+          }
 
           if (file.uploadState.kind != "uploaded")
             return (

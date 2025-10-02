@@ -65,15 +65,21 @@ export function TextPreviewWindow({
   process: Process<"text_preview">;
   window: Doc<"windows">;
 }) {
-  const file = useQuery(api.my.files.get, { fileId: process.props.fileId });
+  const file = useQuery(
+    api.my.files.get,
+    process.props.fileId ? { fileId: process.props.fileId } : "skip",
+  );
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const onError = useErrorHandler();
   const [textContent, setTextContent] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!file) return;
+    if (!file) {
+      setIsLoading(false);
+      return;
+    }
     if (file.uploadState.kind !== "uploaded") return;
 
     setIsLoading(true);
@@ -124,7 +130,31 @@ export function TextPreviewWindow({
         }}
       >
         {iife(() => {
-          if (!file) return null;
+          if (!file) {
+            return (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  width: "100%",
+                  height: "100%",
+                  padding: "16px",
+                  textAlign: "center",
+                  backgroundColor: "#1a1a1a",
+                }}
+              >
+                <p
+                  style={{
+                    color: "white",
+                    textShadow: "0 1px 2px rgba(0,0,0,0.6)",
+                  }}
+                >
+                  Drop a text file here to preview it.
+                </p>
+              </div>
+            );
+          }
 
           if (file.uploadState.kind !== "uploaded")
             return (

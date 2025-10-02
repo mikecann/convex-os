@@ -3,11 +3,17 @@ import { MenuItem } from "./types";
 export const leftMenuItems: MenuItem[] = [
   { icon: "/xp/ie.png", label: "Internet", subtitle: "Internet Explorer" },
   { icon: "/xp/outlook.png", label: "E-mail", subtitle: "Outlook Express" },
-  { icon: "/xp/cmd.png", label: "Command Prompt" },
-  { icon: "/xp/msn.png", label: "MSN Messenger" },
-  { icon: "/xp/mediaplayer.png", label: "Windows Media Player" },
-  { icon: "/xp/solitaire.png", label: "Solitaire" },
-  { icon: "/xp/paint.png", label: "Paint" },
+  {
+    icon: "/xp/image.png",
+    label: "Image Preview",
+    processKind: "image_preview",
+  },
+  {
+    icon: "/xp/mediaplayer.png",
+    label: "Video Player",
+    processKind: "video_player",
+  },
+  { icon: "/xp/doc.png", label: "Text Preview", processKind: "text_preview" },
   { icon: "/xp/help.png", label: "Tour Windows XP" },
 ];
 

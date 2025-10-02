@@ -1,5 +1,5 @@
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { playSound } from "../../../common/sounds/soundEffects";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
@@ -13,6 +13,7 @@ import { leftMenuItems, rightMenuItems } from "./menuItems";
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
   const user = useQuery(api.my.user.find);
+  const startProcess = useMutation(api.my.processes.start);
   const onError = useErrorHandler();
 
   if (!isOpen) return null;
@@ -23,6 +24,71 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
       onClose();
       return;
     }
+
+    if (item.processKind) {
+      const iconMap = {
+        image_preview: "/xp/image.png",
+        video_player: "/xp/mediaplayer.png",
+        text_preview: "/xp/doc.png",
+      } as const;
+
+      const titleMap = {
+        image_preview: "Image Preview",
+        video_player: "Video Player",
+        text_preview: "Text Preview",
+      } as const;
+
+      if (item.processKind === "image_preview") {
+        void startProcess({
+          process: {
+            kind: "image_preview" as const,
+            props: {},
+            windowCreationParams: {
+              x: 100,
+              y: 100,
+              width: 600,
+              height: 400,
+              title: titleMap.image_preview,
+              icon: iconMap.image_preview,
+            },
+          },
+        }).catch(onError);
+      } else if (item.processKind === "video_player") {
+        void startProcess({
+          process: {
+            kind: "video_player" as const,
+            props: {},
+            windowCreationParams: {
+              x: 100,
+              y: 100,
+              width: 600,
+              height: 400,
+              title: titleMap.video_player,
+              icon: iconMap.video_player,
+            },
+          },
+        }).catch(onError);
+      } else if (item.processKind === "text_preview") {
+        void startProcess({
+          process: {
+            kind: "text_preview" as const,
+            props: {},
+            windowCreationParams: {
+              x: 100,
+              y: 100,
+              width: 600,
+              height: 400,
+              title: titleMap.text_preview,
+              icon: iconMap.text_preview,
+            },
+          },
+        }).catch(onError);
+      }
+
+      onClose();
+      return;
+    }
+
     onError("This feature does nothing right now");
   };
 
