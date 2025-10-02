@@ -67,6 +67,7 @@ const windowCreationParams = {
   width: v.number(),
   height: v.number(),
   title: v.string(),
+  icon: v.optional(v.string()),
 };
 
 export const processStartingValidator = v.union(
@@ -83,7 +84,6 @@ export const processStartingValidator = v.union(
     windowCreationParams: v.object(windowCreationParams),
   }),
 );
-
 
 export const processPropsUpdateValidator = v.union(
   processDefinitions.image_preview.props,

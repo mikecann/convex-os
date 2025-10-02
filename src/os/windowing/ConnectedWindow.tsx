@@ -33,6 +33,7 @@ export function ConnectedWindow({
     <Window
       {...rest}
       title={window.title}
+      icon={window.icon}
       x={window.x}
       y={window.y}
       width={window.width}

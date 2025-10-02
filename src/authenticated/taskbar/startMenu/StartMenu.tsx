@@ -26,24 +26,6 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
     onError("This feature does nothing right now");
   };
 
-  const handleLogOff = () => {
-    playSound("logoff", 0.4);
-    void signOut();
-    onClose();
-  };
-
-  const handleTurnOff = () => {
-    playSound("shutdown", 0.4);
-    setTimeout(() => {
-      window.close();
-    }, 500);
-    onClose();
-  };
-
-  const handleAllProgramsClick = () => {
-    onError("This feature does nothing right now");
-  };
-
   const userName = user?.name || user?.email || "User";
 
   return (
@@ -93,7 +75,9 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           <StartMenuLeftColumn
             items={leftMenuItems}
             onItemClick={handleMenuItemClick}
-            onAllProgramsClick={handleAllProgramsClick}
+            onAllProgramsClick={() => {
+              onError("This feature does nothing right now");
+            }}
           />
           <StartMenuRightColumn
             items={rightMenuItems}
@@ -102,8 +86,18 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         </div>
 
         <StartMenuBottomButtons
-          onLogOff={handleLogOff}
-          onTurnOff={handleTurnOff}
+          onLogOff={() => {
+            playSound("logoff", 0.4);
+            void signOut();
+            onClose();
+          }}
+          onTurnOff={() => {
+            playSound("shutdown", 0.4);
+            setTimeout(() => {
+              window.close();
+            }, 500);
+            onClose();
+          }}
         />
       </div>
     </>

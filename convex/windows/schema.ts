@@ -22,6 +22,7 @@ export const windowValidator = v.object({
   width: v.number(),
   height: v.number(),
   title: v.string(),
+  icon: v.optional(v.string()),
   viewState: windowViewStateValidator,
 });
 

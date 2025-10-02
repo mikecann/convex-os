@@ -29,6 +29,7 @@ export function getProcessStartingParams(
         width: 480,
         height: 320,
         title: file.name,
+        icon: "/xp/image.png",
       },
     };
   }
@@ -43,6 +44,7 @@ export function getProcessStartingParams(
         width: 480,
         height: 320,
         title: file.name,
+        icon: "/xp/mediaplayer.png",
       },
     };
   }
@@ -57,6 +59,7 @@ export function getProcessStartingParams(
         width: 600,
         height: 400,
         title: file.name,
+        icon: "/xp/doc.png",
       },
     };
   }

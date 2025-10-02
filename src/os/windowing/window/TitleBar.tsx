@@ -3,6 +3,7 @@ import { WindowControls } from "./WindowControls";
 
 interface TitleBarProps {
   title: string;
+  icon?: string;
   draggable: boolean;
   handleMouseDown: (event: React.MouseEvent) => void;
   titleBarStyle?: React.CSSProperties;
@@ -17,6 +18,7 @@ interface TitleBarProps {
 
 export function TitleBar({
   title,
+  icon,
   draggable,
   handleMouseDown,
   titleBarStyle,
@@ -39,8 +41,18 @@ export function TitleBar({
       onMouseDown={handleMouseDown}
       onDoubleClick={onToggleMaximize}
     >
-      <div className="title-bar-text" style={{ flex: 1 }}>
-        {title}
+      <div
+        className="title-bar-text"
+        style={{ flex: 1, display: "flex", alignItems: "center", gap: "4px" }}
+      >
+        {icon && (
+          <img
+            src={icon}
+            alt=""
+            style={{ width: "16px", height: "16px", flexShrink: 0 }}
+          />
+        )}
+        <span>{title}</span>
       </div>
       <WindowControls
         showCloseButton={showCloseButton}

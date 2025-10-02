@@ -17,6 +17,7 @@ export type ResizeCorner =
 
 export interface WindowProps {
   title: string;
+  icon?: string;
   children: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
@@ -48,6 +49,7 @@ export interface WindowProps {
 
 export function Window({
   title,
+  icon,
   children,
   className = "",
   style,
@@ -327,6 +329,7 @@ export function Window({
     >
       <TitleBar
         title={title}
+        icon={icon}
         draggable={draggable}
         handleMouseDown={handleMouseDown}
         titleBarStyle={titleBarStyle}
