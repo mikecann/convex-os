@@ -1,12 +1,20 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ErrorsContext } from "./ErrorsProvider";
 import { LocalWindow } from "../../os/windowing/LocalWindow";
 import { Button } from "../components/Button";
 import Vertical from "../components/Vertical";
 import Horizontal from "../components/Horizontal";
+import { playSound } from "../sounds/soundEffects";
 
 export function ErrorsRenderer() {
   const context = useContext(ErrorsContext);
+
+  useEffect(() => {
+    if (context?.error) {
+      playSound("criticalStop", 0.4);
+    }
+  }, [context?.error]);
+
   if (!context?.error) return null;
 
   return (
@@ -14,10 +22,8 @@ export function ErrorsRenderer() {
       title="Error"
       showCloseButton={true}
       viewState={{ kind: "open", viewStackOrder: 99999, isActive: true }}
-      x={0}
-      y={0}
       width={350}
-      height={200}
+      height={160}
       onClose={context.dismissError}
     >
       <Vertical gap={16} style={{ padding: "16px" }}>

@@ -1,9 +1,10 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Horizontal from "../components/Horizontal";
 import Vertical from "../components/Vertical";
 import { Button } from "../components/Button";
 import { LocalWindow } from "../../os/windowing/LocalWindow";
 import { useKeydown } from "../hooks/useKeydown";
+import { playSound } from "../sounds/soundEffects";
 
 type ConfirmationDialogProps = {
   isOpen: boolean;
@@ -26,6 +27,12 @@ export function ConfirmationDialog({
   onConfirm,
   onCancel,
 }: ConfirmationDialogProps) {
+  useEffect(() => {
+    if (isOpen) {
+      playSound("balloon", 0.3);
+    }
+  }, [isOpen]);
+
   useKeydown({
     enabled: isOpen,
     keys: ["Enter", "Escape"],
@@ -50,8 +57,6 @@ export function ConfirmationDialog({
       onClose={onCancel}
       style={{ minWidth: "280px" }}
       viewState={{ kind: "open", viewStackOrder: 999, isActive: true }}
-      x={0}
-      y={0}
       width={320}
       height={200}
     >

@@ -2,6 +2,7 @@ import React from "react";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { playSound } from "../../common/sounds/soundEffects";
 
 interface StartMenuProps {
   isOpen: boolean;
@@ -354,6 +355,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               color: "white",
             }}
             onClick={() => {
+              playSound("logoff", 0.4);
               void signOut();
               onClose();
             }}
@@ -390,7 +392,10 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
               color: "white",
             }}
             onClick={() => {
-              window.close();
+              playSound("shutdown", 0.4);
+              setTimeout(() => {
+                window.close();
+              }, 500);
               onClose();
             }}
             onMouseDown={(e) => {

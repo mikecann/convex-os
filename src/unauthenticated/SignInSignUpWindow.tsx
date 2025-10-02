@@ -7,10 +7,11 @@ import { TextBox } from "../common/components/TextBox";
 import Box from "../common/components/Box";
 import { Button } from "../common/components/Button";
 import { LocalWindow } from "../os/windowing/LocalWindow";
+import { playSound } from "../common/sounds/soundEffects";
 
 const windowTitleByFlow: Record<"signIn" | "signUp", string> = {
-  signIn: "Sign in to Convex Desktop",
-  signUp: "Create a Convex Desktop account",
+  signIn: "Sign in to Convex OS",
+  signUp: "Create a Convex OS account",
 };
 
 export function SignInSignUpWindow() {
@@ -30,8 +31,6 @@ export function SignInSignUpWindow() {
       bodyStyle={{ margin: "0px 3px 0px 3px" }}
       resizable={false}
       viewState={{ kind: "open", viewStackOrder: 0, isActive: true }}
-      x={0}
-      y={0}
       width={400}
       height={300}
     >
@@ -78,6 +77,9 @@ export function SignInSignUpWindow() {
             formData.append("flow", flow);
             setIsSubmitting(true);
             void signIn("password", formData)
+              .then(() => {
+                playSound("startup", 0.3);
+              })
               .catch(onError)
               .finally(() => setIsSubmitting(false));
           }}

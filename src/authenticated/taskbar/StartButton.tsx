@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { playSound } from "../../common/sounds/soundEffects";
 
 interface StartButtonProps {
   onClick?: () => void;
@@ -10,7 +11,10 @@ export function StartButton({ onClick }: StartButtonProps) {
   return (
     <button
       className="start-button"
-      onClick={onClick}
+      onClick={() => {
+        playSound("start", 0.4);
+        onClick?.();
+      }}
       onMouseDown={() => setIsPressed(true)}
       onMouseUp={() => setIsPressed(false)}
       onMouseLeave={() => setIsPressed(false)}

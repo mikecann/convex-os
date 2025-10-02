@@ -3,6 +3,7 @@ import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
+import { playSound } from "../../common/sounds/soundEffects";
 
 export type DesktopFileUpload = {
   file: File;
@@ -117,6 +118,9 @@ export function useDesktopFileUploader() {
           total,
         }));
       }
+
+      // Play success sound when all uploads complete
+      playSound("balloon", 0.3);
     } catch (error) {
       handleError(error);
     } finally {
