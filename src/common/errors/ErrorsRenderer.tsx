@@ -20,6 +20,7 @@ export function ErrorsRenderer() {
   return (
     <LocalWindow
       title="Error"
+      icon="/xp/dialog/error.png"
       showCloseButton={true}
       viewState={{ kind: "open", viewStackOrder: 99999, isActive: true }}
       width={350}

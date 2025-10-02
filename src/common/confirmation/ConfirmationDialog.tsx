@@ -53,6 +53,7 @@ export function ConfirmationDialog({
   return (
     <LocalWindow
       title={title}
+      icon="/xp/dialog/help.png"
       showCloseButton
       onClose={onCancel}
       style={{ minWidth: "280px" }}

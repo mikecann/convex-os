@@ -25,6 +25,7 @@ export function SignInSignUpWindow() {
   return (
     <LocalWindow
       title={windowTitleByFlow[flow]}
+      icon="/xp/users.png"
       showCloseButton={false}
       showMaximizeButton={false}
       showMinimiseButton={false}
