@@ -10,4 +10,3 @@ export interface StartMenuProps {
   isOpen: boolean;
   onClose: () => void;
 }
-

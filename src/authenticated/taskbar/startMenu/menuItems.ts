@@ -24,4 +24,3 @@ export const rightMenuItems: MenuItem[] = [
   { icon: "/xp/search.png", label: "Search" },
   { icon: "/xp/run.png", label: "Run..." },
 ];
-
