@@ -67,7 +67,7 @@ export function VideoPlayerWindow({
 
           await updateWindowTitle({
             windowId: window._id,
-            title: fileName,
+            title: `${fileName} - Video Player`,
           }).catch(onError);
         }}
       >

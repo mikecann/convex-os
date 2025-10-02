@@ -28,7 +28,7 @@ export function getProcessStartingParams(
         y: file.position.y,
         width: 480,
         height: 320,
-        title: file.name,
+        title: `${file.name} - Image Preview`,
         icon: "/xp/image.png",
       },
     };
@@ -43,7 +43,7 @@ export function getProcessStartingParams(
         y: file.position.y,
         width: 480,
         height: 320,
-        title: file.name,
+        title: `${file.name} - Video Player`,
         icon: "/xp/mediaplayer.png",
       },
     };
@@ -58,7 +58,7 @@ export function getProcessStartingParams(
         y: file.position.y,
         width: 600,
         height: 400,
-        title: file.name,
+        title: `${file.name} - Text Preview`,
         icon: "/xp/doc.png",
       },
     };

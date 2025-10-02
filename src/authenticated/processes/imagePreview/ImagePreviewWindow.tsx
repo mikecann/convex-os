@@ -67,7 +67,7 @@ export function ImagePreviewWindow({
 
           await updateWindowTitle({
             windowId: window._id,
-            title: fileName,
+            title: `${fileName} - Image Preview`,
           }).catch(onError);
         }}
       >

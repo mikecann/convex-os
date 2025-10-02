@@ -26,64 +26,37 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
     }
 
     if (item.processKind) {
-      const iconMap = {
-        image_preview: "/xp/image.png",
-        video_player: "/xp/mediaplayer.png",
-        text_preview: "/xp/doc.png",
+      const processConfig = {
+        image_preview: {
+          title: "Image Preview",
+          icon: "/xp/image.png",
+        },
+        video_player: {
+          title: "Video Player",
+          icon: "/xp/mediaplayer.png",
+        },
+        text_preview: {
+          title: "Text Preview",
+          icon: "/xp/doc.png",
+        },
       } as const;
 
-      const titleMap = {
-        image_preview: "Image Preview",
-        video_player: "Video Player",
-        text_preview: "Text Preview",
-      } as const;
+      const config = processConfig[item.processKind];
 
-      if (item.processKind === "image_preview") {
-        void startProcess({
-          process: {
-            kind: "image_preview" as const,
-            props: {},
-            windowCreationParams: {
-              x: 100,
-              y: 100,
-              width: 600,
-              height: 400,
-              title: titleMap.image_preview,
-              icon: iconMap.image_preview,
-            },
+      void startProcess({
+        process: {
+          kind: item.processKind,
+          props: {},
+          windowCreationParams: {
+            x: 100,
+            y: 100,
+            width: 600,
+            height: 400,
+            title: config.title,
+            icon: config.icon,
           },
-        }).catch(onError);
-      } else if (item.processKind === "video_player") {
-        void startProcess({
-          process: {
-            kind: "video_player" as const,
-            props: {},
-            windowCreationParams: {
-              x: 100,
-              y: 100,
-              width: 600,
-              height: 400,
-              title: titleMap.video_player,
-              icon: iconMap.video_player,
-            },
-          },
-        }).catch(onError);
-      } else if (item.processKind === "text_preview") {
-        void startProcess({
-          process: {
-            kind: "text_preview" as const,
-            props: {},
-            windowCreationParams: {
-              x: 100,
-              y: 100,
-              width: 600,
-              height: 400,
-              title: titleMap.text_preview,
-              icon: iconMap.text_preview,
-            },
-          },
-        }).catch(onError);
-      }
+        },
+      }).catch(onError);
 
       onClose();
       return;

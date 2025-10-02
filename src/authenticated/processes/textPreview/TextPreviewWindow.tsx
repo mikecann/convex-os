@@ -146,7 +146,7 @@ export function TextPreviewWindow({
 
           await updateWindowTitle({
             windowId: window._id,
-            title: fileName,
+            title: `${fileName} - Text Preview`,
           }).catch(onError);
         }}
       >
