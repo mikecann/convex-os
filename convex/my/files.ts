@@ -12,7 +12,8 @@ export const get = userQuery({
   args: {
     fileId: v.id("files"),
   },
-  handler: (ctx, { fileId }) => files.getForUser(ctx.db, { userId: ctx.userId, fileId }),
+  handler: (ctx, { fileId }) =>
+    files.getForUser(ctx.db, { userId: ctx.userId, fileId }),
 });
 
 export const createAll = userMutation({
@@ -154,6 +155,31 @@ export const updatePosition = userMutation({
       fileId,
     });
     await ctx.db.patch(fileId, { position });
+  },
+});
+
+export const updatePositions = userMutation({
+  args: {
+    updates: v.array(
+      v.object({
+        fileId: v.id("files"),
+        position: v.object({
+          x: v.number(),
+          y: v.number(),
+        }),
+      }),
+    ),
+  },
+  returns: v.null(),
+  handler: async (ctx, { updates }) => {
+    for (const { fileId, position } of updates) {
+      await files.ensureUserOwnsFile(ctx.db, {
+        userId: ctx.userId,
+        fileId,
+      });
+      await ctx.db.patch(fileId, { position });
+    }
+    return null;
   },
 });
 

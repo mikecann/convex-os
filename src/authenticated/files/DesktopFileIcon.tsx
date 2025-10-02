@@ -8,7 +8,7 @@ import {
 } from "react";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { Doc } from "../../../convex/_generated/dataModel";
+import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "./DesktopFileImage";
 import { getProcessStartingParams } from "./openFileHelpers";
@@ -18,31 +18,38 @@ export type DesktopFileDoc = Doc<"files">;
 
 type DesktopFileIconProps = {
   file: DesktopFileDoc;
-
+  selectedFiles: DesktopFileDoc[];
   containerRef: RefObject<HTMLDivElement | null>;
   registerNode: (element: HTMLDivElement | null) => void;
   isSelected: boolean;
   onMouseDown: (event: ReactMouseEvent<HTMLDivElement>) => void;
+  onClickWithoutDrag?: () => void;
 };
 
 export function DesktopFileIcon({
   file,
-
+  selectedFiles,
   containerRef,
   registerNode,
   isSelected,
   onMouseDown,
+  onClickWithoutDrag,
 }: DesktopFileIconProps) {
   const [isDragging, setIsDragging] = useState(false);
   const updatePosition = useMutation(api.my.files.updatePosition);
+  const updatePositions = useMutation(api.my.files.updatePositions);
   const renameFile = useMutation(api.my.files.rename);
   const onError = useErrorHandler();
   const dragOffsetRef = useRef({ x: 0, y: 0 });
+  const selectedFilesOffsetsRef = useRef<
+    Array<{ fileId: Id<"files">; offsetX: number; offsetY: number }>
+  >([]);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const [isRenaming, setIsRenaming] = useState(false);
   const [nameDraft, setNameDraft] = useState(file.name);
   const renamedDuringSessionRef = useRef(false);
   const startApp = useMutation(api.my.processes.start);
+  const dragStartedRef = useRef(false);
 
   useEffect(() => {
     if (!isRenaming) return;
@@ -85,13 +92,23 @@ export function DesktopFileIcon({
         if (event.button !== 0) return;
         event.currentTarget.focus();
         if (isRenaming) return;
+        dragStartedRef.current = false;
         onMouseDown(event);
+      }}
+      onMouseUp={(event) => {
+        if (event.button !== 0) return;
+        if (isRenaming) return;
+        // If this was a click (not a drag) on a selected file, select only this file
+        if (isSelected && !dragStartedRef.current && onClickWithoutDrag) {
+          onClickWithoutDrag();
+        }
       }}
       onDragStart={(event) => {
         if (isRenaming) {
           event.preventDefault();
           return;
         }
+        dragStartedRef.current = true;
         setIsDragging(true);
         const rect = containerRef.current?.getBoundingClientRect();
         const containerLeft = rect?.left ?? 0;
@@ -100,6 +117,19 @@ export function DesktopFileIcon({
           x: event.clientX - (containerLeft + file.position.x),
           y: event.clientY - (containerTop + file.position.y),
         };
+
+        // If this file is selected and there are multiple selected files,
+        // calculate offsets for all selected files relative to this one
+        if (isSelected && selectedFiles.length > 1) {
+          selectedFilesOffsetsRef.current = selectedFiles.map((f) => ({
+            fileId: f._id,
+            offsetX: f.position.x - file.position.x,
+            offsetY: f.position.y - file.position.y,
+          }));
+        } else {
+          selectedFilesOffsetsRef.current = [];
+        }
+
         event.dataTransfer.effectAllowed = "copyMove";
         event.dataTransfer.setData("application/x-desktop-file-id", file._id);
       }}
@@ -121,12 +151,31 @@ export function DesktopFileIcon({
         const snappedPosition = snapToGrid({ x: newX, y: newY });
 
         try {
-          await updatePosition({
-            fileId: file._id,
-            position: snappedPosition,
-          });
+          // If we're dragging multiple files, update all of them
+          if (selectedFilesOffsetsRef.current.length > 0) {
+            const updates: Array<{
+              fileId: Id<"files">;
+              position: { x: number; y: number };
+            }> = selectedFilesOffsetsRef.current.map((offset) => ({
+              fileId: offset.fileId,
+              position: snapToGrid({
+                x: snappedPosition.x + offset.offsetX,
+                y: snappedPosition.y + offset.offsetY,
+              }),
+            }));
+
+            await updatePositions({ updates });
+          } else {
+            // Single file drag
+            await updatePosition({
+              fileId: file._id,
+              position: snappedPosition,
+            });
+          }
         } catch (error) {
           onError(error);
+        } finally {
+          selectedFilesOffsetsRef.current = [];
         }
       }}
       onDoubleClick={() => {

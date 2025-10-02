@@ -210,31 +210,51 @@ export function DesktopFiles() {
           backgroundRepeat: "no-repeat",
         }}
       >
-        {files.map((file) => (
-          <DesktopFileIcon
-            key={file._id}
-            file={file}
-            containerRef={containerRef}
-            isSelected={selectedIds.includes(file._id)}
-            registerNode={(element) => {
-              if (!element) {
-                iconNodesRef.current.delete(file._id);
-                return;
-              }
-              iconNodesRef.current.set(file._id, { element, file });
-            }}
-            onMouseDown={(event) => {
-              if (!event.shiftKey) {
+        {files.map((file) => {
+          const selectedFiles = files.filter((f) =>
+            selectedIds.includes(f._id),
+          );
+          const isSelected = selectedIds.includes(file._id);
+          return (
+            <DesktopFileIcon
+              key={file._id}
+              file={file}
+              selectedFiles={selectedFiles}
+              containerRef={containerRef}
+              isSelected={isSelected}
+              registerNode={(element) => {
+                if (!element) {
+                  iconNodesRef.current.delete(file._id);
+                  return;
+                }
+                iconNodesRef.current.set(file._id, { element, file });
+              }}
+              onMouseDown={(event) => {
+                // Shift+click to add/toggle selection
+                if (event.shiftKey) {
+                  setSelectedIds((current) => {
+                    if (current.includes(file._id)) return current;
+                    return [...current, file._id];
+                  });
+                  return;
+                }
+
+                // If clicking on an already-selected file, don't change selection
+                // (allows dragging multiple files)
+                if (isSelected) {
+                  return;
+                }
+
+                // Otherwise, select only this file
                 setSelectedIds([file._id]);
-                return;
-              }
-              setSelectedIds((current) => {
-                if (current.includes(file._id)) return current;
-                return [...current, file._id];
-              });
-            }}
-          />
-        ))}
+              }}
+              onClickWithoutDrag={() => {
+                // When clicking on a selected file without dragging, select only that file
+                setSelectedIds([file._id]);
+              }}
+            />
+          );
+        })}
         {isDragOver ? (
           <div
             style={{
