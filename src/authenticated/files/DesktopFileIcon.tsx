@@ -12,6 +12,7 @@ import { Doc } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "./DesktopFileImage";
 import { getProcessStartingParams } from "./openFileHelpers";
+import { snapToGrid } from "./gridSnapping";
 
 export type DesktopFileDoc = Doc<"files">;
 
@@ -116,10 +117,13 @@ export function DesktopFileIcon({
 
         if (Number.isNaN(newX) || Number.isNaN(newY)) return;
 
+        // Snap to grid before saving
+        const snappedPosition = snapToGrid({ x: newX, y: newY });
+
         try {
           await updatePosition({
             fileId: file._id,
-            position: { x: newX, y: newY },
+            position: snappedPosition,
           });
         } catch (error) {
           onError(error);

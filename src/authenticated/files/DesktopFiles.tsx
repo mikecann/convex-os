@@ -10,6 +10,7 @@ import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
 import { getProcessStartingParams } from "./openFileHelpers";
+import { snapToGrid } from "./gridSnapping";
 
 export function DesktopFiles() {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -135,13 +136,16 @@ export function DesktopFiles() {
           const dropX = event.clientX - (deskRect?.left ?? 0);
           const dropY = event.clientY - (deskRect?.top ?? 0);
 
+          // Snap the drop position to grid
+          const basePosition = snapToGrid({ x: dropX, y: dropY });
+
           const uploads: Array<DesktopFileUpload> = Array.from(
             event.dataTransfer.files,
           ).map((file, index) => ({
             file,
             position: {
-              x: dropX + index * 80,
-              y: dropY,
+              x: basePosition.x + index * 100,
+              y: basePosition.y,
             },
           }));
 
