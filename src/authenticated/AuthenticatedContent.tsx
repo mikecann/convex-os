@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DesktopFiles } from "./files/DesktopFiles";
+import { DesktopFiles } from "./files/desktopFiles/DesktopFiles";
 import { ProcessSystem } from "./processes/ProcessSystem";
 import { StartMenu } from "./taskbar/startMenu/StartMenu";
 import { Taskbar } from "./taskbar/Taskbar";

@@ -7,7 +7,7 @@ import {
   useRef,
   useState,
 } from "react";
-import type { DesktopFileDoc } from "../../authenticated/files/DesktopFileIcon";
+import type { DesktopFileDoc } from "../../authenticated/files/desktopFileIcon/DesktopFileIcon";
 
 type TaskBase = {
   id: string;

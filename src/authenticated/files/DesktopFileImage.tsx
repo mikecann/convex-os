@@ -1,5 +1,5 @@
 import { CSSProperties, useMemo } from "react";
-import type { DesktopFileDoc } from "./DesktopFileIcon";
+import type { DesktopFileDoc } from "./desktopFileIcon/DesktopFileIcon";
 import {
   EXTENSION_ICON_MAP,
   MIME_ICON_MAP,

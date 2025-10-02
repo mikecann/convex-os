@@ -1,5 +1,6 @@
 // Grid configuration for desktop icon positioning
-export const GRID_SIZE = 100; // pixels
+export const GRID_SIZE_X = 100; // pixels - horizontal grid spacing
+export const GRID_SIZE_Y = 120; // pixels - vertical grid spacing (slightly larger than icon height)
 export const ICON_WIDTH = 96; // pixels
 export const ICON_HEIGHT = 112; // pixels
 
@@ -11,8 +12,8 @@ export function snapToGrid(position: { x: number; y: number }): {
   y: number;
 } {
   return {
-    x: Math.round(position.x / GRID_SIZE) * GRID_SIZE,
-    y: Math.round(position.y / GRID_SIZE) * GRID_SIZE,
+    x: Math.round(position.x / GRID_SIZE_X) * GRID_SIZE_X,
+    y: Math.round(position.y / GRID_SIZE_Y) * GRID_SIZE_Y,
   };
 }
 
@@ -79,12 +80,12 @@ export function findNearestAvailablePosition(
   }
 
   // Calculate grid dimensions
-  const maxCols = Math.floor(containerWidth / GRID_SIZE);
-  const maxRows = Math.floor(containerHeight / GRID_SIZE);
+  const maxCols = Math.floor(containerWidth / GRID_SIZE_X);
+  const maxRows = Math.floor(containerHeight / GRID_SIZE_Y);
 
   // Try positions in a spiral pattern starting from the desired position
-  const desiredGridX = Math.round(snappedDesired.x / GRID_SIZE);
-  const desiredGridY = Math.round(snappedDesired.y / GRID_SIZE);
+  const desiredGridX = Math.round(snappedDesired.x / GRID_SIZE_X);
+  const desiredGridY = Math.round(snappedDesired.y / GRID_SIZE_Y);
 
   // Search in expanding squares around the desired position
   for (let radius = 1; radius < Math.max(maxCols, maxRows); radius++) {
@@ -101,8 +102,8 @@ export function findNearestAvailablePosition(
           continue;
 
         const candidatePos = {
-          x: gridX * GRID_SIZE,
-          y: gridY * GRID_SIZE,
+          x: gridX * GRID_SIZE_X,
+          y: gridY * GRID_SIZE_Y,
         };
 
         // Check if this position overlaps with any occupied position
