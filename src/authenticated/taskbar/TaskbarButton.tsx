@@ -30,6 +30,7 @@ export function TaskbarButton({
     x: number;
     y: number;
   } | null>(null);
+  const [isHovered, setIsHovered] = useState(false);
 
   return (
     <>
@@ -55,6 +56,8 @@ export function TaskbarButton({
           e.preventDefault();
           setContextMenu({ x: e.clientX, y: e.clientY });
         }}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
         style={{
           display: "flex",
           alignItems: "center",
@@ -63,8 +66,12 @@ export function TaskbarButton({
           border: "1px solid rgba(0,0,0,0.4)",
           borderRadius: "4px",
           background: isActive
-            ? "linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%)"
-            : "linear-gradient(0deg, #1943b8 0%, #3370d3 100%)",
+            ? isHovered
+              ? "linear-gradient(0deg, #1a6bd6 0%, #20a8f9 100%)"
+              : "linear-gradient(0deg, #0a5bc6 0%, #1198e9 100%)"
+            : isHovered
+              ? "linear-gradient(0deg, #2953c8 0%, #4380e3 100%)"
+              : "linear-gradient(0deg, #1943b8 0%, #3370d3 100%)",
           color: "white",
           boxShadow: isActive
             ? "inset 1px 1px 1px rgba(255,255,255,0.4)"
@@ -72,6 +79,7 @@ export function TaskbarButton({
           cursor: "pointer",
           minWidth: "120px",
           outline: "none",
+          transition: "background 0.15s ease",
         }}
       >
         <img
