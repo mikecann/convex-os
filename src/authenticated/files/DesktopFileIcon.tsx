@@ -12,13 +12,19 @@ import { Doc, Id } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "./DesktopFileImage";
 import { getProcessStartingParams } from "./openFileHelpers";
-import { snapToGrid } from "./gridSnapping";
+import {
+  snapToGrid,
+  findNearestAvailablePosition,
+  ICON_WIDTH,
+  ICON_HEIGHT,
+} from "./gridSnapping";
 
 export type DesktopFileDoc = Doc<"files">;
 
 type DesktopFileIconProps = {
   file: DesktopFileDoc;
   selectedFiles: DesktopFileDoc[];
+  allFiles: DesktopFileDoc[];
   containerRef: RefObject<HTMLDivElement | null>;
   registerNode: (element: HTMLDivElement | null) => void;
   isSelected: boolean;
@@ -29,6 +35,7 @@ type DesktopFileIconProps = {
 export function DesktopFileIcon({
   file,
   selectedFiles,
+  allFiles,
   containerRef,
   registerNode,
   isSelected,
@@ -140,36 +147,89 @@ export function DesktopFileIcon({
         if (event.dataTransfer.dropEffect === "copy") return;
 
         const rect = containerRef.current?.getBoundingClientRect();
-        const containerLeft = rect?.left ?? 0;
-        const containerTop = rect?.top ?? 0;
+        if (!rect) return;
+
+        const containerLeft = rect.left;
+        const containerTop = rect.top;
+        const containerWidth = rect.width;
+        const containerHeight = rect.height;
+
         const newX = event.clientX - containerLeft - dragOffsetRef.current.x;
         const newY = event.clientY - containerTop - dragOffsetRef.current.y;
 
         if (Number.isNaN(newX) || Number.isNaN(newY)) return;
 
-        // Snap to grid before saving
-        const snappedPosition = snapToGrid({ x: newX, y: newY });
+        // Clamp position to keep icon within bounds
+        const clampedX = Math.max(
+          0,
+          Math.min(newX, containerWidth - ICON_WIDTH),
+        );
+        const clampedY = Math.max(
+          0,
+          Math.min(newY, containerHeight - ICON_HEIGHT),
+        );
+
+        // Prepare occupied positions for collision detection
+        const occupiedPositions = allFiles.map((f) => ({
+          id: f._id,
+          position: f.position,
+        }));
 
         try {
           // If we're dragging multiple files, update all of them
           if (selectedFilesOffsetsRef.current.length > 0) {
+            // Get IDs of all files being moved (to exclude from collision check)
+            const movingFileIds = selectedFilesOffsetsRef.current.map(
+              (offset) => offset.fileId,
+            );
+
+            // Find available position for the primary dragged file
+            const primaryPosition = findNearestAvailablePosition(
+              { x: clampedX, y: clampedY },
+              occupiedPositions,
+              containerWidth,
+              containerHeight,
+              movingFileIds,
+            );
+
+            // Calculate positions for all selected files maintaining their relative offsets
             const updates: Array<{
               fileId: Id<"files">;
               position: { x: number; y: number };
-            }> = selectedFilesOffsetsRef.current.map((offset) => ({
-              fileId: offset.fileId,
-              position: snapToGrid({
-                x: snappedPosition.x + offset.offsetX,
-                y: snappedPosition.y + offset.offsetY,
-              }),
-            }));
+            }> = selectedFilesOffsetsRef.current.map((offset) => {
+              const fileX = primaryPosition.x + offset.offsetX;
+              const fileY = primaryPosition.y + offset.offsetY;
+
+              // Clamp each file's position
+              const clampedFileX = Math.max(
+                0,
+                Math.min(fileX, containerWidth - ICON_WIDTH),
+              );
+              const clampedFileY = Math.max(
+                0,
+                Math.min(fileY, containerHeight - ICON_HEIGHT),
+              );
+
+              return {
+                fileId: offset.fileId,
+                position: snapToGrid({ x: clampedFileX, y: clampedFileY }),
+              };
+            });
 
             await updatePositions({ updates });
           } else {
-            // Single file drag
+            // Single file drag - find nearest available position
+            const availablePosition = findNearestAvailablePosition(
+              { x: clampedX, y: clampedY },
+              occupiedPositions,
+              containerWidth,
+              containerHeight,
+              [file._id], // Exclude the file being moved
+            );
+
             await updatePosition({
               fileId: file._id,
-              position: snappedPosition,
+              position: availablePosition,
             });
           }
         } catch (error) {

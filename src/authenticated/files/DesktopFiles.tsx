@@ -10,7 +10,12 @@ import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { Id } from "../../../convex/_generated/dataModel";
 import { ConfirmationDialog } from "../../common/confirmation/ConfirmationDialog";
 import { getProcessStartingParams } from "./openFileHelpers";
-import { snapToGrid } from "./gridSnapping";
+import {
+  snapToGrid,
+  findNearestAvailablePosition,
+  ICON_WIDTH,
+  ICON_HEIGHT,
+} from "./gridSnapping";
 
 export function DesktopFiles() {
   const [isDragOver, setIsDragOver] = useState(false);
@@ -133,21 +138,61 @@ export function DesktopFiles() {
           if (event.dataTransfer.files.length === 0) return;
 
           const deskRect = containerRef.current?.getBoundingClientRect();
-          const dropX = event.clientX - (deskRect?.left ?? 0);
-          const dropY = event.clientY - (deskRect?.top ?? 0);
+          if (!deskRect) return;
 
-          // Snap the drop position to grid
-          const basePosition = snapToGrid({ x: dropX, y: dropY });
+          const dropX = event.clientX - deskRect.left;
+          const dropY = event.clientY - deskRect.top;
 
-          const uploads: Array<DesktopFileUpload> = Array.from(
-            event.dataTransfer.files,
-          ).map((file, index) => ({
-            file,
-            position: {
-              x: basePosition.x + index * 100,
-              y: basePosition.y,
-            },
+          // Clamp the drop position to keep within bounds
+          const clampedX = Math.max(
+            0,
+            Math.min(dropX, deskRect.width - ICON_WIDTH),
+          );
+          const clampedY = Math.max(
+            0,
+            Math.min(dropY, deskRect.height - ICON_HEIGHT),
+          );
+
+          // Prepare occupied positions for collision detection
+          const occupiedPositions: Array<{
+            id: string;
+            position: { x: number; y: number };
+          }> = files.map((f) => ({
+            id: f._id,
+            position: f.position,
           }));
+
+          const uploads: Array<DesktopFileUpload> = [];
+          const droppedFiles = Array.from(event.dataTransfer.files);
+
+          // Find positions for each file, avoiding overlaps
+          for (let index = 0; index < droppedFiles.length; index++) {
+            const file = droppedFiles[index];
+
+            // Try horizontal placement first
+            const desiredX = clampedX + index * 100;
+            const desiredY = clampedY;
+
+            // Find nearest available position
+            const availablePosition = findNearestAvailablePosition(
+              { x: desiredX, y: desiredY },
+              occupiedPositions,
+              deskRect.width,
+              deskRect.height,
+              [],
+            );
+
+            uploads.push({
+              file,
+              position: availablePosition,
+            });
+
+            // Add this position to occupied list for next iteration
+            occupiedPositions.push({
+              id: `temp-${index}`,
+              position: availablePosition,
+            });
+          }
 
           await uploadFiles(uploads);
         }}
@@ -220,6 +265,7 @@ export function DesktopFiles() {
               key={file._id}
               file={file}
               selectedFiles={selectedFiles}
+              allFiles={files}
               containerRef={containerRef}
               isSelected={isSelected}
               registerNode={(element) => {
