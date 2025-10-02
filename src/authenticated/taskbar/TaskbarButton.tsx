@@ -47,11 +47,9 @@ export function TaskbarButton({
           focus({ processId: process._id });
         }}
         onMouseDown={(e) => {
-          // Middle mouse button click closes the window
-          if (e.button === 1) {
-            e.preventDefault();
-            close({ processId: process._id });
-          }
+          if (e.button != 1) return;
+          e.preventDefault();
+          close({ processId: process._id });
         }}
         onContextMenu={(e) => {
           e.preventDefault();
