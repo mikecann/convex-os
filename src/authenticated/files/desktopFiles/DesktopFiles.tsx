@@ -14,6 +14,7 @@ export function DesktopFiles() {
   const containerRef = useRef<HTMLDivElement>(null);
   const files = useQuery(api.my.files.list) ?? [];
   const deleteFiles = useMutation(api.my.files.deleteAll);
+  const deactivateActiveWindow = useMutation(api.my.windows.deactivateActive);
   const { uploadFiles } = useDesktopFileUploader();
   const onError = useErrorHandler();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
@@ -24,7 +25,9 @@ export function DesktopFiles() {
     selectionRect,
     iconNodesRef,
     handleMouseDown,
-  } = useFileSelection(containerRef);
+  } = useFileSelection(containerRef, () => {
+    void deactivateActiveWindow();
+  });
 
   const {
     isDragOver,

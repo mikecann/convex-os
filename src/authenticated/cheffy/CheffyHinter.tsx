@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { SpeechBubble } from "./SpeechBubble";
 import { CheffyCharacter } from "./CheffyCharacter";
+import { createProcessStartParams } from "../processes/startProcessHelpers";
 
 export function CheffyHinter() {
   const [isVisible, setIsVisible] = useState(false);
@@ -18,18 +19,7 @@ export function CheffyHinter() {
 
   const handleClick = () => {
     void startProcess({
-      process: {
-        kind: "cheffy_chat",
-        props: {},
-        windowCreationParams: {
-          x: 100,
-          y: 100,
-          width: 600,
-          height: 400,
-          title: "Cheffy Chat",
-          icon: "/cheffy.webp",
-        },
-      },
+      process: createProcessStartParams("cheffy_chat"),
     });
     setIsVisible(false);
   };

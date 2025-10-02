@@ -4,6 +4,7 @@ import { DesktopFileDoc } from "../desktopFileIcon/DesktopFileIcon";
 
 export function useFileSelection(
   containerRef: React.RefObject<HTMLDivElement | null>,
+  onClickEmpty?: () => void,
 ) {
   const [selectedIds, setSelectedIds] = useState<Array<Id<"files">>>([]);
   const [selectionRect, setSelectionRect] = useState<{
@@ -76,7 +77,10 @@ export function useFileSelection(
     const handleMouseUp = () => {
       selectionStartRef.current = null;
       setSelectionRect(null);
-      if (!hasDraggedRef.current) setSelectedIds([]);
+      if (!hasDraggedRef.current) {
+        setSelectedIds([]);
+        onClickEmpty?.();
+      }
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
     };

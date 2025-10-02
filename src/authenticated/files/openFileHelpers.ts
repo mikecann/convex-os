@@ -6,6 +6,7 @@ import {
   isTextFile,
 } from "../../../shared/fileTypes";
 import { api } from "../../../convex/_generated/api";
+import { createProcessStartParams } from "../processes/startProcessHelpers";
 
 type FileWithNameTypeAndPosition = {
   _id: Id<"files">;
@@ -20,48 +21,30 @@ export function getProcessStartingParams(
   file: FileWithNameTypeAndPosition,
 ): AppStartParams | null {
   if (isImageFile(file)) {
-    return {
-      kind: "image_preview",
-      props: { fileId: file._id },
-      windowCreationParams: {
-        x: file.position.x,
-        y: file.position.y,
-        width: 480,
-        height: 320,
-        title: `${file.name} - Image Preview`,
-        icon: "/xp/image.png",
-      },
-    };
+    return createProcessStartParams("image_preview", {
+      x: file.position.x,
+      y: file.position.y,
+      fileId: file._id,
+      fileName: file.name,
+    });
   }
 
   if (isVideoFile(file)) {
-    return {
-      kind: "video_player",
-      props: { fileId: file._id },
-      windowCreationParams: {
-        x: file.position.x,
-        y: file.position.y,
-        width: 480,
-        height: 320,
-        title: `${file.name} - Video Player`,
-        icon: "/xp/mediaplayer.png",
-      },
-    };
+    return createProcessStartParams("video_player", {
+      x: file.position.x,
+      y: file.position.y,
+      fileId: file._id,
+      fileName: file.name,
+    });
   }
 
   if (isTextFile(file)) {
-    return {
-      kind: "text_preview",
-      props: { fileId: file._id },
-      windowCreationParams: {
-        x: file.position.x,
-        y: file.position.y,
-        width: 600,
-        height: 400,
-        title: `${file.name} - Text Preview`,
-        icon: "/xp/doc.png",
-      },
-    };
+    return createProcessStartParams("text_preview", {
+      x: file.position.x,
+      y: file.position.y,
+      fileId: file._id,
+      fileName: file.name,
+    });
   }
 
   return null;

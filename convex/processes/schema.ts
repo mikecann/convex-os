@@ -35,7 +35,14 @@ export const processDefinitions = {
   },
   cheffy_chat: {
     kind: v.literal(processKinds.cheffy_chat),
-    props: v.object({}),
+    props: v.object({
+      input: v.optional(
+        v.object({
+          text: v.string(),
+          attachments: v.array(v.id("files")),
+        }),
+      ),
+    }),
   },
 } satisfies Record<keyof typeof processKinds, any>;
 

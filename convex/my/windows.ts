@@ -76,3 +76,15 @@ export const updateTitle = userMutation({
     return null;
   },
 });
+
+export const deactivateActive = userMutation({
+  args: {},
+  returns: v.null(),
+  handler: async (ctx) => {
+    const activeWindow = await windows.forUser(ctx.userId).findActive(ctx.db);
+    if (activeWindow) {
+      await windows.forWindow(activeWindow._id).deactivate(ctx.db);
+    }
+    return null;
+  },
+});

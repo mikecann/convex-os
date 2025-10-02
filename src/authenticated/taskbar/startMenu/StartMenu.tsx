@@ -9,6 +9,7 @@ import { StartMenuLeftColumn } from "./StartMenuLeftColumn";
 import { StartMenuRightColumn } from "./StartMenuRightColumn";
 import { StartMenuBottomButtons } from "./StartMenuBottomButtons";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
+import { createProcessStartParams } from "../../processes/startProcessHelpers";
 
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
@@ -26,40 +27,8 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
     }
 
     if (item.processKind) {
-      const processConfig = {
-        image_preview: {
-          title: "Image Preview",
-          icon: "/xp/image.png",
-        },
-        video_player: {
-          title: "Video Player",
-          icon: "/xp/mediaplayer.png",
-        },
-        text_preview: {
-          title: "Text Preview",
-          icon: "/xp/doc.png",
-        },
-        cheffy_chat: {
-          title: "Cheffy Chat",
-          icon: "/cheffy.webp",
-        },
-      } as const;
-
-      const config = processConfig[item.processKind];
-
       void startProcess({
-        process: {
-          kind: item.processKind,
-          props: {},
-          windowCreationParams: {
-            x: 100,
-            y: 100,
-            width: 600,
-            height: 400,
-            title: config.title,
-            icon: config.icon,
-          },
-        },
+        process: createProcessStartParams(item.processKind),
       }).catch(onError);
 
       onClose();
