@@ -4,7 +4,7 @@ import { api } from "../../../convex/_generated/api";
 import { SpeechBubble } from "./SpeechBubble";
 import { CheffyCharacter } from "./CheffyCharacter";
 
-export function Cheffy() {
+export function CheffyHinter() {
   const [isVisible, setIsVisible] = useState(true);
   const startProcess = useMutation(api.my.processes.start);
 

@@ -137,7 +137,7 @@ export const processes = {
               viewState: { kind: "open", viewStackOrder: 0, isActive: false },
             },
           });
-          await windows.forWindow(windowId).activate(db);
+          await windows.forWindow(windowId).focus(db);
         } else if (process.kind === "video_player") {
           const windowId = await windows.forProcess(processId).create(db, {
             params: {
@@ -145,7 +145,7 @@ export const processes = {
               viewState: { kind: "open", viewStackOrder: 0, isActive: false },
             },
           });
-          await windows.forWindow(windowId).activate(db);
+          await windows.forWindow(windowId).focus(db);
         } else if (process.kind === "text_preview") {
           const windowId = await windows.forProcess(processId).create(db, {
             params: {
@@ -153,7 +153,7 @@ export const processes = {
               viewState: { kind: "open", viewStackOrder: 0, isActive: false },
             },
           });
-          await windows.forWindow(windowId).activate(db);
+          await windows.forWindow(windowId).focus(db);
         } else if (process.kind === "cheffy_chat") {
           const windowId = await windows.forProcess(processId).create(db, {
             params: {
@@ -161,7 +161,7 @@ export const processes = {
               viewState: { kind: "open", viewStackOrder: 0, isActive: false },
             },
           });
-          await windows.forWindow(windowId).activate(db);
+          await windows.forWindow(windowId).focus(db);
         } else exhaustiveCheck(process);
 
         return processId;
