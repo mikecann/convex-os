@@ -10,7 +10,7 @@ import {
 import { Wallpaper } from "../common/components/Wallpaper";
 import { Id } from "../../convex/_generated/dataModel";
 import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
-import { Cheffy } from "./cheffy/Cheffy";
+import { Cheffy } from "../authenticated/cheffy/Cheffy";
 
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 

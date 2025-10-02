@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { DesktopFiles } from "./files/DesktopFiles";
-import { ProcessSystem } from "../os/ProcessSystem";
+import { ProcessSystem } from "./processes/ProcessSystem";
 import { StartMenu } from "./taskbar/StartMenu";
 import { Taskbar } from "./taskbar/Taskbar";
 
