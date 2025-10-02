@@ -1,4 +1,5 @@
 import React from "react";
+import { playSound } from "../../../common/sounds/soundEffects";
 
 interface WindowControlsProps {
   showCloseButton?: boolean;
@@ -27,6 +28,7 @@ export function WindowControls({
           aria-label="Minimize"
           onClick={(event) => {
             event.stopPropagation();
+            playSound("minimize", 0.3);
             onMinimize();
           }}
           onMouseDown={(event) => event.stopPropagation()}

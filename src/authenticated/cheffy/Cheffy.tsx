@@ -21,10 +21,10 @@ export function Cheffy() {
       }}
     >
       <SpeechBubble
-        message="It looks like you want to cook!"
+        message="It looks like you are trying to cook!"
         onClose={() => setIsVisible(false)}
       />
-      <CheffyCharacter  />
+      <CheffyCharacter />
     </div>
   );
 }

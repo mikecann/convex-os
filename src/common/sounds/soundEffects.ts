@@ -7,7 +7,8 @@ export type SoundEffect =
   | "shutdown"
   | "start"
   | "balloon"
-  | "criticalStop";
+  | "criticalStop"
+  | "minimize";
 
 const soundPaths: Record<SoundEffect, string> = {
   startup: "/sounds/Windows XP Startup.mp3",
@@ -17,6 +18,7 @@ const soundPaths: Record<SoundEffect, string> = {
   start: "/sounds/Windows XP Start.mp3",
   balloon: "/sounds/Windows XP Balloon.mp3",
   criticalStop: "/sounds/Windows XP Critical Stop.mp3",
+  minimize: "/sounds/Windows XP Minimize.mp3",
 };
 
 let currentAudio: HTMLAudioElement | null = null;
