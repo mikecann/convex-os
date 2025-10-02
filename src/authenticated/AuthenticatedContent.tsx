@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { DesktopFiles } from "./files/DesktopFiles";
 import { ProcessSystem } from "./processes/ProcessSystem";
 import { StartMenu } from "./taskbar/StartMenu";
-import { Taskbar } from "./taskbar/taskbar";
-import { playSound } from "../common/sounds/soundEffects";
+import { Taskbar } from "./taskbar/Taskbar";
 
 export function AuthenticatedContent() {
   const [isStartMenuVisible, setIsStartMenuVisible] = useState(false);
