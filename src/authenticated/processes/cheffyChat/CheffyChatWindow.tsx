@@ -1,6 +1,9 @@
+import { useState } from "react";
 import { Process } from "../../../../convex/processes/schema";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { ConnectedWindow } from "../../../os/windowing/ConnectedWindow";
+import { ChatWindowInputBox } from "./ChatWindowInputBox";
+import { EmptyCheffyState } from "./EmptyCheffyState";
 
 export function CheffyChatWindow({
   process,
@@ -9,6 +12,16 @@ export function CheffyChatWindow({
   process: Process<"cheffy_chat">;
   window: Doc<"windows">;
 }) {
+  const [messages, setMessages] = useState<
+    Array<{ role: string; content: string }>
+  >([]);
+
+  const handleSend = (message: string) => {
+    // TODO: Implement message sending
+    console.log("Message:", message);
+    setMessages([...messages, { role: "user", content: message }]);
+  };
+
   return (
     <ConnectedWindow
       window={window}
@@ -22,14 +35,30 @@ export function CheffyChatWindow({
           width: "100%",
           height: "100%",
           display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
+          flexDirection: "column",
           backgroundColor: "#f0f0f0",
         }}
       >
-        <p style={{ color: "#666", fontSize: "16px" }}>
-          Cheffy Chat - Coming Soon
-        </p>
+        {/* Messages Area */}
+        {messages.length === 0 ? (
+          <EmptyCheffyState />
+        ) : (
+          <div
+            style={{
+              flex: 1,
+              overflowY: "auto",
+              padding: "24px",
+            }}
+          >
+            {/* TODO: Render messages */}
+            {messages.map((msg, idx) => (
+              <div key={idx}>{msg.content}</div>
+            ))}
+          </div>
+        )}
+
+        {/* Input Box */}
+        <ChatWindowInputBox onSend={handleSend} />
       </div>
     </ConnectedWindow>
   );
