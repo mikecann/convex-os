@@ -71,6 +71,7 @@ export function TextPreviewWindow({
     process.props.fileId ? { fileId: process.props.fileId } : "skip",
   );
   const updateProcessProps = useMutation(api.my.processes.updateProps);
+  const updateWindowTitle = useMutation(api.my.windows.updateTitle);
   const onError = useErrorHandler();
   const [textContent, setTextContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
@@ -141,6 +142,11 @@ export function TextPreviewWindow({
           await updateProcessProps({
             processId: process._id,
             props: { fileId },
+          }).catch(onError);
+
+          await updateWindowTitle({
+            windowId: window._id,
+            title: fileName,
           }).catch(onError);
         }}
       >

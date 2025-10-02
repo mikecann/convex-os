@@ -24,6 +24,7 @@ export function VideoPlayerWindow({
     process.props.fileId ? { fileId: process.props.fileId } : "skip",
   );
   const updateProcessProps = useMutation(api.my.processes.updateProps);
+  const updateWindowTitle = useMutation(api.my.windows.updateTitle);
   const onError = useErrorHandler();
 
   return (
@@ -62,6 +63,11 @@ export function VideoPlayerWindow({
           await updateProcessProps({
             processId: process._id,
             props: { fileId },
+          }).catch(onError);
+
+          await updateWindowTitle({
+            windowId: window._id,
+            title: fileName,
           }).catch(onError);
         }}
       >

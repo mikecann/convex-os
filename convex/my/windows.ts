@@ -64,3 +64,15 @@ export const toggleMaximize = userMutation({
   handler: (ctx, { windowId }) =>
     windows.forWindow(windowId).toggleMaximize(ctx.db),
 });
+
+export const updateTitle = userMutation({
+  args: {
+    windowId: v.id("windows"),
+    title: v.string(),
+  },
+  returns: v.null(),
+  handler: async (ctx, { windowId, title }) => {
+    await ctx.db.patch(windowId, { title });
+    return null;
+  },
+});
