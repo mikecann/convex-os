@@ -39,6 +39,10 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           title: "Text Preview",
           icon: "/xp/doc.png",
         },
+        cheffy_chat: {
+          title: "Cheffy Chat",
+          icon: "/cheffy.webp",
+        },
       } as const;
 
       const config = processConfig[item.processKind];

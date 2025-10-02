@@ -5,6 +5,7 @@ import { ProcessKinds } from "../../../convex/processes/schema";
 import { ImagePreviewWindow } from "./imagePreview/ImagePreviewWindow";
 import { VideoPlayerWindow } from "./videoPlayer/VideoPlayerWindow";
 import { TextPreviewWindow } from "./textPreview/TextPreviewWindow";
+import { CheffyChatWindow } from "./cheffyChat/CheffyChatWindow";
 import { Doc } from "../../../convex/_generated/dataModel";
 
 const processToComponentMap: {
@@ -16,6 +17,7 @@ const processToComponentMap: {
   image_preview: ImagePreviewWindow,
   video_player: VideoPlayerWindow,
   text_preview: TextPreviewWindow,
+  cheffy_chat: CheffyChatWindow,
 };
 
 export function ProcessSystem() {

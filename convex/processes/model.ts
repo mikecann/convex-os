@@ -154,6 +154,14 @@ export const processes = {
             },
           });
           await windows.forWindow(windowId).activate(db);
+        } else if (process.kind === "cheffy_chat") {
+          const windowId = await windows.forProcess(processId).create(db, {
+            params: {
+              ...process.windowCreationParams,
+              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+            },
+          });
+          await windows.forWindow(windowId).activate(db);
         } else exhaustiveCheck(process);
 
         return processId;

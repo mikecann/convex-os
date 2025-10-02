@@ -11,6 +11,7 @@ const processKinds = produceLiteral([
   "image_preview",
   "video_player",
   "text_preview",
+  "cheffy_chat",
 ]);
 
 export const processDefinitions = {
@@ -32,6 +33,10 @@ export const processDefinitions = {
       fileId: v.optional(v.id("files")),
     }),
   },
+  cheffy_chat: {
+    kind: v.literal(processKinds.cheffy_chat),
+    props: v.object({}),
+  },
 } satisfies Record<keyof typeof processKinds, any>;
 
 export const processValidator = v.union(
@@ -47,6 +52,10 @@ export const processValidator = v.union(
     ...processDefinitions.text_preview,
     ...processCommon,
   }),
+  v.object({
+    ...processDefinitions.cheffy_chat,
+    ...processCommon,
+  }),
 );
 
 export const processCreationValidator = v.union(
@@ -58,6 +67,9 @@ export const processCreationValidator = v.union(
   }),
   v.object({
     ...processDefinitions.text_preview,
+  }),
+  v.object({
+    ...processDefinitions.cheffy_chat,
   }),
 );
 
@@ -83,12 +95,17 @@ export const processStartingValidator = v.union(
     ...processDefinitions.text_preview,
     windowCreationParams: v.object(windowCreationParams),
   }),
+  v.object({
+    ...processDefinitions.cheffy_chat,
+    windowCreationParams: v.object(windowCreationParams),
+  }),
 );
 
 export const processPropsUpdateValidator = v.union(
   processDefinitions.image_preview.props,
   processDefinitions.video_player.props,
   processDefinitions.text_preview.props,
+  processDefinitions.cheffy_chat.props,
 );
 
 export type ProcessKinds = Infer<typeof processValidator>["kind"];

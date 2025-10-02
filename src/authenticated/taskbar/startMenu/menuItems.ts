@@ -14,6 +14,13 @@ export const leftMenuItems: MenuItem[] = [
     processKind: "video_player",
   },
   { icon: "/xp/doc.png", label: "Text Preview", processKind: "text_preview" },
+  { icon: "/cheffy.webp", label: "Cheffy Chat", processKind: "cheffy_chat" },
+  {
+    icon: "/xp/github.png",
+    label: "View on GitHub",
+    onClick: () =>
+      window.open("https://github.com/get-convex/desktop-ai", "_blank"),
+  },
   { icon: "/xp/help.png", label: "Tour Windows XP" },
 ];
 
