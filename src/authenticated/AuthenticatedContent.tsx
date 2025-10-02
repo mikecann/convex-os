@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { DesktopFiles } from "./files/DesktopFiles";
 import { ProcessSystem } from "./processes/ProcessSystem";
 import { StartMenu } from "./taskbar/StartMenu";
-import { Taskbar } from "./taskbar/Taskbar";
+import { Taskbar } from "./taskbar/taskbar";
 import { playSound } from "../common/sounds/soundEffects";
 
 export function AuthenticatedContent() {
