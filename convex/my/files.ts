@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
-import { files } from "../files/lib";
+import { files } from "../files/model";
 
 export const list = userQuery({
   args: {},

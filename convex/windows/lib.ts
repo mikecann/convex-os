@@ -1,7 +1,7 @@
 import { ensureFP } from "../../shared/ensure";
 import { Doc, Id } from "../_generated/dataModel";
 import { DatabaseReader, DatabaseWriter } from "../_generated/server";
-import { processes } from "../processes/lib";
+import { processes } from "../processes/model";
 import { WindowCreationParams } from "./schema";
 import { toggleMaximize } from "../my/windows";
 

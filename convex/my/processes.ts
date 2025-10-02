@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { userMutation, userQuery } from "../lib";
-import { processes } from "../processes/lib";
+import { processes } from "../processes/model";
 import {
   processPropsUpdateValidator,
   processStartingValidator,
