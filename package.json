@@ -16,10 +16,12 @@
   },
   "dependencies": {
     "@convex-dev/auth": "^0.0.81",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "convex": "^1.27.0",
     "convex-helpers": "^0.1.104",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-syntax-highlighter": "^15.6.6",
     "typestyle": "^2.4.0",
     "xp.css": "^0.2.6"
   },

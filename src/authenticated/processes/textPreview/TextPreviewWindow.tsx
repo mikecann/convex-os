@@ -11,6 +11,52 @@ import {
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { useEffect, useState } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+
+function getLanguageFromFilename(filename: string): string {
+  const extension = filename.split(".").pop()?.toLowerCase() || "";
+
+  const languageMap: Record<string, string> = {
+    js: "javascript",
+    jsx: "jsx",
+    ts: "typescript",
+    tsx: "tsx",
+    py: "python",
+    rb: "ruby",
+    java: "java",
+    c: "c",
+    cpp: "cpp",
+    cs: "csharp",
+    php: "php",
+    go: "go",
+    rs: "rust",
+    swift: "swift",
+    kt: "kotlin",
+    scala: "scala",
+    sh: "bash",
+    bash: "bash",
+    zsh: "bash",
+    sql: "sql",
+    html: "markup",
+    xml: "markup",
+    css: "css",
+    scss: "scss",
+    sass: "sass",
+    less: "less",
+    json: "json",
+    yaml: "yaml",
+    yml: "yaml",
+    md: "markdown",
+    markdown: "markdown",
+    graphql: "graphql",
+    diff: "diff",
+    docker: "docker",
+    dockerfile: "docker",
+  };
+
+  return languageMap[extension] || "text";
+}
 
 export function TextPreviewWindow({
   process,
@@ -139,33 +185,40 @@ export function TextPreviewWindow({
               </div>
             );
 
+          const language = getLanguageFromFilename(file.name);
+
           return (
             <div
               style={{
                 display: "flex",
                 flexDirection: "column",
-                backgroundColor: "#1a1a1a",
+                backgroundColor: "#1e1e1e",
                 width: "100%",
                 height: "100%",
-                overflow: "hidden",
+                overflow: "auto",
               }}
             >
-              <pre
-                style={{
+              <SyntaxHighlighter
+                language={language}
+                style={vscDarkPlus}
+                showLineNumbers
+                customStyle={{
                   margin: 0,
                   padding: "16px",
-                  color: "#e0e0e0",
-                  fontFamily: "'Consolas', 'Monaco', 'Courier New', monospace",
                   fontSize: "13px",
                   lineHeight: "1.5",
-                  whiteSpace: "pre-wrap",
-                  wordWrap: "break-word",
-                  overflow: "auto",
-                  flex: 1,
+                  backgroundColor: "#1e1e1e",
+                  height: "100%",
+                }}
+                lineNumberStyle={{
+                  minWidth: "3em",
+                  paddingRight: "1em",
+                  color: "#858585",
+                  userSelect: "none",
                 }}
               >
                 {textContent}
-              </pre>
+              </SyntaxHighlighter>
             </div>
           );
         })}
