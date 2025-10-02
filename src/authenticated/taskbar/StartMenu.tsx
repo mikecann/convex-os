@@ -3,6 +3,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { playSound } from "../../common/sounds/soundEffects";
+import { useErrorHandler } from "../../common/errors/useErrorHandler";
 
 interface StartMenuProps {
   isOpen: boolean;
@@ -45,14 +46,17 @@ const rightMenuItems: MenuItem[] = [
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
   const user = useQuery(api.my.user.find);
+  const onError = useErrorHandler();
 
   if (!isOpen) return null;
 
   const handleMenuItemClick = (item: MenuItem) => {
     if (item.onClick) {
       item.onClick();
+      onClose();
+      return;
     }
-    onClose();
+    onError("This feature does nothing right now");
   };
 
   return (
@@ -179,7 +183,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                       alignItems: "center",
                       gap: "8px",
                       padding: item.subtitle ? "2px 8px 1px 8px" : "3px 8px",
-                      cursor: "pointer",
+                      cursor: item.onClick ? "pointer" : "not-allowed",
                       minHeight: item.subtitle ? "30px" : "22px",
                     }}
                     onClick={() => handleMenuItemClick(item)}
@@ -241,9 +245,12 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                   alignItems: "center",
                   gap: "8px",
                   padding: "6px 8px",
-                  cursor: "pointer",
+                  cursor: "not-allowed",
                   fontSize: "11px",
                   fontWeight: "bold",
+                }}
+                onClick={() => {
+                  onError("This feature does nothing right now");
                 }}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.background = "#316AC5";
@@ -291,7 +298,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
                     alignItems: "center",
                     gap: "8px",
                     padding: "3px 8px",
-                    cursor: "pointer",
+                    cursor: item.onClick ? "pointer" : "not-allowed",
                     fontSize: "11px",
                     minHeight: "22px",
                   }}
