@@ -39,12 +39,7 @@ export function ChatWindowInputBox({
   };
 
   return (
-    <div
-      style={{
-        padding: "8px",
-        backgroundColor: "#ece9d8",
-      }}
-    >
+  
       <form onSubmit={handleSubmit}>
         <div
           className="field-row"
@@ -84,6 +79,6 @@ export function ChatWindowInputBox({
           </button>
         </div>
       </form>
-    </div>
+   
   );
 }
