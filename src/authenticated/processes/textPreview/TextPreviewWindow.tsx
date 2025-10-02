@@ -13,6 +13,7 @@ import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { useEffect, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { isTextFile } from "../../../../shared/fileTypes";
 
 function getLanguageFromFilename(filename: string): string {
   const extension = filename.split(".").pop()?.toLowerCase() || "";
@@ -122,6 +123,20 @@ export function TextPreviewWindow({
             "application/x-desktop-file-id",
           ) as Id<"files">;
           if (!fileId) return;
+
+          const fileType = getDragData(
+            event,
+            "application/x-desktop-file-type",
+          ) as string;
+          const fileName = getDragData(
+            event,
+            "application/x-desktop-file-name",
+          ) as string;
+
+          if (!isTextFile({ name: fileName, type: fileType })) {
+            onError("Invalid file type. Only text files are supported.");
+            return;
+          }
 
           await updateProcessProps({
             processId: process._id,

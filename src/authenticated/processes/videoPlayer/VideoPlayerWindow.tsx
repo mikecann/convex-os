@@ -10,6 +10,7 @@ import {
   getDragData,
 } from "../../../common/dragDrop/helpers";
 import { DropZone } from "../../../common/dragDrop/DropZone";
+import { isVideoFile } from "../../../../shared/fileTypes";
 
 export function VideoPlayerWindow({
   process,
@@ -43,6 +44,20 @@ export function VideoPlayerWindow({
             "application/x-desktop-file-id",
           ) as Id<"files">;
           if (!fileId) return;
+
+          const fileType = getDragData(
+            event,
+            "application/x-desktop-file-type",
+          ) as string;
+          const fileName = getDragData(
+            event,
+            "application/x-desktop-file-name",
+          ) as string;
+
+          if (!isVideoFile({ name: fileName, type: fileType })) {
+            onError("Invalid file type. Only video files are supported.");
+            return;
+          }
 
           await updateProcessProps({
             processId: process._id,

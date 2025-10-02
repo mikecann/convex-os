@@ -57,6 +57,8 @@ export function useDragAndDrop(
 
     event.dataTransfer.effectAllowed = "copyMove";
     event.dataTransfer.setData("application/x-desktop-file-id", file._id);
+    event.dataTransfer.setData("application/x-desktop-file-type", file.type);
+    event.dataTransfer.setData("application/x-desktop-file-name", file.name);
   };
 
   const handleDragEnd = async (event: ReactDragEvent<HTMLDivElement>) => {

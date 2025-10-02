@@ -20,7 +20,7 @@ export function StartMenuItem({
         alignItems: "center",
         gap: "8px",
         padding: item.subtitle ? "2px 8px 1px 8px" : "3px 8px",
-        cursor: item.onClick ? "pointer" : "not-allowed",
+        cursor: item.onClick || item.processKind ? "pointer" : "not-allowed",
         minHeight: item.subtitle ? "30px" : "22px",
         fontSize: "11px",
       }}
@@ -71,4 +71,3 @@ export function StartMenuItem({
     </div>
   );
 }
-

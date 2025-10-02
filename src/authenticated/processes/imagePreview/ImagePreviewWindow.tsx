@@ -10,6 +10,7 @@ import {
 } from "../../../common/dragDrop/helpers";
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
+import { isImageFile } from "../../../../shared/fileTypes";
 
 export function ImagePreviewWindow({
   process,
@@ -43,6 +44,20 @@ export function ImagePreviewWindow({
             "application/x-desktop-file-id",
           ) as Id<"files">;
           if (!fileId) return;
+
+          const fileType = getDragData(
+            event,
+            "application/x-desktop-file-type",
+          ) as string;
+          const fileName = getDragData(
+            event,
+            "application/x-desktop-file-name",
+          ) as string;
+
+          if (!isImageFile({ name: fileName, type: fileType })) {
+            onError("Invalid file type. Only image files are supported.");
+            return;
+          }
 
           await updateProcessProps({
             processId: process._id,
