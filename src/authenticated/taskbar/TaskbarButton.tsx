@@ -22,6 +22,7 @@ export function TaskbarButton({
   const { taskbarButtonRefs } = useOS();
   const minimize = useMutation(api.my.processes.minimize);
   const focus = useMutation(api.my.processes.focus);
+  const close = useMutation(api.my.processes.close);
   const processName = useQuery(api.my.processes.findName, {
     processId: process._id,
   });
@@ -44,6 +45,13 @@ export function TaskbarButton({
             return;
           }
           focus({ processId: process._id });
+        }}
+        onMouseDown={(e) => {
+          // Middle mouse button click closes the window
+          if (e.button === 1) {
+            e.preventDefault();
+            close({ processId: process._id });
+          }
         }}
         onContextMenu={(e) => {
           e.preventDefault();
