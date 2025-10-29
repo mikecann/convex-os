@@ -76,6 +76,19 @@ export const restore = userMutation({
   },
 });
 
+export const centerOnScreen = userMutation({
+  args: {
+    processId: v.id("processes"),
+    desktopWidth: v.number(),
+    desktopHeight: v.number(),
+  },
+  handler: (ctx, { processId, desktopWidth, desktopHeight }) => {
+    return processes
+      .forProcess(processId)
+      .centerOnScreen(ctx.db, { desktopWidth, desktopHeight });
+  },
+});
+
 export const updateProps = userMutation({
   args: {
     processId: v.id("processes"),

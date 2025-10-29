@@ -101,6 +101,19 @@ export const windows = {
         return await db.patch(window._id, updates);
       },
 
+      async centerOnScreen(
+        db: DatabaseWriter,
+        {
+          desktopWidth,
+          desktopHeight,
+        }: { desktopWidth: number; desktopHeight: number },
+      ) {
+        const window = await this.get(db);
+        const x = Math.max(0, (desktopWidth - window.width) / 2);
+        const y = Math.max(0, (desktopHeight - window.height) / 2);
+        return await db.patch(window._id, { x, y });
+      },
+
       async activate(db: DatabaseWriter) {
         const { window, process } = await this.getWithProcess(db);
 

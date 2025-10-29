@@ -2,6 +2,8 @@ import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useEffect, useRef } from "react";
+import { createPortal } from "react-dom";
+import { useOS } from "../../os/OperatingSystem";
 
 interface TaskbarContextMenuProps {
   processId: Id<"processes">;
@@ -19,6 +21,8 @@ export function TaskbarContextMenu({
   const close = useMutation(api.my.processes.close);
   const minimize = useMutation(api.my.processes.minimize);
   const restore = useMutation(api.my.processes.restore);
+  const centerOnScreen = useMutation(api.my.processes.centerOnScreen);
+  const { desktopRect } = useOS();
   const menuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,8 +45,8 @@ export function TaskbarContextMenu({
   }, [onClose]);
 
   // Adjust position to appear above the taskbar button
-  const menuHeight = 90; // Approximate height of menu
-  const adjustedY = position.y - menuHeight;
+  const menuHeight = 120; // Approximate height of menu
+  const adjustedY = position.y - menuHeight + 20;
 
   const handleRestore = () => {
     restore({ processId });
@@ -54,17 +58,27 @@ export function TaskbarContextMenu({
     onClose();
   };
 
+  const handleCenterOnScreen = () => {
+    if (!desktopRect) return;
+    centerOnScreen({
+      processId,
+      desktopWidth: desktopRect.width,
+      desktopHeight: desktopRect.height,
+    });
+    onClose();
+  };
+
   const handleClose = () => {
     close({ processId });
     onClose();
   };
 
-  return (
+  return createPortal(
     <div
       ref={menuRef}
       style={{
         position: "fixed",
-        left: position.x,
+        left: position.x - 80,
         top: adjustedY,
         background: "#ECE9D8",
         border: "1px solid #0054E3",
@@ -72,7 +86,7 @@ export function TaskbarContextMenu({
         borderRadius: "0px",
         minWidth: "140px",
         padding: "2px",
-        zIndex: 10000,
+        zIndex: 100000,
         fontFamily: "Tahoma, sans-serif",
         fontSize: "11px",
       }}
@@ -126,6 +140,29 @@ export function TaskbarContextMenu({
           Restore
         </button>
       )}
+      <button
+        onClick={handleCenterOnScreen}
+        style={{
+          display: "block",
+          width: "100%",
+          padding: "4px 20px",
+          textAlign: "left",
+          background: "transparent",
+          border: "none",
+          cursor: "pointer",
+          color: "#000",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.background = "#316AC5";
+          e.currentTarget.style.color = "#fff";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.background = "transparent";
+          e.currentTarget.style.color = "#000";
+        }}
+      >
+        Center Window on Screen
+      </button>
       <div
         style={{
           height: "1px",
@@ -157,6 +194,7 @@ export function TaskbarContextMenu({
       >
         Close
       </button>
-    </div>
+    </div>,
+    document.body,
   );
 }

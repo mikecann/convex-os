@@ -66,7 +66,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           left: 0,
           right: 0,
           bottom: 0,
-          zIndex: 998,
+          zIndex: 10001,
         }}
         onClick={onClose}
       />
@@ -85,7 +85,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
           borderRightColor: "#404040",
           borderRadius: "8px 8px 0 0",
           boxShadow: "4px 0 10px rgba(0, 0, 0, 0.5)",
-          zIndex: 999,
+          zIndex: 10002,
           overflow: "hidden",
           fontFamily: "MS Sans Serif, Arial, sans-serif",
         }}

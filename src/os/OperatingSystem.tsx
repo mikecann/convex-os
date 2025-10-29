@@ -55,7 +55,7 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
   );
 
   return (
-    <OperatingSystemContext.Provider value={contextValue}>
+    <OperatingSystemContext value={contextValue}>
       <div
         style={{
           width: "100vw",
@@ -91,6 +91,6 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
           </div>
         </Wallpaper>
       </div>
-    </OperatingSystemContext.Provider>
+    </OperatingSystemContext>
   );
 }

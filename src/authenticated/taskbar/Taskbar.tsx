@@ -28,7 +28,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         bottom: 0,
         left: 0,
         right: 0,
-        zIndex: 1000,
+        zIndex: 10000,
       }}
     >
       <StartButton onClick={onStartClick} />
@@ -43,7 +43,11 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
         }}
       >
         {processes.map((process) => (
-          <TaskbarButton key={process._id} process={process} isActive={process._id === activeProcessId} />
+          <TaskbarButton
+            key={process._id}
+            process={process}
+            isActive={process._id === activeProcessId}
+          />
         ))}
       </div>
       <SystemTray />

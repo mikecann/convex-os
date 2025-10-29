@@ -36,6 +36,20 @@ export const processes = {
           await windows.forWindow(window._id).focus(db);
       },
 
+      async centerOnScreen(
+        db: DatabaseWriter,
+        {
+          desktopWidth,
+          desktopHeight,
+        }: { desktopWidth: number; desktopHeight: number },
+      ) {
+        const wins = await windows.forProcess(processId).list(db);
+        for (const window of wins)
+          await windows
+            .forWindow(window._id)
+            .centerOnScreen(db, { desktopWidth, desktopHeight });
+      },
+
       async findName(db: DatabaseReader) {
         const wins = await windows.forProcess(processId).list(db);
         if (wins.length === 0) return null;
