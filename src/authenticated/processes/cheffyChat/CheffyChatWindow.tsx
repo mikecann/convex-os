@@ -58,19 +58,6 @@ export function CheffyChatWindow({
     }
   };
 
-  const removeAttachment = (fileId: Id<"files">) => {
-    const newAttachments = attachments.filter((id) => id !== fileId);
-    void updateProcessProps({
-      processId: process._id,
-      props: {
-        input: {
-          text: inputText,
-          attachments: newAttachments,
-        },
-      },
-    });
-  };
-
   return (
     <ConnectedWindow
       window={window}
@@ -88,9 +75,7 @@ export function CheffyChatWindow({
             event,
             "application/x-desktop-file-id",
           ) as Id<"files">;
-          if (fileId) 
-            addAttachment(fileId);
-          
+          if (fileId) addAttachment(fileId);
         }}
       >
         <div
@@ -128,8 +113,21 @@ export function CheffyChatWindow({
           >
             {/* Attachments Area */}
             <AttachmentsArea
-              attachmentIds={attachments}
-              onRemove={removeAttachment}
+              attachments={attachments}
+              onRemove={(fileId) => {
+                const newAttachments = attachments.filter(
+                  (id) => id !== fileId,
+                );
+                void updateProcessProps({
+                  processId: process._id,
+                  props: {
+                    input: {
+                      text: inputText,
+                      attachments: newAttachments,
+                    },
+                  },
+                });
+              }}
             />
 
             {/* Input Box */}

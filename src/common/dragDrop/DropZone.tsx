@@ -22,59 +22,38 @@ export function DropZone({
   const [isDragOver, setIsDragOver] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
-    if (shouldAcceptDrag && !shouldAcceptDrag(event)) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (getDropEffect) 
-      event.dataTransfer.dropEffect = getDropEffect(event);
-    
-
-    setIsDragOver(true);
-  };
-
-  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
-    if (shouldAcceptDrag && !shouldAcceptDrag(event)) return;
-
-    event.preventDefault();
-    event.stopPropagation();
-
-    if (getDropEffect) 
-      event.dataTransfer.dropEffect = getDropEffect(event);
-    
-  };
-
-  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
-    event.stopPropagation();
-
-    if (!containerRef.current) {
-      setIsDragOver(false);
-      return;
-    }
-
-    const nextTarget = event.relatedTarget as Node | null;
-    if (nextTarget && containerRef.current.contains(nextTarget)) return;
-
-    setIsDragOver(false);
-  };
-
-  const handleDrop = async (event: React.DragEvent<HTMLDivElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    setIsDragOver(false);
-
-    await onDrop(event);
-  };
-
   return (
     <div
       ref={containerRef}
-      onDragEnter={handleDragEnter}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      onDrop={handleDrop}
+      onDragEnter={(event) => {
+        if (shouldAcceptDrag && !shouldAcceptDrag(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (getDropEffect) event.dataTransfer.dropEffect = getDropEffect(event);
+        setIsDragOver(true);
+      }}
+      onDragOver={(event) => {
+        if (shouldAcceptDrag && !shouldAcceptDrag(event)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (getDropEffect) event.dataTransfer.dropEffect = getDropEffect(event);
+      }}
+      onDragLeave={(event) => {
+        event.stopPropagation();
+        if (!containerRef.current) {
+          setIsDragOver(false);
+          return;
+        }
+        const nextTarget = event.relatedTarget as Node | null;
+        if (nextTarget && containerRef.current.contains(nextTarget)) return;
+        setIsDragOver(false);
+      }}
+      onDrop={async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        setIsDragOver(false);
+        await onDrop(event);
+      }}
       style={{
         width: "100%",
         height: "100%",

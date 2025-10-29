@@ -12,12 +12,6 @@ export function CheffyHinter() {
     processes?.some((p) => p.kind === "cheffy_chat") ?? false;
   const isVisible = !hasCheffyChat;
 
-  const handleClick = () => {
-    void startProcess({
-      process: startCheffyChat(),
-    });
-  };
-
   if (!isVisible) return null;
 
   return (
@@ -33,7 +27,11 @@ export function CheffyHinter() {
         gap: "10px",
         cursor: "pointer",
       }}
-      onClick={handleClick}
+      onClick={() => {
+        void startProcess({
+          process: startCheffyChat(),
+        });
+      }}
     >
       <SpeechBubble message="It looks like you are trying to cook!" />
       <CheffyCharacter />

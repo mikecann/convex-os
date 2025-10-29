@@ -18,67 +18,59 @@ export function ChatWindowInputBox({
     if (message.trim()) {
       onSend(message);
       onMessageChange("");
-      if (textareaRef.current) 
-        textareaRef.current.style.height = "auto";
-      
+      if (textareaRef.current) textareaRef.current.style.height = "auto";
     }
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSubmit(e);
-    }
-  };
-
-  const handleInput = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    onMessageChange(e.target.value);
-    // Auto-resize textarea
-    e.target.style.height = "auto";
-    e.target.style.height = e.target.scrollHeight + "px";
   };
 
   return (
-  
-      <form onSubmit={handleSubmit}>
-        <div
-          className="field-row"
+    <form onSubmit={handleSubmit}>
+      <div
+        className="field-row"
+        style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: "8px",
+        }}
+      >
+        <textarea
+          ref={textareaRef}
+          value={message}
+          onChange={(e) => {
+            onMessageChange(e.target.value);
+            // Auto-resize textarea
+            e.target.style.height = "auto";
+            e.target.style.height = e.target.scrollHeight + "px";
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              handleSubmit(e);
+            }
+          }}
+          placeholder="Ask Cheffy anything about cooking..."
           style={{
-            display: "flex",
-            alignItems: "flex-end",
-            gap: "8px",
+            flex: 1,
+            padding: "4px",
+            fontSize: "13px",
+            fontFamily: "MS Sans Serif, Arial, sans-serif",
+            lineHeight: "1.4",
+            maxHeight: "150px",
+            overflow: "auto",
+            resize: "none",
+          }}
+          rows={3}
+        />
+        <button
+          type="submit"
+          disabled={!message.trim()}
+          style={{
+            minWidth: "75px",
+            height: "23px",
           }}
         >
-          <textarea
-            ref={textareaRef}
-            value={message}
-            onChange={handleInput}
-            onKeyDown={handleKeyDown}
-            placeholder="Ask Cheffy anything about cooking..."
-            style={{
-              flex: 1,
-              padding: "4px",
-              fontSize: "13px",
-              fontFamily: "MS Sans Serif, Arial, sans-serif",
-              lineHeight: "1.4",
-              maxHeight: "150px",
-              overflow: "auto",
-              resize: "none",
-            }}
-            rows={3}
-          />
-          <button
-            type="submit"
-            disabled={!message.trim()}
-            style={{
-              minWidth: "75px",
-              height: "23px",
-            }}
-          >
-            Send
-          </button>
-        </div>
-      </form>
-   
+          Send
+        </button>
+      </div>
+    </form>
   );
 }
