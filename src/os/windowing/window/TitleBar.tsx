@@ -43,7 +43,13 @@ export function TitleBar({
     >
       <div
         className="title-bar-text"
-        style={{ flex: 1, display: "flex", alignItems: "center", gap: "4px" }}
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+          minWidth: 0,
+        }}
       >
         {icon && (
           <img
@@ -52,7 +58,15 @@ export function TitleBar({
             style={{ width: "16px", height: "16px", flexShrink: 0 }}
           />
         )}
-        <span>{title}</span>
+        <span
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {title}
+        </span>
       </div>
       <WindowControls
         showCloseButton={showCloseButton}
