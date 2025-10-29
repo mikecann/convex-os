@@ -113,7 +113,7 @@ export function CheffyChatWindow({
           >
             {/* Attachments Area */}
             <AttachmentsArea
-              attachments={attachments}
+              attachmentIds={attachments}
               onRemove={(fileId) => {
                 const newAttachments = attachments.filter(
                   (id) => id !== fileId,
