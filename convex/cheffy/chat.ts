@@ -1,8 +1,10 @@
 import { v } from "convex/values";
-import { action } from "../_generated/server";
+import { action, query } from "../_generated/server";
 import { api, internal } from "../_generated/api";
 import { cheffyAgent } from "./agent";
-import { Id } from "../_generated/dataModel";
+import { listUIMessages } from "@convex-dev/agent";
+import { components } from "../_generated/api";
+import { paginationOptsValidator } from "convex/server";
 
 export const sendMessage = action({
   args: {
@@ -90,23 +92,9 @@ export const sendMessage = action({
   },
 });
 
-export const getMessages = action({
-  args: {
-    processId: v.id("processes"),
-  },
-  returns: v.array(
-    v.object({
-      role: v.string(),
-      content: v.string(),
-      timestamp: v.number(),
-    }),
-  ),
-  handler: async (
-    ctx,
-    args,
-  ): Promise<Array<{ role: string; content: string; timestamp: number }>> => {
-    // For now, return empty array as messages are maintained in client state
-    // The thread maintains context server-side for the agent
-    return [];
+export const listThreadMessages = query({
+  args: { threadId: v.string(), paginationOpts: paginationOptsValidator },
+  handler: async (ctx, args) => {
+    return await listUIMessages(ctx, components.agent, args);
   },
 });

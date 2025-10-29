@@ -21,6 +21,15 @@ export const leftMenuItems: MenuItem[] = [
     onClick: () =>
       window.open("https://github.com/get-convex/desktop-ai", "_blank"),
   },
+  {
+    icon: "/convex.svg",
+    label: "Convex Dashboard",
+    onClick: () =>
+      window.open(
+        "https://dashboard.convex.dev/d/local-cvx_devx-desktop_ai",
+        "_blank",
+      ),
+  },
   { icon: "/xp/help.png", label: "Tour Windows XP" },
 ];
 
