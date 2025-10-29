@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import type { ResizeCorner } from "./Window";
 
+const MIN_WINDOW_WIDTH = 200;
+const MIN_WINDOW_HEIGHT = 100;
+
 interface ResizeOrigin {
   startX: number;
   startY: number;
@@ -93,6 +96,44 @@ function applyDesktopBounds(
   return { newWidth, newHeight, newLeft, newTop };
 }
 
+function applyMinimumConstraints(
+  dimensions: {
+    newWidth: number;
+    newHeight: number;
+    newLeft: number;
+    newTop: number;
+  },
+  origin: ResizeOrigin,
+): { newWidth: number; newHeight: number; newLeft: number; newTop: number } {
+  let { newWidth, newHeight, newLeft, newTop } = dimensions;
+
+  // Apply minimum width constraint
+  if (newWidth < MIN_WINDOW_WIDTH) {
+    // If resizing from the left, adjust the left position back
+    if (
+      origin.corner === "left" ||
+      origin.corner === "top-left" ||
+      origin.corner === "bottom-left"
+    )
+      newLeft = origin.startLeft + origin.startWidth - MIN_WINDOW_WIDTH;
+    newWidth = MIN_WINDOW_WIDTH;
+  }
+
+  // Apply minimum height constraint
+  if (newHeight < MIN_WINDOW_HEIGHT) {
+    // If resizing from the top, adjust the top position back
+    if (
+      origin.corner === "top" ||
+      origin.corner === "top-left" ||
+      origin.corner === "top-right"
+    )
+      newTop = origin.startTop + origin.startHeight - MIN_WINDOW_HEIGHT;
+    newHeight = MIN_WINDOW_HEIGHT;
+  }
+
+  return { newWidth, newHeight, newLeft, newTop };
+}
+
 export function useResizing({
   isResizing,
   windowRef,
@@ -114,6 +155,9 @@ export function useResizing({
       const deltaY = event.clientY - origin.startY;
 
       let dimensions = calculateNewDimensions(origin, deltaX, deltaY);
+
+      // Apply minimum constraints first
+      dimensions = applyMinimumConstraints(dimensions, origin);
 
       if (desktopRect) dimensions = applyDesktopBounds(dimensions, desktopRect);
 
