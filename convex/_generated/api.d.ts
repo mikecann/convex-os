@@ -8,11 +8,6 @@
  * @module
  */
 
-import type {
-  ApiFromModules,
-  FilterApi,
-  FunctionReference,
-} from "convex/server";
 import type * as auth from "../auth.js";
 import type * as files_model from "../files/model.js";
 import type * as http from "../http.js";
@@ -24,6 +19,12 @@ import type * as my_windows from "../my/windows.js";
 import type * as processes_model from "../processes/model.js";
 import type * as users_model from "../users/model.js";
 import type * as windows_lib from "../windows/lib.js";
+
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -46,11 +47,15 @@ declare const fullApi: ApiFromModules<{
   "users/model": typeof users_model;
   "windows/lib": typeof windows_lib;
 }>;
+declare const fullApiWithMounts: typeof fullApi;
+
 export declare const api: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "public">
 >;
 export declare const internal: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "internal">
 >;
+
+export declare const components: {};
