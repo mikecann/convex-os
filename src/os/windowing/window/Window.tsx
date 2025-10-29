@@ -170,14 +170,13 @@ export function Window({
       } else if (origin.corner === "top") {
         newHeight = origin.startHeight - deltaY;
         newTop = origin.startTop + deltaY;
-      } else if (origin.corner === "bottom") {
+      } else if (origin.corner === "bottom")
         newHeight = origin.startHeight + deltaY;
-      } else if (origin.corner === "left") {
+      else if (origin.corner === "left") {
         newWidth = origin.startWidth - deltaX;
         newLeft = origin.startLeft + deltaX;
-      } else if (origin.corner === "right") {
+      } else if (origin.corner === "right")
         newWidth = origin.startWidth + deltaX;
-      }
 
       // Apply desktop bounds
       if (desktopRect) {

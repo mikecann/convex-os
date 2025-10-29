@@ -38,6 +38,7 @@ function ProcessRenderer({ process }: { process: Process }) {
   return (
     <>
       {windows?.map((window) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const Component = processToComponentMap[process.kind] as any;
         return <Component key={window._id} process={process} window={window} />;
       })}

@@ -75,7 +75,7 @@ export default [
       ],
 
       // Custom local rules
-      "local/no-hoisted-single-use-handlers": "warn",
+      "local/no-hoisted-single-use-handlers": "error",
     },
   },
   // Apply max-lines-per-function only to React component files (.tsx)
