@@ -1,12 +1,12 @@
 import { v } from "convex/values";
-import { userMutation, userQuery } from "../lib";
+import { myMutation, myQuery } from "../lib";
 import { processes } from "../processes/model";
 import {
   processPropsUpdateValidator,
   processStartingValidator,
 } from "../processes/schema";
 
-export const get = userQuery({
+export const get = myQuery({
   args: {
     processId: v.id("processes"),
   },
@@ -14,17 +14,17 @@ export const get = userQuery({
     processes.forProcess(processId).withUser(ctx.userId).get(ctx.db),
 });
 
-export const list = userQuery({
+export const list = myQuery({
   args: {},
   handler: (ctx) => processes.forUser(ctx.userId).list(ctx.db),
 });
 
-export const listWithWindows = userQuery({
+export const listWithWindows = myQuery({
   args: {},
   handler: (ctx) => processes.forUser(ctx.userId).listWithWindows(ctx.db),
 });
 
-export const activeProcessId = userQuery({
+export const activeProcessId = myQuery({
   args: {},
   handler: (ctx) =>
     processes
@@ -33,7 +33,7 @@ export const activeProcessId = userQuery({
       .then((p) => p?._id ?? null),
 });
 
-export const minimize = userMutation({
+export const minimize = myMutation({
   args: {
     processId: v.id("processes"),
   },
@@ -42,7 +42,7 @@ export const minimize = userMutation({
   },
 });
 
-export const focus = userMutation({
+export const focus = myMutation({
   args: {
     processId: v.id("processes"),
   },
@@ -51,7 +51,7 @@ export const focus = userMutation({
   },
 });
 
-export const findName = userQuery({
+export const findName = myQuery({
   args: {
     processId: v.id("processes"),
   },
@@ -59,7 +59,7 @@ export const findName = userQuery({
     processes.forProcess(processId).findName(ctx.db),
 });
 
-export const close = userMutation({
+export const close = myMutation({
   args: {
     processId: v.id("processes"),
   },
@@ -67,7 +67,7 @@ export const close = userMutation({
     processes.forProcess(processId).close(ctx.db),
 });
 
-export const restore = userMutation({
+export const restore = myMutation({
   args: {
     processId: v.id("processes"),
   },
@@ -76,7 +76,7 @@ export const restore = userMutation({
   },
 });
 
-export const centerOnScreen = userMutation({
+export const centerOnScreen = myMutation({
   args: {
     processId: v.id("processes"),
     desktopWidth: v.number(),
@@ -89,7 +89,7 @@ export const centerOnScreen = userMutation({
   },
 });
 
-export const updateProps = userMutation({
+export const updateProps = myMutation({
   args: {
     processId: v.id("processes"),
     props: processPropsUpdateValidator,
@@ -105,7 +105,7 @@ export const updateProps = userMutation({
   },
 });
 
-export const start = userMutation({
+export const start = myMutation({
   args: {
     process: processStartingValidator,
   },

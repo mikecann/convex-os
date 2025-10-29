@@ -16,6 +16,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.56",
+    "@convex-dev/agent": "^0.2.11",
     "@convex-dev/auth": "^0.0.90",
     "@types/react-syntax-highlighter": "^15.5.13",
     "convex": "^1.28.0",

@@ -1,29 +1,29 @@
 import { v } from "convex/values";
-import { userMutation, userQuery } from "../lib";
+import { myMutation, myQuery } from "../lib";
 import {} from "../processes/schema";
 import { windows } from "../windows/lib";
 import { windowViewStateValidator } from "../windows/schema";
 
-export const list = userQuery({
+export const list = myQuery({
   args: {},
   handler: (ctx) => windows.forUser(ctx.userId).list(ctx.db),
 });
 
-export const listForProcess = userQuery({
+export const listForProcess = myQuery({
   args: {
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => windows.forProcess(processId).list(ctx.db),
 });
 
-export const minimize = userMutation({
+export const minimize = myMutation({
   args: {
     windowId: v.id("windows"),
   },
   handler: (ctx, { windowId }) => windows.forWindow(windowId).minimize(ctx.db),
 });
 
-export const updateGeometry = userMutation({
+export const updateGeometry = myMutation({
   args: {
     windowId: v.id("windows"),
     position: v.object({
@@ -41,14 +41,14 @@ export const updateGeometry = userMutation({
     windows.forWindow(windowId).updateGeometry(ctx.db, { position, size }),
 });
 
-export const focus = userMutation({
+export const focus = myMutation({
   args: {
     windowId: v.id("windows"),
   },
   handler: (ctx, { windowId }) => windows.forWindow(windowId).focus(ctx.db),
 });
 
-export const close = userMutation({
+export const close = myMutation({
   args: {
     windowId: v.id("windows"),
   },
@@ -57,7 +57,7 @@ export const close = userMutation({
   },
 });
 
-export const toggleMaximize = userMutation({
+export const toggleMaximize = myMutation({
   args: {
     windowId: v.id("windows"),
   },
@@ -65,7 +65,7 @@ export const toggleMaximize = userMutation({
     windows.forWindow(windowId).toggleMaximize(ctx.db),
 });
 
-export const updateTitle = userMutation({
+export const updateTitle = myMutation({
   args: {
     windowId: v.id("windows"),
     title: v.string(),
@@ -77,14 +77,14 @@ export const updateTitle = userMutation({
   },
 });
 
-export const deactivateActive = userMutation({
+export const deactivateActive = myMutation({
   args: {},
   returns: v.null(),
   handler: async (ctx) => {
     const activeWindow = await windows.forUser(ctx.userId).findActive(ctx.db);
-    if (activeWindow) 
+    if (activeWindow)
       await windows.forWindow(activeWindow._id).deactivate(ctx.db);
-    
+
     return null;
   },
 });

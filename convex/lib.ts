@@ -1,13 +1,12 @@
-import { mutation, query, action } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 import {
   customMutation,
   customQuery,
-  customAction,
 } from "convex-helpers/server/customFunctions";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ensure } from "../shared/ensure";
 
-export const userQuery = customQuery(query, {
+export const myQuery = customQuery(query, {
   args: {},
   input: async (ctx, args) => {
     const userId = await getAuthUserId(ctx);
@@ -26,7 +25,7 @@ export const userQuery = customQuery(query, {
   },
 });
 
-export const userMutation = customMutation(mutation, {
+export const myMutation = customMutation(mutation, {
   args: {},
   input: async (_ctx, args) => {
     const userId = await getAuthUserId(_ctx);

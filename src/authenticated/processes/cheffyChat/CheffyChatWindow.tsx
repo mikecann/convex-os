@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { useMutation } from "convex/react";
+import { useState, useEffect, useRef } from "react";
+import { useMutation, useAction } from "convex/react";
 import { Process } from "../../../../convex/processes/schema";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
+import type { FunctionReference } from "convex/server";
 import { ConnectedWindow } from "../../../os/windowing/ConnectedWindow";
 import { ChatWindowInputBox } from "./ChatWindowInputBox";
 import { EmptyCheffyState } from "./EmptyCheffyState";
 import { AttachmentsArea } from "./AttachmentsArea";
+import { MessageBubble } from "./MessageBubble";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import {
@@ -22,9 +24,18 @@ export function CheffyChatWindow({
   window: Doc<"windows">;
 }) {
   const [messages, setMessages] = useState<
-    Array<{ role: string; content: string }>
+    Array<{ role: string; content: string; timestamp: number }>
   >([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   const updateProcessProps = useMutation(api.my.processes.updateProps);
+  // Cheffy agent action - using type assertion until TypeScript server refreshes types
+  const sendMessageAction = useAction(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (api as any).cheffy.chat.sendMessage as FunctionReference<"action">,
+  );
+
   const attachments = process.props.input?.attachments ?? [];
 
   const [inputText, setInputText] = useDebouncedServerSync(
@@ -33,6 +44,7 @@ export function CheffyChatWindow({
       void updateProcessProps({
         processId: process._id,
         props: {
+          threadId: process.props.threadId,
           input: {
             text,
             attachments,
@@ -42,6 +54,13 @@ export function CheffyChatWindow({
     },
   );
 
+  // Messages are maintained in client state for this session
+  // Thread context is maintained server-side for the agent
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const addAttachment = (fileId: Id<"files">) => {
     const newAttachments = [...attachments];
     if (!newAttachments.includes(fileId)) {
@@ -49,6 +68,7 @@ export function CheffyChatWindow({
       void updateProcessProps({
         processId: process._id,
         props: {
+          threadId: process.props.threadId,
           input: {
             text: inputText,
             attachments: newAttachments,
@@ -88,7 +108,7 @@ export function CheffyChatWindow({
           }}
         >
           {/* Messages Area */}
-          {messages.length === 0 ? (
+          {messages.length === 0 && !isLoading ? (
             <EmptyCheffyState />
           ) : (
             <div
@@ -98,10 +118,38 @@ export function CheffyChatWindow({
                 padding: "24px",
               }}
             >
-              {/* TODO: Render messages */}
               {messages.map((msg, idx) => (
-                <div key={idx}>{msg.content}</div>
+                <MessageBubble
+                  key={idx}
+                  role={msg.role as "user" | "assistant"}
+                  content={msg.content}
+                  timestamp={msg.timestamp}
+                />
               ))}
+              {isLoading && (
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    padding: "8px",
+                  }}
+                >
+                  <img
+                    src="/cheffy.webp"
+                    alt="Cheffy"
+                    style={{
+                      width: "32px",
+                      height: "32px",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <span style={{ fontSize: "13px", color: "#666" }}>
+                    Cheffy is thinking...
+                  </span>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
           )}
 
@@ -120,6 +168,7 @@ export function CheffyChatWindow({
                 void updateProcessProps({
                   processId: process._id,
                   props: {
+                    threadId: process.props.threadId,
                     input: {
                       text: inputText,
                       attachments: newAttachments,
@@ -132,10 +181,24 @@ export function CheffyChatWindow({
             <ChatWindowInputBox
               message={inputText}
               onMessageChange={setInputText}
-              onSend={(message) => {
-                // TODO: Implement message sending
-                console.log("Message:", message);
-                setMessages([...messages, { role: "user", content: message }]);
+              onSend={async (message) => {
+                if (!message.trim() && attachments.length === 0) return;
+
+                setIsLoading(true);
+
+                sendMessageAction({
+                  processId: process._id,
+                  text: message,
+                  attachments,
+                })
+                  .then((newMessages) => {
+                    setMessages((prev) => [...prev, ...newMessages]);
+                    setIsLoading(false);
+                  })
+                  .catch((err) => {
+                    console.error("Failed to send message:", err);
+                    setIsLoading(false);
+                  });
               }}
             />
           </div>

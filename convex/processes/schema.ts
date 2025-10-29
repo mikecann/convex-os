@@ -36,6 +36,7 @@ export const processDefinitions = {
   cheffy_chat: {
     kind: v.literal(processKinds.cheffy_chat),
     props: v.object({
+      threadId: v.optional(v.string()),
       input: v.optional(
         v.object({
           text: v.string(),

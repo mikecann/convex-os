@@ -1,13 +1,13 @@
 import { v } from "convex/values";
-import { userMutation, userQuery } from "../lib";
+import { myMutation, myQuery } from "../lib";
 import { files } from "../files/model";
 
-export const list = userQuery({
+export const list = myQuery({
   args: {},
   handler: (ctx) => files.forUser(ctx.userId).list(ctx.db),
 });
 
-export const get = userQuery({
+export const get = myQuery({
   args: {
     fileId: v.id("files"),
   },
@@ -15,7 +15,7 @@ export const get = userQuery({
     files.forUser(ctx.userId).forFile(fileId).get(ctx.db),
 });
 
-export const createAll = userMutation({
+export const createAll = myMutation({
   args: {
     files: v.array(
       v.object({
@@ -33,7 +33,7 @@ export const createAll = userMutation({
     files.forUser(ctx.userId).createAll(ctx.db, { files: args.files }),
 });
 
-export const startUpload = userMutation({
+export const startUpload = myMutation({
   args: {
     fileId: v.id("files"),
   },
@@ -41,7 +41,7 @@ export const startUpload = userMutation({
     files.forUser(ctx.userId).forFile(fileId).startUpload(ctx),
 });
 
-export const updateUploadProgress = userMutation({
+export const updateUploadProgress = myMutation({
   args: {
     fileId: v.id("files"),
     progress: v.number(),
@@ -53,7 +53,7 @@ export const updateUploadProgress = userMutation({
       .updateUploadProgress(ctx.db, { progress }),
 });
 
-export const completeUpload = userMutation({
+export const completeUpload = myMutation({
   args: {
     fileId: v.id("files"),
     storageId: v.id("_storage"),
@@ -65,7 +65,7 @@ export const completeUpload = userMutation({
       .completeUpload(ctx, { storageId }),
 });
 
-export const setUploadError = userMutation({
+export const setUploadError = myMutation({
   args: {
     fileId: v.id("files"),
     message: v.string(),
@@ -77,7 +77,7 @@ export const setUploadError = userMutation({
       .setUploadError(ctx.db, { message }),
 });
 
-export const updatePosition = userMutation({
+export const updatePosition = myMutation({
   args: {
     fileId: v.id("files"),
     position: v.object({
@@ -92,7 +92,7 @@ export const updatePosition = userMutation({
       .updatePosition(ctx.db, { position }),
 });
 
-export const updatePositions = userMutation({
+export const updatePositions = myMutation({
   args: {
     updates: v.array(
       v.object({
@@ -110,7 +110,7 @@ export const updatePositions = userMutation({
   },
 });
 
-export const rename = userMutation({
+export const rename = myMutation({
   args: {
     fileId: v.id("files"),
     name: v.string(),
@@ -119,7 +119,7 @@ export const rename = userMutation({
     files.forUser(ctx.userId).forFile(fileId).rename(ctx.db, { name }),
 });
 
-export const deleteAll = userMutation({
+export const deleteAll = myMutation({
   args: {
     fileIds: v.array(v.id("files")),
   },
