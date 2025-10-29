@@ -5,6 +5,7 @@ import { cheffyAgent } from "./agent";
 import { listUIMessages } from "@convex-dev/agent";
 import { components } from "../_generated/api";
 import { paginationOptsValidator } from "convex/server";
+import { myQuery } from "../lib";
 
 export const sendMessage = action({
   args: {
@@ -92,7 +93,7 @@ export const sendMessage = action({
   },
 });
 
-export const listThreadMessages = query({
+export const listThreadMessages = myQuery({
   args: { threadId: v.string(), paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
     return await listUIMessages(ctx, components.agent, args);

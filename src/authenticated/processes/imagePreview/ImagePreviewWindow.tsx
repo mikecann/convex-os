@@ -11,6 +11,8 @@ import {
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { isImageFile } from "../../../../shared/fileTypes";
+import { MenuBar } from "../../../common/components/MenuBar";
+import { useStartCenteredApp } from "../useStartCenteredApp";
 
 export function ImagePreviewWindow({
   process,
@@ -26,6 +28,7 @@ export function ImagePreviewWindow({
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const updateWindowTitle = useMutation(api.my.windows.updateTitle);
   const onError = useErrorHandler();
+  const startCenteredApp = useStartCenteredApp();
 
   return (
     <ConnectedWindow
@@ -35,6 +38,32 @@ export function ImagePreviewWindow({
       showMinimiseButton
       resizable
     >
+      <MenuBar
+        items={[
+          {
+            label: "File",
+            items: [
+              {
+                label: "Open...",
+                onClick: () => {
+                  startCenteredApp({
+                    kind: "file_browser" as const,
+                    props: { parentProcessId: process._id },
+                    windowCreationParams: {
+                      x: 0,
+                      y: 0,
+                      width: 600,
+                      height: 500,
+                      title: "Open",
+                      icon: "/xp/folder.png",
+                    },
+                  });
+                },
+              },
+            ],
+          },
+        ]}
+      />
       <DropZone
         dropMessage="Drop image here"
         shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}
@@ -72,7 +101,7 @@ export function ImagePreviewWindow({
         }}
       >
         {iife(() => {
-          if (!file) 
+          if (!file)
             return (
               <div
                 style={{
@@ -96,7 +125,6 @@ export function ImagePreviewWindow({
                 </p>
               </div>
             );
-          
 
           if (file.uploadState.kind != "uploaded")
             return (

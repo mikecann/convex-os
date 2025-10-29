@@ -33,6 +33,12 @@ const processConfigs: Record<ProcessKinds, ProcessConfig> = {
     defaultWidth: 400,
     defaultHeight: 600,
   },
+  file_browser: {
+    title: "Open",
+    icon: "/xp/folder.png",
+    defaultWidth: 600,
+    defaultHeight: 500,
+  },
 } as const;
 
 export function startImagePreview(options?: {

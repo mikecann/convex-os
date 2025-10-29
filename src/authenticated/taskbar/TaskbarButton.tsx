@@ -11,6 +11,7 @@ const process_ICON_MAP: Record<ProcessKinds, string> = {
   video_player: "/xp/mediaplayer.png",
   text_preview: "/xp/doc.png",
   cheffy_chat: "/cheffy.webp",
+  file_browser: "/xp/folder.png",
 };
 
 export function TaskbarButton({
