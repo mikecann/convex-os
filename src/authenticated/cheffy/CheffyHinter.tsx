@@ -1,11 +1,12 @@
-import { useMutation, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { SpeechBubble } from "./SpeechBubble";
 import { CheffyCharacter } from "./CheffyCharacter";
 import { startCheffyChat } from "../processes/startProcessHelpers";
+import { useStartCenteredApp } from "../processes/useStartCenteredApp";
 
 export function CheffyHinter() {
-  const startProcess = useMutation(api.my.processes.start);
+  const startCenteredApp = useStartCenteredApp();
   const processes = useQuery(api.my.processes.list);
 
   const hasCheffyChat =
@@ -28,9 +29,7 @@ export function CheffyHinter() {
         cursor: "pointer",
       }}
       onClick={() => {
-        void startProcess({
-          process: startCheffyChat(),
-        });
+        void startCenteredApp(startCheffyChat());
       }}
     >
       <SpeechBubble message="It looks like you are trying to cook!" />

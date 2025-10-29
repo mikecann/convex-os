@@ -1,6 +1,4 @@
 import { useState, RefObject, type MouseEvent as ReactMouseEvent } from "react";
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "../DesktopFileImage";
@@ -10,6 +8,7 @@ import { FileIconRenameInput } from "./FileIconRenameInput";
 import { FileIconUploadStatus } from "./FileIconUploadStatus";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { useRename } from "./useRename";
+import { useStartCenteredApp } from "../../processes/useStartCenteredApp";
 
 export type DesktopFileDoc = Doc<"files">;
 
@@ -35,7 +34,7 @@ export function DesktopFileIcon({
   onClickWithoutDrag,
 }: DesktopFileIconProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const startApp = useMutation(api.my.processes.start);
+  const startCenteredApp = useStartCenteredApp();
   const onError = useErrorHandler();
 
   const {
@@ -73,9 +72,8 @@ export function DesktopFileIcon({
         if (event.button !== 0) return;
         if (isRenaming) return;
         // If this was a click (not a drag) on a selected file, select only this file
-        if (isSelected && !dragStartedRef.current && onClickWithoutDrag) 
+        if (isSelected && !dragStartedRef.current && onClickWithoutDrag)
           onClickWithoutDrag();
-        
       }}
       onDragStart={(event) => {
         setIsDragging(true);
@@ -93,7 +91,7 @@ export function DesktopFileIcon({
           );
           return;
         }
-        startApp({ process });
+        void startCenteredApp(process);
       }}
       onKeyDown={(event) => {
         if (event.key === "Escape" && isRenaming) {

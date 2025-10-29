@@ -1,5 +1,5 @@
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { playSound } from "../../../common/sounds/soundEffects";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
@@ -15,11 +15,12 @@ import {
   startTextPreview,
   startCheffyChat,
 } from "../../processes/startProcessHelpers";
+import { useStartCenteredApp } from "../../processes/useStartCenteredApp";
 
 export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   const { signOut } = useAuthActions();
   const user = useQuery(api.my.user.find);
-  const startProcess = useMutation(api.my.processes.start);
+  const startCenteredApp = useStartCenteredApp();
   const onError = useErrorHandler();
 
   if (!isOpen) return null;
@@ -33,19 +34,16 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
 
     if (item.processKind) {
       let processParams;
-      if (item.processKind === "image_preview") 
+      if (item.processKind === "image_preview")
         processParams = startImagePreview();
-       else if (item.processKind === "video_player") 
+      else if (item.processKind === "video_player")
         processParams = startVideoPlayer();
-       else if (item.processKind === "text_preview") 
+      else if (item.processKind === "text_preview")
         processParams = startTextPreview();
-       else if (item.processKind === "cheffy_chat") 
+      else if (item.processKind === "cheffy_chat")
         processParams = startCheffyChat();
-      
 
-      if (processParams) 
-        void startProcess({ process: processParams }).catch(onError);
-      
+      if (processParams) void startCenteredApp(processParams);
 
       onClose();
       return;
