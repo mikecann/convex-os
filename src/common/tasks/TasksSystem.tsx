@@ -51,77 +51,63 @@ const TasksSystemContext = createContext<TasksSystemContextValue | undefined>(
   undefined,
 );
 
+function upsertTask(current: Array<Task>, task: Task): Array<Task> {
+  const existingIndex = current.findIndex((t) => t.id === task.id);
+
+  if (existingIndex !== -1) {
+    const updated = [...current];
+    const existing = updated[existingIndex];
+    if (!existing) return [...current, task];
+    const refreshedTask: Task = {
+      ...existing,
+      ...task,
+      isMinimized: false,
+    };
+    updated.splice(existingIndex, 1);
+    updated.push(refreshedTask);
+    return updated;
+  }
+
+  return [...current, task];
+}
+
+function createFileTask(
+  taskDef: Omit<
+    ImagePreviewTask | VideoPreviewTask,
+    "id" | "title" | "isMinimized"
+  >,
+): Task {
+  return {
+    id: taskDef.file._id,
+    ...taskDef,
+    title: taskDef.file.name,
+    isMinimized: false,
+  };
+}
+
+function createSignInTask(): Task {
+  return {
+    id: "sign_in_sign_up",
+    kind: "sign_in_sign_up",
+    title: "Sign In",
+    isMinimized: false,
+  };
+}
+
 export function TasksSystem({ children }: PropsWithChildren) {
   const [tasks, setTasks] = useState<Array<Task>>([]);
   const [activeTaskId, setActiveTaskId] = useState<string | null>(null);
   const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
 
   const openTask = useCallback((taskDef: TaskDef): Task => {
-    if (taskDef.kind === "image_preview" || taskDef.kind === "video_preview") {
-      const task: Task = {
-        id: taskDef.file._id,
-        ...taskDef,
-        title: taskDef.file.name,
-        isMinimized: false,
-      };
+    const task =
+      taskDef.kind === "sign_in_sign_up"
+        ? createSignInTask()
+        : createFileTask(taskDef);
 
-      setTasks((current) => {
-        const existingIndex = current.findIndex((t) => t.id === task.id);
-
-        if (existingIndex !== -1) {
-          const updated = [...current];
-          const existing = updated[existingIndex];
-          if (!existing) return [...current, task];
-          const refreshedTask: Task = {
-            ...existing,
-            ...task,
-            isMinimized: false,
-          };
-          updated.splice(existingIndex, 1);
-          updated.push(refreshedTask);
-          return updated;
-        }
-
-        return [...current, task];
-      });
-
-      setActiveTaskId(task.id);
-      return task;
-    }
-
-    if (taskDef.kind === "sign_in_sign_up") {
-      const task: Task = {
-        id: "sign_in_sign_up",
-        kind: "sign_in_sign_up",
-        title: "Sign In",
-        isMinimized: false,
-      };
-
-      setTasks((current) => {
-        const existingIndex = current.findIndex((t) => t.id === task.id);
-
-        if (existingIndex !== -1) {
-          const updated = [...current];
-          const existing = updated[existingIndex];
-          if (!existing) return [...current, task];
-          const refreshedTask: Task = {
-            ...existing,
-            ...task,
-            isMinimized: false,
-          };
-          updated.splice(existingIndex, 1);
-          updated.push(refreshedTask);
-          return updated;
-        }
-
-        return [...current, task];
-      });
-
-      setActiveTaskId(task.id);
-      return task;
-    }
-
-    throw new Error(`Unknown task kind: ${taskDef satisfies never}`);
+    setTasks((current) => upsertTask(current, task));
+    setActiveTaskId(task.id);
+    return task;
   }, []);
 
   const closeTask = useCallback((taskId: string) => {

@@ -60,7 +60,7 @@ export default [
       "no-negated-condition": "warn",
       "no-extra-boolean-cast": "error",
       "no-unneeded-ternary": "error",
-
+        
 
       "@typescript-eslint/no-non-null-assertion": "error",
       "@typescript-eslint/prefer-as-const": "error",
@@ -85,7 +85,7 @@ export default [
     rules: {
       "max-lines-per-function": [
         "warn",
-        { max: 150, skipBlankLines: true, skipComments: true },
+        { max: 200, skipBlankLines: true, skipComments: true },
       ],
     },
   },

@@ -59,6 +59,84 @@ function getLanguageFromFilename(filename: string): string {
   return languageMap[extension] || "text";
 }
 
+function CenteredMessage({
+  children,
+  color = "white",
+}: {
+  children: React.ReactNode;
+  color?: string;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: "100%",
+        height: "100%",
+        padding: "16px",
+        textAlign: "center",
+        backgroundColor: "#1a1a1a",
+      }}
+    >
+      <p
+        style={{
+          color,
+          textShadow:
+            color === "white" ? "0 1px 2px rgba(0,0,0,0.6)" : undefined,
+        }}
+      >
+        {children}
+      </p>
+    </div>
+  );
+}
+
+function TextContent({
+  content,
+  filename,
+}: {
+  content: string;
+  filename: string;
+}) {
+  const language = getLanguageFromFilename(filename);
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: "#1e1e1e",
+        width: "100%",
+        height: "100%",
+        overflow: "auto",
+      }}
+    >
+      <SyntaxHighlighter
+        language={language}
+        style={vscDarkPlus}
+        showLineNumbers
+        customStyle={{
+          margin: 0,
+          padding: "16px",
+          fontSize: "13px",
+          lineHeight: "1.5",
+          backgroundColor: "#1e1e1e",
+          height: "100%",
+        }}
+        lineNumberStyle={{
+          minWidth: "3em",
+          paddingRight: "1em",
+          color: "#858585",
+          userSelect: "none",
+        }}
+      >
+        {content}
+      </SyntaxHighlighter>
+    </div>
+  );
+}
+
 export function TextPreviewWindow({
   process,
   window,
@@ -156,124 +234,27 @@ export function TextPreviewWindow({
         {iife(() => {
           if (!file)
             return (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  height: "100%",
-                  padding: "16px",
-                  textAlign: "center",
-                  backgroundColor: "#1a1a1a",
-                }}
-              >
-                <p
-                  style={{
-                    color: "white",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.6)",
-                  }}
-                >
-                  Drop a text file here to preview it.
-                </p>
-              </div>
+              <CenteredMessage>
+                Drop a text file here to preview it.
+              </CenteredMessage>
             );
 
           if (file.uploadState.kind !== "uploaded")
             return (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  height: "100%",
-                  padding: "16px",
-                  textAlign: "center",
-                }}
-              >
-                <p
-                  style={{
-                    color: "white",
-                    textShadow: "0 1px 2px rgba(0,0,0,0.6)",
-                  }}
-                >
-                  Text preview is not available yet. Please wait for the upload
-                  to finish.
-                </p>
-              </div>
+              <CenteredMessage>
+                Text preview is not available yet. Please wait for the upload to
+                finish.
+              </CenteredMessage>
             );
 
-          if (isLoading)
-            return (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  height: "100%",
-                  padding: "16px",
-                  backgroundColor: "#1a1a1a",
-                }}
-              >
-                <p style={{ color: "white" }}>Loading...</p>
-              </div>
-            );
+          if (isLoading) return <CenteredMessage>Loading...</CenteredMessage>;
 
           if (loadError)
             return (
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "100%",
-                  height: "100%",
-                  padding: "16px",
-                  backgroundColor: "#1a1a1a",
-                }}
-              >
-                <p style={{ color: "#ffb4b4" }}>{loadError}</p>
-              </div>
+              <CenteredMessage color="#ffb4b4">{loadError}</CenteredMessage>
             );
 
-          const language = getLanguageFromFilename(file.name);
-
-          return (
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                backgroundColor: "#1e1e1e",
-                width: "100%",
-                height: "100%",
-                overflow: "auto",
-              }}
-            >
-              <SyntaxHighlighter
-                language={language}
-                style={vscDarkPlus}
-                showLineNumbers
-                customStyle={{
-                  margin: 0,
-                  padding: "16px",
-                  fontSize: "13px",
-                  lineHeight: "1.5",
-                  backgroundColor: "#1e1e1e",
-                  height: "100%",
-                }}
-                lineNumberStyle={{
-                  minWidth: "3em",
-                  paddingRight: "1em",
-                  color: "#858585",
-                  userSelect: "none",
-                }}
-              >
-                {textContent}
-              </SyntaxHighlighter>
-            </div>
-          );
+          return <TextContent content={textContent} filename={file.name} />;
         })}
       </DropZone>
     </ConnectedWindow>

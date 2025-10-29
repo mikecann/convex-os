@@ -12,6 +12,55 @@ interface TaskbarContextMenuProps {
   onClose: () => void;
 }
 
+function MenuItem({
+  onClick,
+  isBold,
+  children,
+}: {
+  onClick: () => void;
+  isBold?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      style={{
+        display: "block",
+        width: "100%",
+        padding: "4px 20px",
+        textAlign: "left",
+        background: "transparent",
+        border: "none",
+        cursor: "pointer",
+        color: "#000",
+        fontWeight: isBold ? "bold" : "normal",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "#316AC5";
+        e.currentTarget.style.color = "#fff";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "transparent";
+        e.currentTarget.style.color = "#000";
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function MenuDivider() {
+  return (
+    <div
+      style={{
+        height: "1px",
+        background: "#919B9C",
+        margin: "2px 1px",
+      }}
+    />
+  );
+}
+
 export function TaskbarContextMenu({
   processId,
   isActive,
@@ -67,61 +116,25 @@ export function TaskbarContextMenu({
       }}
     >
       {isActive ? (
-        <button
+        <MenuItem
           onClick={() => {
             minimize({ processId });
             onClose();
           }}
-          style={{
-            display: "block",
-            width: "100%",
-            padding: "4px 20px",
-            textAlign: "left",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "#000",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#316AC5";
-            e.currentTarget.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#000";
-          }}
         >
           Minimize
-        </button>
+        </MenuItem>
       ) : (
-        <button
+        <MenuItem
           onClick={() => {
             restore({ processId });
             onClose();
           }}
-          style={{
-            display: "block",
-            width: "100%",
-            padding: "4px 20px",
-            textAlign: "left",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: "#000",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#316AC5";
-            e.currentTarget.style.color = "#fff";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "transparent";
-            e.currentTarget.style.color = "#000";
-          }}
         >
           Restore
-        </button>
+        </MenuItem>
       )}
-      <button
+      <MenuItem
         onClick={() => {
           if (!desktopRect) return;
           centerOnScreen({
@@ -131,61 +144,19 @@ export function TaskbarContextMenu({
           });
           onClose();
         }}
-        style={{
-          display: "block",
-          width: "100%",
-          padding: "4px 20px",
-          textAlign: "left",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          color: "#000",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#316AC5";
-          e.currentTarget.style.color = "#fff";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "transparent";
-          e.currentTarget.style.color = "#000";
-        }}
       >
         Center Window on Screen
-      </button>
-      <div
-        style={{
-          height: "1px",
-          background: "#919B9C",
-          margin: "2px 1px",
-        }}
-      />
-      <button
+      </MenuItem>
+      <MenuDivider />
+      <MenuItem
         onClick={() => {
           close({ processId });
           onClose();
         }}
-        style={{
-          display: "block",
-          width: "100%",
-          padding: "4px 20px",
-          textAlign: "left",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          color: "#000",
-          fontWeight: "bold",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "#316AC5";
-          e.currentTarget.style.color = "#fff";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = "transparent";
-          e.currentTarget.style.color = "#000";
-        }}
+        isBold
       >
         Close
-      </button>
+      </MenuItem>
     </div>,
     document.body,
   );
