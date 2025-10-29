@@ -39,8 +39,8 @@ export default function Flex({
     display: inline ? "inline-flex" : "flex",
     flexDirection: direction,
     ...(wrap ? { flexWrap: "wrap" } : {}),
-    ...(mappedAlign !== undefined ? { alignItems: mappedAlign } : {}),
-    ...(mappedJustify !== undefined ? { justifyContent: mappedJustify } : {}),
+    ...(mappedAlign === undefined ? {} : { alignItems: mappedAlign }),
+    ...(mappedJustify === undefined ? {} : { justifyContent: mappedJustify }),
     ...(styleOverride ?? {}),
   };
 

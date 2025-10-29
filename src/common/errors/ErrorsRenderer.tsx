@@ -1,5 +1,5 @@
 import { useContext, useEffect } from "react";
-import { ErrorsContext } from "./ErrorsProvider";
+import { ErrorsContext } from "./ErrorsContext";
 import { LocalWindow } from "../../os/windowing/LocalWindow";
 import { Button } from "../components/Button";
 import Vertical from "../components/Vertical";
@@ -10,9 +10,7 @@ export function ErrorsRenderer() {
   const context = useContext(ErrorsContext);
 
   useEffect(() => {
-    if (context?.error) 
-      playSound("criticalStop", 0.4);
-    
+    if (context?.error) playSound("criticalStop", 0.4);
   }, [context?.error]);
 
   if (!context?.error) return null;

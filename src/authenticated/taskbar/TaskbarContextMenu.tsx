@@ -48,31 +48,6 @@ export function TaskbarContextMenu({
   const menuHeight = 120; // Approximate height of menu
   const adjustedY = position.y - menuHeight + 20;
 
-  const handleRestore = () => {
-    restore({ processId });
-    onClose();
-  };
-
-  const handleMinimize = () => {
-    minimize({ processId });
-    onClose();
-  };
-
-  const handleCenterOnScreen = () => {
-    if (!desktopRect) return;
-    centerOnScreen({
-      processId,
-      desktopWidth: desktopRect.width,
-      desktopHeight: desktopRect.height,
-    });
-    onClose();
-  };
-
-  const handleClose = () => {
-    close({ processId });
-    onClose();
-  };
-
   return createPortal(
     <div
       ref={menuRef}
@@ -93,7 +68,10 @@ export function TaskbarContextMenu({
     >
       {isActive ? (
         <button
-          onClick={handleMinimize}
+          onClick={() => {
+            minimize({ processId });
+            onClose();
+          }}
           style={{
             display: "block",
             width: "100%",
@@ -117,7 +95,10 @@ export function TaskbarContextMenu({
         </button>
       ) : (
         <button
-          onClick={handleRestore}
+          onClick={() => {
+            restore({ processId });
+            onClose();
+          }}
           style={{
             display: "block",
             width: "100%",
@@ -141,7 +122,15 @@ export function TaskbarContextMenu({
         </button>
       )}
       <button
-        onClick={handleCenterOnScreen}
+        onClick={() => {
+          if (!desktopRect) return;
+          centerOnScreen({
+            processId,
+            desktopWidth: desktopRect.width,
+            desktopHeight: desktopRect.height,
+          });
+          onClose();
+        }}
         style={{
           display: "block",
           width: "100%",
@@ -171,7 +160,10 @@ export function TaskbarContextMenu({
         }}
       />
       <button
-        onClick={handleClose}
+        onClick={() => {
+          close({ processId });
+          onClose();
+        }}
         style={{
           display: "block",
           width: "100%",

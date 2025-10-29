@@ -111,7 +111,6 @@ export function CheffyChatWindow({
               backgroundColor: "#ece9d8",
             }}
           >
-            {/* Attachments Area */}
             <AttachmentsArea
               attachmentIds={attachments}
               onRemove={(fileId) => {
@@ -130,7 +129,6 @@ export function CheffyChatWindow({
               }}
             />
 
-            {/* Input Box */}
             <ChatWindowInputBox
               message={inputText}
               onMessageChange={setInputText}

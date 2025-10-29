@@ -225,36 +225,6 @@ export function Window({
     };
   }, [isResizing, desktopRect, onGeometryChange]);
 
-  const handleMouseDown = (event: React.MouseEvent) => {
-    onFocus?.();
-    if (!draggable) return;
-    event.preventDefault();
-
-    const rect = event.currentTarget.getBoundingClientRect();
-    setDragOffset({
-      x: event.clientX - rect.left,
-      y: event.clientY - rect.top,
-    });
-    setIsDragging(true);
-  };
-
-  const handleResizeStart = (corner: ResizeCorner, event: React.MouseEvent) => {
-    if (!resizable || viewState.kind == "maximized") return;
-    event.preventDefault();
-    event.stopPropagation();
-
-    resizeOriginRef.current = {
-      startX: event.clientX,
-      startY: event.clientY,
-      startWidth: width,
-      startHeight: height,
-      startLeft: x,
-      startTop: y,
-      corner,
-    };
-    setIsResizing(true);
-  };
-
   useLayoutEffect(() => {
     if (!windowRef.current) return;
     let newTransformOrigin = "center bottom";
@@ -265,7 +235,7 @@ export function Window({
       newTransformOrigin = `${originX}px ${originY}px`;
     }
     windowRef.current.style.transformOrigin = newTransformOrigin;
-  }, [x, y]);
+  }, [x, y, getTaskbarButtonRect]);
 
   return (
     <div
@@ -320,7 +290,18 @@ export function Window({
         title={title}
         icon={icon}
         draggable={draggable}
-        handleMouseDown={handleMouseDown}
+        handleMouseDown={(event: React.MouseEvent) => {
+          onFocus?.();
+          if (!draggable) return;
+          event.preventDefault();
+
+          const rect = event.currentTarget.getBoundingClientRect();
+          setDragOffset({
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top,
+          });
+          setIsDragging(true);
+        }}
         titleBarStyle={titleBarStyle}
         onToggleMaximize={onToggleMaximize}
         showCloseButton={showCloseButton}
@@ -344,7 +325,22 @@ export function Window({
       </div>
       {statusBar && <div className="status-bar">{statusBar}</div>}
       <ResizeHandles
-        startResize={handleResizeStart}
+        startResize={(corner: ResizeCorner, event: React.MouseEvent) => {
+          if (!resizable || viewState.kind == "maximized") return;
+          event.preventDefault();
+          event.stopPropagation();
+
+          resizeOriginRef.current = {
+            startX: event.clientX,
+            startY: event.clientY,
+            startWidth: width,
+            startHeight: height,
+            startLeft: x,
+            startTop: y,
+            corner,
+          };
+          setIsResizing(true);
+        }}
         resizable={resizable}
         isMaximized={viewState.kind == "maximized"}
       />

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-export function CheffyCharacter({}: {}) {
+export function CheffyCharacter() {
   const [isDancing, setIsDancing] = useState(false);
 
   useEffect(() => {

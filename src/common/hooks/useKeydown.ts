@@ -13,9 +13,6 @@ export function useKeydown({
   enabled = true,
   target,
 }: UseKeydownOptions) {
-  const normalizedKeys = keys ? [...keys].sort() : null;
-  const subscriptionKey = normalizedKeys?.join("|") ?? "__ANY__";
-
   useEffect(() => {
     if (!enabled) return;
 
@@ -23,6 +20,7 @@ export function useKeydown({
       target ?? (typeof window === "undefined" ? null : window);
     if (!eventTarget) return;
 
+    const normalizedKeys = keys ? [...keys].sort() : null;
     const keySet = normalizedKeys ? new Set(normalizedKeys) : null;
 
     const handleKeydown: EventListener = (event) => {
@@ -35,5 +33,5 @@ export function useKeydown({
     return () => {
       eventTarget.removeEventListener("keydown", handleKeydown);
     };
-  }, [enabled, handler, subscriptionKey, target]);
+  }, [enabled, handler, keys, target]);
 }

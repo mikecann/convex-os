@@ -1,37 +1,22 @@
 import {
-  createContext,
   PropsWithChildren,
-  useContext,
   useLayoutEffect,
   useRef,
   useState,
   useMemo,
 } from "react";
 import { Wallpaper } from "../common/components/Wallpaper";
-import { Id } from "../../convex/_generated/dataModel";
 import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
+import { OperatingSystemContext } from "./OperatingSystemContext";
+import { Id } from "../../convex/_generated/dataModel";
+
+// Re-export useOS for convenience
+// eslint-disable-next-line react-refresh/only-export-components
+export { useOS } from "./OperatingSystemContext";
 
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
-export interface OperatingSystemContextValue {
-  desktopRect: DOMRect | null;
-  taskbarButtonRefs: { current: TaskbarButtonRefs };
-}
-
-export const OperatingSystemContext =
-  createContext<OperatingSystemContextValue | null>(null);
-
-export function useOS() {
-  const context = useContext(OperatingSystemContext);
-  if (context === null) 
-    throw new Error(
-      "useOperatingSystem must be used within a OperatingSystemProvider",
-    );
-  
-  return context;
-}
-
-export function OperatingSystem({ children }: PropsWithChildren<{}>) {
+export function OperatingSystem({ children }: PropsWithChildren) {
   const desktopRef = useRef<HTMLDivElement>(null);
   const [desktopRect, setDesktopRect] = useState<DOMRect | null>(null);
   const taskbarButtonRefs = useRef<TaskbarButtonRefs>(new Map());
@@ -55,7 +40,7 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
   );
 
   return (
-    <OperatingSystemContext value={contextValue}>
+    <OperatingSystemContext.Provider value={contextValue}>
       <div
         style={{
           width: "100vw",
@@ -91,6 +76,6 @@ export function OperatingSystem({ children }: PropsWithChildren<{}>) {
           </div>
         </Wallpaper>
       </div>
-    </OperatingSystemContext>
+    </OperatingSystemContext.Provider>
   );
 }

@@ -37,8 +37,8 @@ export default function Vertical({
     display: "flex",
     flexDirection: reverse ? "column-reverse" : "column",
     ...(wrap ? { flexWrap: "wrap" } : {}),
-    ...(mappedAlign !== undefined ? { alignItems: mappedAlign } : {}),
-    ...(mappedJustify !== undefined ? { justifyContent: mappedJustify } : {}),
+    ...(mappedAlign === undefined ? {} : { alignItems: mappedAlign }),
+    ...(mappedJustify === undefined ? {} : { justifyContent: mappedJustify }),
     ...(styleOverride ?? {}),
   };
 

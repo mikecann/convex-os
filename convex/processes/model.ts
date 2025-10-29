@@ -6,6 +6,7 @@ import {
   Process,
   processCreationValidator,
   processStartingValidator,
+  processValidator,
 } from "./schema";
 import { windows } from "../windows/lib";
 import { exhaustiveCheck } from "../../shared/misc";
@@ -134,8 +135,8 @@ export const processes = {
           userId,
           kind: process.kind,
           props: process.props,
-        };
-        return await db.insert("processes", toInsert as any);
+        } as Infer<typeof processValidator>;
+        return await db.insert("processes", toInsert);
       },
 
       async start(

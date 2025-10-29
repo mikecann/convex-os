@@ -37,8 +37,8 @@ export default function Horizontal({
     display: "flex",
     flexDirection: reverse ? "row-reverse" : "row",
     ...(wrap ? { flexWrap: "wrap" } : {}),
-    ...(mappedAlign !== undefined ? { alignItems: mappedAlign } : {}),
-    ...(mappedJustify !== undefined ? { justifyContent: mappedJustify } : {}),
+    ...(mappedAlign === undefined ? {} : { alignItems: mappedAlign }),
+    ...(mappedJustify === undefined ? {} : { justifyContent: mappedJustify }),
     ...(styleOverride ?? {}),
   };
 
