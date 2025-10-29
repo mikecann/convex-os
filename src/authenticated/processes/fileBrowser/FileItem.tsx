@@ -1,4 +1,5 @@
 import { Doc } from "../../../../convex/_generated/dataModel";
+import { DesktopFileImage } from "../../files/DesktopFileImage";
 
 type FileItemProps = {
   file: Doc<"files">;
@@ -28,11 +29,7 @@ export function FileItem({
         borderRadius: "2px",
       }}
     >
-      <img
-        src="/xp/image.png"
-        alt=""
-        style={{ width: "32px", height: "32px" }}
-      />
+      <DesktopFileImage file={file} size={32} />
       <div
         style={{
           fontSize: "11px",
