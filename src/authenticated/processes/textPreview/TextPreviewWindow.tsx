@@ -89,9 +89,9 @@ export function TextPreviewWindow({
 
     fetch(file.uploadState.url)
       .then((response) => {
-        if (!response.ok) {
+        if (!response.ok) 
           throw new Error(`Failed to load file: ${response.statusText}`);
-        }
+        
         return response.text();
       })
       .then((text) => {
@@ -151,7 +151,7 @@ export function TextPreviewWindow({
         }}
       >
         {iife(() => {
-          if (!file) {
+          if (!file) 
             return (
               <div
                 style={{
@@ -175,7 +175,7 @@ export function TextPreviewWindow({
                 </p>
               </div>
             );
-          }
+          
 
           if (file.uploadState.kind !== "uploaded")
             return (

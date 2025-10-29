@@ -28,9 +28,9 @@ export function ConfirmationDialog({
   onCancel,
 }: ConfirmationDialogProps) {
   useEffect(() => {
-    if (isOpen) {
+    if (isOpen) 
       playSound("balloon", 0.3);
-    }
+    
   }, [isOpen]);
 
   useKeydown({

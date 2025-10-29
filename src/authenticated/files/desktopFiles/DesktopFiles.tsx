@@ -98,9 +98,9 @@ export function DesktopFiles() {
 
                 // If clicking on an already-selected file, don't change selection
                 // (allows dragging multiple files)
-                if (isSelected) {
+                if (isSelected) 
                   return;
-                }
+                
 
                 // Otherwise, select only this file
                 setSelectedIds([file._id]);

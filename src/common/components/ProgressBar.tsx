@@ -9,9 +9,9 @@ export function ProgressBar({
   className = '', 
   ...props 
 }: ProgressBarProps) {
-  if (indeterminate) {
+  if (indeterminate) 
     return <progress className={className} {...props} />;
-  }
+  
 
   return <progress className={className} {...props} />;
 }

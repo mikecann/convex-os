@@ -72,7 +72,7 @@ export function VideoPlayerWindow({
         }}
       >
         {iife(() => {
-          if (!file) {
+          if (!file) 
             return (
               <div
                 style={{
@@ -96,7 +96,7 @@ export function VideoPlayerWindow({
                 </p>
               </div>
             );
-          }
+          
 
           if (file.uploadState.kind != "uploaded")
             return (

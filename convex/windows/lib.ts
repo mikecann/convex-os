@@ -196,12 +196,12 @@ export const windows = {
           });
         }
 
-        if (window.viewState.kind == "open") {
+        if (window.viewState.kind == "open") 
           return await db.patch(window._id, {
             ...window,
             viewState: { kind: "maximized" },
           });
-        }
+        
       },
     };
   },

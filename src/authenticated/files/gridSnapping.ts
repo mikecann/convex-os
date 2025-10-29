@@ -75,9 +75,9 @@ export function findNearestAvailablePosition(
     doIconsOverlap(snappedDesired, occupied.position),
   );
 
-  if (!hasOverlap) {
+  if (!hasOverlap) 
     return snappedDesired;
-  }
+  
 
   // Calculate grid dimensions
   const maxCols = Math.floor(containerWidth / GRID_SIZE_X);
@@ -88,8 +88,8 @@ export function findNearestAvailablePosition(
   const desiredGridY = Math.round(snappedDesired.y / GRID_SIZE_Y);
 
   // Search in expanding squares around the desired position
-  for (let radius = 1; radius < Math.max(maxCols, maxRows); radius++) {
-    for (let dx = -radius; dx <= radius; dx++) {
+  for (let radius = 1; radius < Math.max(maxCols, maxRows); radius++) 
+    for (let dx = -radius; dx <= radius; dx++) 
       for (let dy = -radius; dy <= radius; dy++) {
         // Only check positions on the edge of the current square
         if (Math.abs(dx) !== radius && Math.abs(dy) !== radius) continue;
@@ -111,12 +111,12 @@ export function findNearestAvailablePosition(
           doIconsOverlap(candidatePos, occupied.position),
         );
 
-        if (!overlaps) {
+        if (!overlaps) 
           return candidatePos;
-        }
+        
       }
-    }
-  }
+    
+  
 
   // No available position found, return the desired position (overlap as last resort)
   return snappedDesired;

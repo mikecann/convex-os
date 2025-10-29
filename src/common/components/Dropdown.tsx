@@ -14,7 +14,7 @@ interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
 export function Dropdown({ options, label, id, className = '', ...props }: DropdownProps) {
   const dropdownId = id || `dropdown-${Math.random().toString(36).substr(2, 9)}`;
 
-  if (!label) {
+  if (!label) 
     return (
       <select id={dropdownId} className={className} {...props}>
         {options.map(option => (
@@ -24,7 +24,7 @@ export function Dropdown({ options, label, id, className = '', ...props }: Dropd
         ))}
       </select>
     );
-  }
+  
 
   return (
     <div className="field-row">

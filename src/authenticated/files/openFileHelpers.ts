@@ -24,32 +24,32 @@ type AppStartParams = FunctionArgs<typeof api.my.processes.start>["process"];
 export function getProcessStartingParams(
   file: FileWithNameTypeAndPosition,
 ): AppStartParams | null {
-  if (isImageFile(file)) {
+  if (isImageFile(file)) 
     return startImagePreview({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,
       fileName: file.name,
     });
-  }
+  
 
-  if (isVideoFile(file)) {
+  if (isVideoFile(file)) 
     return startVideoPlayer({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,
       fileName: file.name,
     });
-  }
+  
 
-  if (isTextFile(file)) {
+  if (isTextFile(file)) 
     return startTextPreview({
       x: file.position.x,
       y: file.position.y,
       fileId: file._id,
       fileName: file.name,
     });
-  }
+  
 
   return null;
 }

@@ -198,12 +198,12 @@ export function Window({
           newHeight += newTop;
           newTop = 0;
         }
-        if (newLeft + newWidth > desktopRect.width) {
+        if (newLeft + newWidth > desktopRect.width) 
           newWidth = desktopRect.width - newLeft;
-        }
-        if (newTop + newHeight > desktopRect.height) {
+        
+        if (newTop + newHeight > desktopRect.height) 
           newHeight = desktopRect.height - newTop;
-        }
+        
       }
 
       // Update DOM directly (no re-render)

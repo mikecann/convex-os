@@ -8,7 +8,7 @@ interface SliderProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function Slider({ label, id, className = '', ...props }: SliderProps) {
   const sliderId = id || `slider-${Math.random().toString(36).substr(2, 9)}`;
 
-  if (!label) {
+  if (!label) 
     return (
       <input 
         type="range" 
@@ -17,7 +17,7 @@ export function Slider({ label, id, className = '', ...props }: SliderProps) {
         {...props} 
       />
     );
-  }
+  
 
   return (
     <div className="field-row">

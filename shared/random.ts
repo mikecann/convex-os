@@ -20,9 +20,9 @@ export class Random {
   public readonly seed: number;
 
   constructor(seed: number | null = null) {
-    if (seed == null) {
+    if (seed == null) 
       seed = new Date().getTime();
-    }
+    
 
     this.seed = seed;
 
@@ -94,9 +94,9 @@ export class Random {
    */
   nextInt32(range: [number, number] | null = null): number {
     const result = this._nextInt32();
-    if (range == null) {
+    if (range == null) 
       return result;
-    }
+    
 
     return (result % (range[1] - range[0])) + range[0];
   }

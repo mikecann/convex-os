@@ -10,9 +10,9 @@ export function ErrorsRenderer() {
   const context = useContext(ErrorsContext);
 
   useEffect(() => {
-    if (context?.error) {
+    if (context?.error) 
       playSound("criticalStop", 0.4);
-    }
+    
   }, [context?.error]);
 
   if (!context?.error) return null;

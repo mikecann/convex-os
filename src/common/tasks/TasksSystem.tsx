@@ -105,9 +105,9 @@ export function TasksSystem({ children }: PropsWithChildren) {
     let nextActive: string | null = null;
     setTasks((current) => {
       const filtered = current.filter((task) => task.id !== taskId);
-      if (filtered.length > 0) {
+      if (filtered.length > 0) 
         nextActive = filtered[filtered.length - 1]!.id;
-      }
+      
       return filtered;
     });
     setActiveTaskId((currentActive) =>
@@ -167,9 +167,9 @@ export function TasksSystem({ children }: PropsWithChildren) {
           nextTasks.push(task);
         }
 
-        if (!localChanged) {
+        if (!localChanged) 
           return current;
-        }
+        
 
         changed = true;
 
@@ -177,22 +177,22 @@ export function TasksSystem({ children }: PropsWithChildren) {
           const stillExists = nextTasks.some(
             (task) => task.id === computedActive,
           );
-          if (!stillExists) {
+          if (!stillExists) 
             computedActive =
               nextTasks.length > 0 ? nextTasks[nextTasks.length - 1]!.id : null;
-          }
+          
         }
 
-        if (!computedActive && nextTasks.length > 0) {
+        if (!computedActive && nextTasks.length > 0) 
           computedActive = nextTasks[nextTasks.length - 1]!.id;
-        }
+        
 
         return nextTasks;
       });
 
-      if (changed) {
+      if (changed) 
         setActiveTaskId(computedActive ?? null);
-      }
+      
     },
     [activeTaskId],
   );

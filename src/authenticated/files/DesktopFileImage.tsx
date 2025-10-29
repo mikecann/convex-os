@@ -13,26 +13,26 @@ type DesktopFileImageProps = {
 
 export function DesktopFileImage({ file, size = 48 }: DesktopFileImageProps) {
   const src = useMemo(() => {
-    if (file.uploadState.kind === "uploaded") {
+    if (file.uploadState.kind === "uploaded") 
       try {
         const url = new URL(file.uploadState.url);
         const extension = url.pathname.split(".").pop()?.toLowerCase();
-        if (extension && EXTENSION_ICON_MAP[extension]) {
+        if (extension && EXTENSION_ICON_MAP[extension]) 
           return EXTENSION_ICON_MAP[extension];
-        }
+        
       } catch (error) {
         console.warn("Failed to parse uploaded file URL", error);
       }
-    }
+    
 
     const nameExtension = file.name.split(".").pop()?.toLowerCase();
-    if (nameExtension && EXTENSION_ICON_MAP[nameExtension]) {
+    if (nameExtension && EXTENSION_ICON_MAP[nameExtension]) 
       return EXTENSION_ICON_MAP[nameExtension];
-    }
+    
 
-    if (file.type && MIME_ICON_MAP[file.type]) {
+    if (file.type && MIME_ICON_MAP[file.type]) 
       return MIME_ICON_MAP[file.type];
-    }
+    
 
     return DEFAULT_ICON;
   }, [file]);

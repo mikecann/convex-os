@@ -28,9 +28,9 @@ export function DropZone({
     event.preventDefault();
     event.stopPropagation();
 
-    if (getDropEffect) {
+    if (getDropEffect) 
       event.dataTransfer.dropEffect = getDropEffect(event);
-    }
+    
 
     setIsDragOver(true);
   };
@@ -41,9 +41,9 @@ export function DropZone({
     event.preventDefault();
     event.stopPropagation();
 
-    if (getDropEffect) {
+    if (getDropEffect) 
       event.dataTransfer.dropEffect = getDropEffect(event);
-    }
+    
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {

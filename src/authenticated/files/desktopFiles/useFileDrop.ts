@@ -34,9 +34,9 @@ export function useFileDrop(
 
     setIsDragOver(false);
 
-    if (event.dataTransfer.types.includes("application/x-desktop-file-id")) {
+    if (event.dataTransfer.types.includes("application/x-desktop-file-id")) 
       return;
-    }
+    
 
     if (event.dataTransfer.files.length === 0) return;
 

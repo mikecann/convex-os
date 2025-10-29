@@ -33,19 +33,19 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
 
     if (item.processKind) {
       let processParams;
-      if (item.processKind === "image_preview") {
+      if (item.processKind === "image_preview") 
         processParams = startImagePreview();
-      } else if (item.processKind === "video_player") {
+       else if (item.processKind === "video_player") 
         processParams = startVideoPlayer();
-      } else if (item.processKind === "text_preview") {
+       else if (item.processKind === "text_preview") 
         processParams = startTextPreview();
-      } else if (item.processKind === "cheffy_chat") {
+       else if (item.processKind === "cheffy_chat") 
         processParams = startCheffyChat();
-      }
+      
 
-      if (processParams) {
+      if (processParams) 
         void startProcess({ process: processParams }).catch(onError);
-      }
+      
 
       onClose();
       return;

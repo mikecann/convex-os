@@ -45,15 +45,15 @@ export function useDragAndDrop(
 
     // If this file is selected and there are multiple selected files,
     // calculate offsets for all selected files relative to this one
-    if (isSelected && selectedFiles.length > 1) {
+    if (isSelected && selectedFiles.length > 1) 
       selectedFilesOffsetsRef.current = selectedFiles.map((f) => ({
         fileId: f._id,
         offsetX: f.position.x - file.position.x,
         offsetY: f.position.y - file.position.y,
       }));
-    } else {
+     else 
       selectedFilesOffsetsRef.current = [];
-    }
+    
 
     event.dataTransfer.effectAllowed = "copyMove";
     event.dataTransfer.setData("application/x-desktop-file-id", file._id);

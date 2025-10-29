@@ -82,9 +82,9 @@ export const deactivateActive = userMutation({
   returns: v.null(),
   handler: async (ctx) => {
     const activeWindow = await windows.forUser(ctx.userId).findActive(ctx.db);
-    if (activeWindow) {
+    if (activeWindow) 
       await windows.forWindow(activeWindow._id).deactivate(ctx.db);
-    }
+    
     return null;
   },
 });

@@ -18,9 +18,9 @@ export function TextBox({
 }: TextBoxProps) {
   const inputId = id || `textbox-${Math.random().toString(36).substr(2, 9)}`;
 
-  if (!label) {
+  if (!label) 
     return <input id={inputId} className={className} {...props} />;
-  }
+  
 
   const containerClass = stacked ? "field-row-stacked" : "field-row";
 

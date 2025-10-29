@@ -88,9 +88,9 @@ export function CheffyChatWindow({
             event,
             "application/x-desktop-file-id",
           ) as Id<"files">;
-          if (fileId) {
+          if (fileId) 
             addAttachment(fileId);
-          }
+          
         }}
       >
         <div

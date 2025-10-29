@@ -23,11 +23,11 @@ export const OperatingSystemContext =
 
 export function useOS() {
   const context = useContext(OperatingSystemContext);
-  if (context === null) {
+  if (context === null) 
     throw new Error(
       "useOperatingSystem must be used within a OperatingSystemProvider",
     );
-  }
+  
   return context;
 }
 

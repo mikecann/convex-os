@@ -18,9 +18,9 @@ export function ChatWindowInputBox({
     if (message.trim()) {
       onSend(message);
       onMessageChange("");
-      if (textareaRef.current) {
+      if (textareaRef.current) 
         textareaRef.current.style.height = "auto";
-      }
+      
     }
   };
 

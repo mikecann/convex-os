@@ -30,7 +30,7 @@ export function useErrorHandler() {
         return;
       }
 
-      if (typeof error === "object") {
+      if (typeof error === "object") 
         try {
           const stringified = JSON.stringify(error);
           if (stringified && stringified !== "{}") {
@@ -45,7 +45,7 @@ export function useErrorHandler() {
           );
           return;
         }
-      }
+      
 
       context.showError("An unexpected error occurred.");
     },

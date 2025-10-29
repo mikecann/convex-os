@@ -41,9 +41,9 @@ export function playSound(sound: SoundEffect, volume: number = 0.5): void {
 
     // Clear reference when sound finishes
     audio.addEventListener("ended", () => {
-      if (currentAudio === audio) {
+      if (currentAudio === audio) 
         currentAudio = null;
-      }
+      
     });
   } catch (error) {
     console.warn(`Error playing sound ${sound}:`, error);

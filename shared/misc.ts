@@ -48,9 +48,9 @@ export function produceLiteral<Key extends string>(
 ): { [key in Key]: key } {
   const literal: Partial<{ [key in Key]: key }> = {};
 
-  for (const key of keys) {
+  for (const key of keys) 
     literal[key] = key;
-  }
+  
 
   return literal as { [key in Key]: key };
 }

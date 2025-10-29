@@ -28,9 +28,9 @@ export const partition = <T>(items: T[], numChunks: number): T[][] => {
   // return chunks;
 
   const newArray: T[][] = [];
-  for (let c = 0; c < numChunks; c++) {
+  for (let c = 0; c < numChunks; c++) 
     newArray.push([]);
-  }
+  
 
   for (let i = 0; i < items.length; i++) {
     const mod = i % numChunks;
@@ -132,9 +132,9 @@ export function isNotEmpty<T extends readonly any[]>(
 export const guaranteeUniqueIds = (items: { id: string }[]) => {
   const ids = new Set<string>();
   for (const item of items) {
-    if (ids.has(item.id)) {
+    if (ids.has(item.id)) 
       throw new Error(`node id '${item.id}' is not unique`);
-    }
+    
     ids.add(item.id);
   }
 };

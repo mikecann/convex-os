@@ -19,11 +19,11 @@ interface TreeNodeProps {
 }
 
 function TreeNodeComponent({ node, level = 0 }: TreeNodeProps) {
-  if (!node.children || node.children.length === 0) {
+  if (!node.children || node.children.length === 0) 
     return <li>{node.label}</li>;
-  }
+  
 
-  if (node.expandable) {
+  if (node.expandable) 
     return (
       <li>
         <details open={node.defaultExpanded}>
@@ -36,7 +36,7 @@ function TreeNodeComponent({ node, level = 0 }: TreeNodeProps) {
         </details>
       </li>
     );
-  }
+  
 
   return (
     <li>

@@ -73,9 +73,9 @@ export function DesktopFileIcon({
         if (event.button !== 0) return;
         if (isRenaming) return;
         // If this was a click (not a drag) on a selected file, select only this file
-        if (isSelected && !dragStartedRef.current && onClickWithoutDrag) {
+        if (isSelected && !dragStartedRef.current && onClickWithoutDrag) 
           onClickWithoutDrag();
-        }
+        
       }}
       onDragStart={(event) => {
         setIsDragging(true);

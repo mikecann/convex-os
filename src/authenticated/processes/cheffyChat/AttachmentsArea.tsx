@@ -48,13 +48,13 @@ function AttachmentChip({
   // Get file icon based on extension or MIME type
   const getFileIcon = () => {
     const nameExtension = file.name.split(".").pop()?.toLowerCase();
-    if (nameExtension && EXTENSION_ICON_MAP[nameExtension]) {
+    if (nameExtension && EXTENSION_ICON_MAP[nameExtension]) 
       return EXTENSION_ICON_MAP[nameExtension];
-    }
+    
 
-    if (file.type && MIME_ICON_MAP[file.type]) {
+    if (file.type && MIME_ICON_MAP[file.type]) 
       return MIME_ICON_MAP[file.type];
-    }
+    
 
     return DEFAULT_ICON;
   };
