@@ -21,9 +21,8 @@ export function MenuBar({ items }: MenuBarProps) {
       if (
         menuBarRef.current &&
         !menuBarRef.current.contains(event.target as Node)
-      ) {
+      )
         setOpenMenuIndex(null);
-      }
     };
 
     document.addEventListener("mousedown", handleClickOutside);
@@ -46,29 +45,25 @@ export function MenuBar({ items }: MenuBarProps) {
         <div key={index} style={{ position: "relative" }}>
           <button
             onClick={() => {
-              if (openMenuIndex === index) {
-                setOpenMenuIndex(null);
-              } else {
-                setOpenMenuIndex(index);
-              }
+              if (openMenuIndex === index) setOpenMenuIndex(null);
+              else setOpenMenuIndex(index);
             }}
             style={{
-              padding: "4px 8px",
+              padding: "4px 12px",
               border: "none",
               background: openMenuIndex === index ? "#fff" : "transparent",
               cursor: "pointer",
               fontSize: "11px",
               fontFamily: "Tahoma, sans-serif",
+              minWidth: "30px",
             }}
             onMouseEnter={(e) => {
-              if (openMenuIndex === null) {
+              if (openMenuIndex === null)
                 e.currentTarget.style.background = "#D1E9FF";
-              }
             }}
             onMouseLeave={(e) => {
-              if (openMenuIndex !== index) {
+              if (openMenuIndex !== index)
                 e.currentTarget.style.background = "transparent";
-              }
             }}
           >
             {item.label}
@@ -79,11 +74,12 @@ export function MenuBar({ items }: MenuBarProps) {
                 position: "absolute",
                 top: "100%",
                 left: 0,
-                minWidth: "180px",
+                minWidth: "100px",
                 backgroundColor: "#fff",
                 border: "1px solid #0054E3",
                 boxShadow: "2px 2px 4px rgba(0, 0, 0, 0.3)",
                 zIndex: 10000,
+                whiteSpace: "nowrap",
               }}
             >
               {item.items.map((subItem, subIndex) => (
@@ -96,7 +92,7 @@ export function MenuBar({ items }: MenuBarProps) {
                   style={{
                     display: "block",
                     width: "100%",
-                    padding: "4px 20px",
+                    padding: "4px 12px",
                     textAlign: "left",
                     background: "transparent",
                     border: "none",

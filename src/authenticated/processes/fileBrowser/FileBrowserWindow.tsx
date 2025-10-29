@@ -3,11 +3,11 @@ import { useQuery, useMutation } from "convex/react";
 import { Process } from "../../../../convex/processes/schema";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
-import { LocalModalWindow } from "../../../os/windowing/LocalModalWindow";
+import { ModalWindow } from "../../../os/windowing/ModalWindow";
 import { isImageFile, getFileExtension } from "../../../../shared/fileTypes";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
-
-type FileTypeFilter = "all" | "png" | "jpeg" | "gif" | "webp";
+import { FileGrid } from "./FileGrid";
+import { FileBrowserControls, FileTypeFilter } from "./FileBrowserControls";
 
 export function FileBrowserWindow({
   process,
@@ -49,15 +49,28 @@ export function FileBrowserWindow({
 
   const selectedFile = filteredFiles.find((f) => f._id === selectedFileId);
 
+  const handleOpenFile = (fileId: Id<"files">) => {
+    if (!process.props.parentProcessId || !parentWindow) return;
+
+    const file = filteredFiles.find((f) => f._id === fileId);
+    if (!file) return;
+
+    updateProcessProps({
+      processId: process.props.parentProcessId,
+      props: { fileId },
+    })
+      .then(() =>
+        updateWindowTitle({
+          windowId: parentWindow._id,
+          title: `${file.name} - Image Preview`,
+        }),
+      )
+      .then(() => closeProcess({ processId: process._id }))
+      .catch(onError);
+  };
+
   return (
-    <LocalModalWindow
-      title="Open"
-      icon="/xp/folder.png"
-      showCloseButton
-      width={600}
-      height={500}
-      viewState={{ kind: "open", viewStackOrder: 1000, isActive: true }}
-    >
+    <ModalWindow window={window} showCloseButton resizable>
       <div
         style={{
           display: "flex",
@@ -66,194 +79,25 @@ export function FileBrowserWindow({
           backgroundColor: "#fff",
         }}
       >
-        {/* File list area */}
-        <div
-          style={{
-            flex: 1,
-            padding: "8px",
-            overflowY: "auto",
-            border: "2px inset #dfdfdf",
-            margin: "8px",
-            backgroundColor: "#fff",
+        <FileGrid
+          files={filteredFiles}
+          selectedFileId={selectedFileId}
+          onSelectFile={setSelectedFileId}
+          onOpenFile={handleOpenFile}
+        />
+        <FileBrowserControls
+          selectedFile={selectedFile}
+          fileTypeFilter={fileTypeFilter}
+          onFileTypeFilterChange={setFileTypeFilter}
+          onOpen={() => {
+            if (selectedFileId) handleOpenFile(selectedFileId);
           }}
-        >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(80px, 1fr))",
-              gap: "16px",
-            }}
-          >
-            {filteredFiles.map((file) => (
-              <div
-                key={file._id}
-                onClick={() => setSelectedFileId(file._id)}
-                onDoubleClick={() => {
-                  if (!process.props.parentProcessId || !parentWindow) return;
-                  updateProcessProps({
-                    processId: process.props.parentProcessId,
-                    props: { fileId: file._id },
-                  })
-                    .then(() =>
-                      updateWindowTitle({
-                        windowId: parentWindow._id,
-                        title: `${file.name} - Image Preview`,
-                      }),
-                    )
-                    .then(() => closeProcess({ processId: process._id }))
-                    .catch(onError);
-                }}
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  padding: "8px",
-                  cursor: "pointer",
-                  backgroundColor:
-                    selectedFileId === file._id ? "#316AC5" : "transparent",
-                  color: selectedFileId === file._id ? "#fff" : "#000",
-                  borderRadius: "2px",
-                }}
-              >
-                <img
-                  src="/xp/image.png"
-                  alt=""
-                  style={{ width: "32px", height: "32px" }}
-                />
-                <div
-                  style={{
-                    fontSize: "11px",
-                    textAlign: "center",
-                    wordBreak: "break-word",
-                    marginTop: "4px",
-                  }}
-                >
-                  {file.name}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Bottom section */}
-        <div
-          style={{
-            padding: "8px",
-            borderTop: "1px solid #dfdfdf",
-            backgroundColor: "#ECE9D8",
+          onCancel={() => {
+            closeProcess({ processId: process._id }).catch(onError);
           }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              marginBottom: "8px",
-            }}
-          >
-            <label
-              style={{
-                marginRight: "8px",
-                fontSize: "11px",
-                fontFamily: "Tahoma, sans-serif",
-              }}
-            >
-              File name:
-            </label>
-            <input
-              type="text"
-              value={selectedFile?.name ?? ""}
-              readOnly
-              style={{
-                flex: 1,
-                padding: "2px 4px",
-                fontSize: "11px",
-                fontFamily: "Tahoma, sans-serif",
-              }}
-            />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center" }}>
-              <label
-                style={{
-                  marginRight: "8px",
-                  fontSize: "11px",
-                  fontFamily: "Tahoma, sans-serif",
-                }}
-              >
-                Files of type:
-              </label>
-              <select
-                value={fileTypeFilter}
-                onChange={(e) =>
-                  setFileTypeFilter(e.target.value as FileTypeFilter)
-                }
-                style={{
-                  padding: "2px 4px",
-                  fontSize: "11px",
-                  fontFamily: "Tahoma, sans-serif",
-                }}
-              >
-                <option value="all">All Images</option>
-                <option value="png">PNG Files (*.png)</option>
-                <option value="jpeg">JPEG Files (*.jpg, *.jpeg)</option>
-                <option value="gif">GIF Files (*.gif)</option>
-                <option value="webp">WebP Files (*.webp)</option>
-              </select>
-            </div>
-            <div style={{ display: "flex", gap: "8px" }}>
-              <button
-                onClick={() => {
-                  if (
-                    !selectedFileId ||
-                    !process.props.parentProcessId ||
-                    !parentWindow
-                  )
-                    return;
-                  updateProcessProps({
-                    processId: process.props.parentProcessId,
-                    props: { fileId: selectedFileId },
-                  })
-                    .then(() => {
-                      if (!selectedFile) return;
-                      return updateWindowTitle({
-                        windowId: parentWindow._id,
-                        title: `${selectedFile.name} - Image Preview`,
-                      });
-                    })
-                    .then(() => closeProcess({ processId: process._id }))
-                    .catch(onError);
-                }}
-                disabled={!selectedFileId}
-                style={{
-                  padding: "4px 16px",
-                  fontSize: "11px",
-                  fontFamily: "Tahoma, sans-serif",
-                }}
-              >
-                Open
-              </button>
-              <button
-                onClick={() => {
-                  closeProcess({ processId: process._id }).catch(onError);
-                }}
-                style={{
-                  padding: "4px 16px",
-                  fontSize: "11px",
-                  fontFamily: "Tahoma, sans-serif",
-                }}
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </div>
+          isOpenDisabled={!selectedFileId}
+        />
       </div>
-    </LocalModalWindow>
+    </ModalWindow>
   );
 }

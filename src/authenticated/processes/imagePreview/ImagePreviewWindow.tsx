@@ -37,6 +37,9 @@ export function ImagePreviewWindow({
       showMaximizeButton
       showMinimiseButton
       resizable
+      bodyStyle={{
+        marginTop: 0,
+      }}
     >
       <MenuBar
         items={[

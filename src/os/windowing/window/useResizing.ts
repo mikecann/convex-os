@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import type { ResizeCorner } from "./Window";
 
-const MIN_WINDOW_WIDTH = 200;
-const MIN_WINDOW_HEIGHT = 100;
+const MIN_WINDOW_WIDTH = 250;
+const MIN_WINDOW_HEIGHT = 250;
 
 interface ResizeOrigin {
   startX: number;
