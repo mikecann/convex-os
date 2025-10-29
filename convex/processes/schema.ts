@@ -50,6 +50,9 @@ export const processDefinitions = {
     kind: v.literal(processKinds.file_browser),
     props: v.object({
       parentProcessId: v.optional(v.id("processes")),
+      fileTypeFilter: v.optional(
+        v.union(v.literal("image"), v.literal("video"), v.literal("text")),
+      ),
     }),
   },
 } satisfies Record<keyof typeof processKinds, Record<string, unknown>>;

@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { isTextFile } from "../../../../shared/fileTypes";
+import { MenuBar } from "../../../common/components/MenuBar";
+import { useStartCenteredApp } from "../useStartCenteredApp";
 
 function getLanguageFromFilename(filename: string): string {
   const extension = filename.split(".").pop()?.toLowerCase() || "";
@@ -151,6 +153,7 @@ export function TextPreviewWindow({
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const updateWindowTitle = useMutation(api.my.windows.updateTitle);
   const onError = useErrorHandler();
+  const startCenteredApp = useStartCenteredApp();
   const [textContent, setTextContent] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -194,7 +197,39 @@ export function TextPreviewWindow({
       showMaximizeButton
       showMinimiseButton
       resizable
+      bodyStyle={{
+        marginTop: 0,
+      }}
     >
+      <MenuBar
+        items={[
+          {
+            label: "File",
+            items: [
+              {
+                label: "Open...",
+                onClick: () => {
+                  startCenteredApp({
+                    kind: "file_browser",
+                    props: {
+                      parentProcessId: process._id,
+                      fileTypeFilter: "text",
+                    },
+                    windowCreationParams: {
+                      x: 0,
+                      y: 0,
+                      width: 600,
+                      height: 500,
+                      title: "Open",
+                      icon: "/xp/folder.png",
+                    },
+                  });
+                },
+              },
+            ],
+          },
+        ]}
+      />
       <DropZone
         dropMessage="Drop text file here"
         shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}

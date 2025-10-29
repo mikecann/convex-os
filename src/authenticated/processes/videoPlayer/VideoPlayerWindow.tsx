@@ -11,6 +11,8 @@ import {
 } from "../../../common/dragDrop/helpers";
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import { isVideoFile } from "../../../../shared/fileTypes";
+import { MenuBar } from "../../../common/components/MenuBar";
+import { useStartCenteredApp } from "../useStartCenteredApp";
 
 export function VideoPlayerWindow({
   process,
@@ -26,6 +28,7 @@ export function VideoPlayerWindow({
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const updateWindowTitle = useMutation(api.my.windows.updateTitle);
   const onError = useErrorHandler();
+  const startCenteredApp = useStartCenteredApp();
 
   return (
     <ConnectedWindow
@@ -34,7 +37,39 @@ export function VideoPlayerWindow({
       showMaximizeButton
       showMinimiseButton
       resizable
+      bodyStyle={{
+        marginTop: 0,
+      }}
     >
+      <MenuBar
+        items={[
+          {
+            label: "File",
+            items: [
+              {
+                label: "Open...",
+                onClick: () => {
+                  startCenteredApp({
+                    kind: "file_browser",
+                    props: {
+                      parentProcessId: process._id,
+                      fileTypeFilter: "video",
+                    },
+                    windowCreationParams: {
+                      x: 0,
+                      y: 0,
+                      width: 600,
+                      height: 500,
+                      title: "Open",
+                      icon: "/xp/folder.png",
+                    },
+                  });
+                },
+              },
+            ],
+          },
+        ]}
+      />
       <DropZone
         dropMessage="Drop video here"
         shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}
@@ -72,7 +107,7 @@ export function VideoPlayerWindow({
         }}
       >
         {iife(() => {
-          if (!file) 
+          if (!file)
             return (
               <div
                 style={{
@@ -96,7 +131,6 @@ export function VideoPlayerWindow({
                 </p>
               </div>
             );
-          
 
           if (file.uploadState.kind != "uploaded")
             return (

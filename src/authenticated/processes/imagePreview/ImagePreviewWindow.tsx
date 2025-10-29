@@ -50,8 +50,11 @@ export function ImagePreviewWindow({
                 label: "Open...",
                 onClick: () => {
                   startCenteredApp({
-                    kind: "file_browser" as const,
-                    props: { parentProcessId: process._id },
+                    kind: "file_browser",
+                    props: {
+                      parentProcessId: process._id,
+                      fileTypeFilter: "image",
+                    },
                     windowCreationParams: {
                       x: 0,
                       y: 0,

@@ -39,7 +39,7 @@ const processConfigs: Record<ProcessKinds, ProcessConfig> = {
     defaultWidth: 600,
     defaultHeight: 500,
   },
-} as const;
+};
 
 export function startImagePreview(options?: {
   x?: number;

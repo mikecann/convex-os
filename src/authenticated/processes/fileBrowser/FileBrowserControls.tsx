@@ -1,10 +1,21 @@
 import { Doc } from "../../../../convex/_generated/dataModel";
 
-export type FileTypeFilter = "all" | "png" | "jpeg" | "gif" | "webp";
+export type FileTypeFilter =
+  | "all"
+  | "png"
+  | "jpeg"
+  | "gif"
+  | "webp"
+  | "mp4"
+  | "webm"
+  | "txt"
+  | "md"
+  | "json";
 
 type FileBrowserControlsProps = {
   selectedFile: Doc<"files"> | undefined;
   fileTypeFilter: FileTypeFilter;
+  mainFileType: "image" | "video" | "text";
   onFileTypeFilterChange: (filter: FileTypeFilter) => void;
   onOpen: () => void;
   onCancel: () => void;
@@ -14,6 +25,7 @@ type FileBrowserControlsProps = {
 export function FileBrowserControls({
   selectedFile,
   fileTypeFilter,
+  mainFileType,
   onFileTypeFilterChange,
   onOpen,
   onCancel,
@@ -83,11 +95,30 @@ export function FileBrowserControls({
               fontFamily: "Tahoma, sans-serif",
             }}
           >
-            <option value="all">All Images</option>
-            <option value="png">PNG Files (*.png)</option>
-            <option value="jpeg">JPEG Files (*.jpg, *.jpeg)</option>
-            <option value="gif">GIF Files (*.gif)</option>
-            <option value="webp">WebP Files (*.webp)</option>
+            {mainFileType === "image" && (
+              <>
+                <option value="all">All Images</option>
+                <option value="png">PNG Files (*.png)</option>
+                <option value="jpeg">JPEG Files (*.jpg, *.jpeg)</option>
+                <option value="gif">GIF Files (*.gif)</option>
+                <option value="webp">WebP Files (*.webp)</option>
+              </>
+            )}
+            {mainFileType === "video" && (
+              <>
+                <option value="all">All Videos</option>
+                <option value="mp4">MP4 Files (*.mp4)</option>
+                <option value="webm">WebM Files (*.webm)</option>
+              </>
+            )}
+            {mainFileType === "text" && (
+              <>
+                <option value="all">All Text Files</option>
+                <option value="txt">Text Files (*.txt)</option>
+                <option value="md">Markdown Files (*.md)</option>
+                <option value="json">JSON Files (*.json)</option>
+              </>
+            )}
           </select>
         </div>
         <div style={{ display: "flex", gap: "8px" }}>

@@ -4,7 +4,12 @@ import { Process } from "../../../../convex/processes/schema";
 import { Doc, Id } from "../../../../convex/_generated/dataModel";
 import { api } from "../../../../convex/_generated/api";
 import { ModalWindow } from "../../../os/windowing/ModalWindow";
-import { isImageFile, getFileExtension } from "../../../../shared/fileTypes";
+import {
+  isImageFile,
+  isVideoFile,
+  isTextFile,
+  getFileExtension,
+} from "../../../../shared/fileTypes";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { FileGrid } from "./FileGrid";
 import { FileBrowserControls, FileTypeFilter } from "./FileBrowserControls";
@@ -34,12 +39,29 @@ export function FileBrowserWindow({
   const [fileTypeFilter, setFileTypeFilter] = useState<FileTypeFilter>("all");
 
   const parentWindow = parentWindows?.[0];
+  const mainFileType = process.props.fileTypeFilter || "image";
 
-  const imageFiles = files.filter((file) =>
-    isImageFile({ name: file.name, type: file.type }),
-  );
+  // Get the appropriate file type label
+  const getFileTypeLabel = () => {
+    if (mainFileType === "image") return "Image Preview";
+    if (mainFileType === "video") return "Video Player";
+    if (mainFileType === "text") return "Text Preview";
+    return "Preview";
+  };
 
-  const filteredFiles = imageFiles.filter((file) => {
+  // Filter files by main file type
+  const filesByMainType = files.filter((file) => {
+    if (mainFileType === "image")
+      return isImageFile({ name: file.name, type: file.type });
+    if (mainFileType === "video")
+      return isVideoFile({ name: file.name, type: file.type });
+    if (mainFileType === "text")
+      return isTextFile({ name: file.name, type: file.type });
+    return false;
+  });
+
+  // Further filter by specific sub-type
+  const filteredFiles = filesByMainType.filter((file) => {
     if (fileTypeFilter === "all") return true;
     const ext = getFileExtension(file.name);
     if (!ext) return false;
@@ -62,7 +84,7 @@ export function FileBrowserWindow({
       .then(() =>
         updateWindowTitle({
           windowId: parentWindow._id,
-          title: `${file.name} - Image Preview`,
+          title: `${file.name} - ${getFileTypeLabel()}`,
         }),
       )
       .then(() => closeProcess({ processId: process._id }))
@@ -88,6 +110,7 @@ export function FileBrowserWindow({
         <FileBrowserControls
           selectedFile={selectedFile}
           fileTypeFilter={fileTypeFilter}
+          mainFileType={mainFileType}
           onFileTypeFilterChange={setFileTypeFilter}
           onOpen={() => {
             if (selectedFileId) handleOpenFile(selectedFileId);
