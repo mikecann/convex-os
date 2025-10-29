@@ -20,9 +20,7 @@ export class Random {
   public readonly seed: number;
 
   constructor(seed: number | null = null) {
-    if (seed == null) 
-      seed = new Date().getTime();
-    
+    if (seed == null) seed = new Date().getTime();
 
     this.seed = seed;
 
@@ -34,7 +32,9 @@ export class Random {
     for (this.mti = 1; this.mti < Random.N; this.mti++) {
       const s = this.mt[this.mti - 1] ^ (this.mt[this.mti - 1] >>> 30);
       this.mt[this.mti] =
-        ((((s & 0xffff0000) >>> 16) * 1812433253) << 16) + (s & 0x0000ffff) * 1812433253 + this.mti;
+        ((((s & 0xffff0000) >>> 16) * 1812433253) << 16) +
+        (s & 0x0000ffff) * 1812433253 +
+        this.mti;
       /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
       /* In the previous versions, MSBs of the seed affect   */
       /* only MSBs of the array mt[].                        */
@@ -63,15 +63,28 @@ export class Random {
       /* a default initial seed is used */
 
       for (kk = 0; kk < Random.N - Random.M; kk++) {
-        y = (this.mt[kk] & Random.UPPER_MASK) | (this.mt[kk + 1] & Random.LOWER_MASK);
-        this.mt[kk] = this.mt[kk + Random.M] ^ (y >>> 1) ^ mag01[y & 0x1]!;
+        y =
+          (this.mt[kk] & Random.UPPER_MASK) |
+          (this.mt[kk + 1] & Random.LOWER_MASK);
+        const magVal = mag01[y & 0x1];
+        if (magVal !== undefined)
+          this.mt[kk] = this.mt[kk + Random.M] ^ (y >>> 1) ^ magVal;
       }
       for (; kk < Random.N - 1; kk++) {
-        y = (this.mt[kk] & Random.UPPER_MASK) | (this.mt[kk + 1] & Random.LOWER_MASK);
-        this.mt[kk] = this.mt[kk + (Random.M - Random.N)] ^ (y >>> 1) ^ mag01[y & 0x1]!;
+        y =
+          (this.mt[kk] & Random.UPPER_MASK) |
+          (this.mt[kk + 1] & Random.LOWER_MASK);
+        const magVal = mag01[y & 0x1];
+        if (magVal !== undefined)
+          this.mt[kk] =
+            this.mt[kk + (Random.M - Random.N)] ^ (y >>> 1) ^ magVal;
       }
-      y = (this.mt[Random.N - 1] & Random.UPPER_MASK) | (this.mt[0] & Random.LOWER_MASK);
-      this.mt[Random.N - 1] = this.mt[Random.M - 1] ^ (y >>> 1) ^ mag01[y & 0x1]!;
+      y =
+        (this.mt[Random.N - 1] & Random.UPPER_MASK) |
+        (this.mt[0] & Random.LOWER_MASK);
+      const magVal = mag01[y & 0x1];
+      if (magVal !== undefined)
+        this.mt[Random.N - 1] = this.mt[Random.M - 1] ^ (y >>> 1) ^ magVal;
 
       this.mti = 0;
     }
@@ -94,9 +107,7 @@ export class Random {
    */
   nextInt32(range: [number, number] | null = null): number {
     const result = this._nextInt32();
-    if (range == null) 
-      return result;
-    
+    if (range == null) return result;
 
     return (result % (range[1] - range[0])) + range[0];
   }
@@ -138,9 +149,11 @@ export const setRandomSeed = (seed: number = defaultRandomSeed) => {
 export const randomIndex = <T>(items: T[]): number =>
   Math.floor(getRng().nextNumber() * items.length);
 
-export const findRandomOne = <T>(items: T[]): T | undefined => items[randomIndex(items)];
+export const findRandomOne = <T>(items: T[]): T | undefined =>
+  items[randomIndex(items)];
 
 export const randomOne = <T>(items: T[]): T | null => {
   if (items.length == 0) return null;
-  return findRandomOne(items)!;
+  const result = findRandomOne(items);
+  return result ?? null;
 };

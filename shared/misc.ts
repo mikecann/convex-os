@@ -1,5 +1,5 @@
 export function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
-  const ret: any = {};
+  const ret: Pick<T, K> = {} as Pick<T, K>;
   keys.forEach((key) => {
     ret[key] = obj[key];
   });
@@ -48,9 +48,7 @@ export function produceLiteral<Key extends string>(
 ): { [key in Key]: key } {
   const literal: Partial<{ [key in Key]: key }> = {};
 
-  for (const key of keys) 
-    literal[key] = key;
-  
+  for (const key of keys) literal[key] = key;
 
   return literal as { [key in Key]: key };
 }

@@ -1,10 +1,13 @@
 import { arrayify } from "./array";
 
-type Listener<TData = any> = (data: TData) => unknown;
+type Listener<TData = unknown> = (data: TData) => unknown;
 
-type SavedListener<TData = any> = { listener: Listener<TData>; once: boolean };
+type SavedListener<TData = unknown> = {
+  listener: Listener<TData>;
+  once: boolean;
+};
 
-export type Unlisten = () => any;
+export type Unlisten = () => unknown;
 
 export const createUnlistener =
   (removerOrRemovers: Unlisten | Unlisten[]) => () =>
@@ -38,9 +41,9 @@ export class Signal<TData = void> {
   public dispatch = (data: TData): (unknown | Promise<unknown>)[] => {
     const results: unknown[] = [];
     for (let i = 0; i < this.listeners.length; i++) {
-      const listener = this.listeners[i]!;
-      results.push(listener.listener(data));
-      if (listener.once) {
+      const listener = this.listeners[i];
+      if (listener) results.push(listener.listener(data));
+      if (listener && listener.once) {
         this.listeners.splice(i, 1);
         i--;
       }
@@ -53,9 +56,9 @@ export class Signal<TData = void> {
   ): Promise<(unknown | Promise<unknown>)[]> {
     const results: (unknown | Promise<unknown>)[] = [];
     for (let i = 0; i < this.listeners.length; i++) {
-      const listener = this.listeners[i]!;
-      results.push(listener.listener(data));
-      if (listener.once) {
+      const listener = this.listeners[i];
+      if (listener) results.push(listener.listener(data));
+      if (listener && listener.once) {
         this.listeners.splice(i, 1);
         i--;
       }

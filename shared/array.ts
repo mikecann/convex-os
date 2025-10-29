@@ -28,13 +28,12 @@ export const partition = <T>(items: T[], numChunks: number): T[][] => {
   // return chunks;
 
   const newArray: T[][] = [];
-  for (let c = 0; c < numChunks; c++) 
-    newArray.push([]);
-  
+  for (let c = 0; c < numChunks; c++) newArray.push([]);
 
   for (let i = 0; i < items.length; i++) {
     const mod = i % numChunks;
-    newArray[mod]!.push(items[i]!);
+    const item = items[i];
+    if (item !== undefined) newArray[mod].push(item);
   }
   return newArray;
 };
@@ -110,20 +109,20 @@ type Indices<L extends number, T extends number[] = []> = T["length"] extends L
   ? T[number]
   : Indices<L, [T["length"], ...T]>;
 
-export type LengthAtLeast<T extends readonly any[], L extends number> = Pick<
-  Required<T>,
-  Indices<L>
->;
+export type LengthAtLeast<
+  T extends readonly unknown[],
+  L extends number,
+> = Pick<Required<T>, Indices<L>>;
 
 // Borrowed from: https://stackoverflow.com/a/69370003/521097
-export function hasLengthAtLeast<T extends readonly any[], L extends number>(
-  arr: T,
-  len: L,
-): arr is T & LengthAtLeast<T, L> {
+export function hasLengthAtLeast<
+  T extends readonly unknown[],
+  L extends number,
+>(arr: T, len: L): arr is T & LengthAtLeast<T, L> {
   return arr.length >= len;
 }
 
-export function isNotEmpty<T extends readonly any[]>(
+export function isNotEmpty<T extends readonly unknown[]>(
   arr: T,
 ): arr is T & LengthAtLeast<T, 1> {
   return hasLengthAtLeast(arr, 1);
@@ -132,9 +131,8 @@ export function isNotEmpty<T extends readonly any[]>(
 export const guaranteeUniqueIds = (items: { id: string }[]) => {
   const ids = new Set<string>();
   for (const item of items) {
-    if (ids.has(item.id)) 
-      throw new Error(`node id '${item.id}' is not unique`);
-    
+    if (ids.has(item.id)) throw new Error(`node id '${item.id}' is not unique`);
+
     ids.add(item.id);
   }
 };
@@ -145,7 +143,8 @@ export const join = <TJoinable, TGlue>(
 ): (TJoinable | TGlue)[] => {
   const joined: (TJoinable | TGlue)[] = [];
   for (let i = 0; i < data.length; i++) {
-    joined.push(data[i]!);
+    const item = data[i];
+    if (item !== undefined) joined.push(item);
     if (i != data.length - 1) joined.push(glue);
   }
   return joined;

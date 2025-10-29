@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 interface RadioButtonProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -11,7 +11,8 @@ export function RadioButton({
   className = "",
   ...props
 }: RadioButtonProps) {
-  const radioId = id || `radio-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const radioId = id || generatedId;
 
   return (
     <div className="field-row">

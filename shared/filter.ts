@@ -1,4 +1,6 @@
-export const isNotNullOrUndefined = <T>(item: T | null | undefined): item is T => {
+export const isNotNullOrUndefined = <T>(
+  item: T | null | undefined,
+): item is T => {
   if (item === null) return false;
   if (item === undefined) return false;
   return true;
@@ -22,7 +24,7 @@ export const isKinds =
     ...kinds: TKind[]
   ) =>
   (item: TKindable): item is Extract<TKindable, { kind: TKind }> =>
-    kinds.includes(item.kind as any);
+    kinds.includes(item.kind as TKind);
 
 export const isKind =
   <

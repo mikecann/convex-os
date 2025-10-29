@@ -44,7 +44,7 @@ export const processDefinitions = {
       ),
     }),
   },
-} satisfies Record<keyof typeof processKinds, any>;
+} satisfies Record<keyof typeof processKinds, Record<string, unknown>>;
 
 export const processValidator = v.union(
   v.object({

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 interface TextBoxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -16,11 +16,10 @@ export function TextBox({
   labelStyle,
   ...props
 }: TextBoxProps) {
-  const inputId = id || `textbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const inputId = id || generatedId;
 
-  if (!label) 
-    return <input id={inputId} className={className} {...props} />;
-  
+  if (!label) return <input id={inputId} className={className} {...props} />;
 
   const containerClass = stacked ? "field-row-stacked" : "field-row";
 

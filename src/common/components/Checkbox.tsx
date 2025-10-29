@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useId } from "react";
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -11,8 +11,8 @@ export function Checkbox({
   className = "",
   ...props
 }: CheckboxProps) {
-  const checkboxId =
-    id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const checkboxId = id || generatedId;
 
   return (
     <div className="field-row">

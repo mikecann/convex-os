@@ -1,6 +1,6 @@
 interface SpeechBubbleProps {
   message: string;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export function SpeechBubble({ message, onClose }: SpeechBubbleProps) {
@@ -18,7 +18,7 @@ export function SpeechBubble({ message, onClose }: SpeechBubbleProps) {
         zIndex: 2,
       }}
     >
-      <CloseButton onClick={onClose} />
+      {onClose && <CloseButton onClick={onClose} />}
       <Message message={message} />
       <SpeechBubblePointer />
     </div>

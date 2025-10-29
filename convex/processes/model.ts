@@ -91,7 +91,8 @@ export const processes = {
             db: DatabaseWriter,
             { props }: { props: Process["props"] },
           ) => {
-            await db.patch(processId, { props: props as any });
+            const patch: Record<string, typeof props> = { props };
+            await db.patch(processId, patch);
           },
         };
 
@@ -129,11 +130,12 @@ export const processes = {
         db: DatabaseWriter,
         { process }: { process: Infer<typeof processCreationValidator> },
       ) {
-        return await db.insert("processes", {
+        const toInsert = {
           userId,
           kind: process.kind,
-          props: process.props as any,
-        });
+          props: process.props,
+        };
+        return await db.insert("processes", toInsert as any);
       },
 
       async start(

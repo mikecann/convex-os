@@ -44,10 +44,11 @@ export function useDebouncedServerSync<T>(
       serverValue !== debouncedValue &&
       serverValue !== lastSavedValue.current
     ) {
-      setLocalValue(serverValue);
       lastSavedValue.current = serverValue;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setLocalValue(serverValue);
     }
-  }, [serverValue, localValue, debouncedValue]);
+  }, [serverValue, debouncedValue, localValue]);
 
   // Save to server when debounced value changes
   useEffect(() => {

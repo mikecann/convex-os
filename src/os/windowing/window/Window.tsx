@@ -151,41 +151,32 @@ export function Window({
       let newLeft = origin.startLeft;
       let newTop = origin.startTop;
 
-      switch (origin.corner) {
-        case "bottom-right":
-          newWidth = origin.startWidth + deltaX;
-          newHeight = origin.startHeight + deltaY;
-          break;
-        case "bottom-left":
-          newWidth = origin.startWidth - deltaX;
-          newLeft = origin.startLeft + deltaX;
-          newHeight = origin.startHeight + deltaY;
-          break;
-        case "top-right":
-          newWidth = origin.startWidth + deltaX;
-          newHeight = origin.startHeight - deltaY;
-          newTop = origin.startTop + deltaY;
-          break;
-        case "top-left":
-          newWidth = origin.startWidth - deltaX;
-          newLeft = origin.startLeft + deltaX;
-          newHeight = origin.startHeight - deltaY;
-          newTop = origin.startTop + deltaY;
-          break;
-        case "top":
-          newHeight = origin.startHeight - deltaY;
-          newTop = origin.startTop + deltaY;
-          break;
-        case "bottom":
-          newHeight = origin.startHeight + deltaY;
-          break;
-        case "left":
-          newWidth = origin.startWidth - deltaX;
-          newLeft = origin.startLeft + deltaX;
-          break;
-        case "right":
-          newWidth = origin.startWidth + deltaX;
-          break;
+      if (origin.corner === "bottom-right") {
+        newWidth = origin.startWidth + deltaX;
+        newHeight = origin.startHeight + deltaY;
+      } else if (origin.corner === "bottom-left") {
+        newWidth = origin.startWidth - deltaX;
+        newLeft = origin.startLeft + deltaX;
+        newHeight = origin.startHeight + deltaY;
+      } else if (origin.corner === "top-right") {
+        newWidth = origin.startWidth + deltaX;
+        newHeight = origin.startHeight - deltaY;
+        newTop = origin.startTop + deltaY;
+      } else if (origin.corner === "top-left") {
+        newWidth = origin.startWidth - deltaX;
+        newLeft = origin.startLeft + deltaX;
+        newHeight = origin.startHeight - deltaY;
+        newTop = origin.startTop + deltaY;
+      } else if (origin.corner === "top") {
+        newHeight = origin.startHeight - deltaY;
+        newTop = origin.startTop + deltaY;
+      } else if (origin.corner === "bottom") {
+        newHeight = origin.startHeight + deltaY;
+      } else if (origin.corner === "left") {
+        newWidth = origin.startWidth - deltaX;
+        newLeft = origin.startLeft + deltaX;
+      } else if (origin.corner === "right") {
+        newWidth = origin.startWidth + deltaX;
       }
 
       // Apply desktop bounds
@@ -198,12 +189,11 @@ export function Window({
           newHeight += newTop;
           newTop = 0;
         }
-        if (newLeft + newWidth > desktopRect.width) 
+        if (newLeft + newWidth > desktopRect.width)
           newWidth = desktopRect.width - newLeft;
-        
-        if (newTop + newHeight > desktopRect.height) 
+
+        if (newTop + newHeight > desktopRect.height)
           newHeight = desktopRect.height - newTop;
-        
       }
 
       // Update DOM directly (no re-render)

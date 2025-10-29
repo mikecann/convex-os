@@ -78,20 +78,19 @@ export function TextPreviewWindow({
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!file) {
-      setIsLoading(false);
-      return;
-    }
+    if (!file) return;
     if (file.uploadState.kind !== "uploaded") return;
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsLoading(true);
     setLoadError(null);
 
-    fetch(file.uploadState.url)
+    const controller = new AbortController();
+    fetch(file.uploadState.url, { signal: controller.signal })
       .then((response) => {
-        if (!response.ok) 
+        if (!response.ok)
           throw new Error(`Failed to load file: ${response.statusText}`);
-        
+
         return response.text();
       })
       .then((text) => {
@@ -99,11 +98,15 @@ export function TextPreviewWindow({
         setIsLoading(false);
       })
       .catch((error) => {
-        setLoadError(
-          error instanceof Error ? error.message : "Failed to load file",
-        );
-        setIsLoading(false);
+        if (error.name !== "AbortError") {
+          setLoadError(
+            error instanceof Error ? error.message : "Failed to load file",
+          );
+          setIsLoading(false);
+        }
       });
+
+    return () => controller.abort();
   }, [file]);
 
   return (
@@ -151,7 +154,7 @@ export function TextPreviewWindow({
         }}
       >
         {iife(() => {
-          if (!file) 
+          if (!file)
             return (
               <div
                 style={{
@@ -175,7 +178,6 @@ export function TextPreviewWindow({
                 </p>
               </div>
             );
-          
 
           if (file.uploadState.kind !== "uploaded")
             return (

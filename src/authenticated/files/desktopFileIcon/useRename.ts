@@ -11,6 +11,17 @@ export function useRename(file: DesktopFileDoc) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [nameDraft, setNameDraft] = useState(file.name);
   const renamedDuringSessionRef = useRef(false);
+  const prevFileNameRef = useRef(file.name);
+
+  useEffect(() => {
+    if (isRenaming) return;
+    if (prevFileNameRef.current !== file.name) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setNameDraft(file.name);
+      renamedDuringSessionRef.current = false;
+      prevFileNameRef.current = file.name;
+    }
+  }, [file.name, isRenaming]);
 
   useEffect(() => {
     if (!isRenaming) return;
@@ -18,12 +29,6 @@ export function useRename(file: DesktopFileDoc) {
     inputRef.current.focus();
     inputRef.current.select();
   }, [isRenaming]);
-
-  useEffect(() => {
-    if (isRenaming) return;
-    setNameDraft(file.name);
-    renamedDuringSessionRef.current = false;
-  }, [file.name, isRenaming]);
 
   const handleRenameSubmit = async () => {
     const trimmedName = nameDraft.trim();

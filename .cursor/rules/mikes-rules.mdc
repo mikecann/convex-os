@@ -1,0 +1,26 @@
+---
+alwaysApply: true
+---
+
+# General Guidelines
+
+Some things you should always know about this project:
+
+- This is a Convex project, all data is managed on the server by convex
+- This is a React and Vite project, we should follow clean sensible best practices
+- I will be keeping BOTH the convex dev server and the vite server running at all times, YOU DO NOT need to run these yourself, you should assume they are always running
+- We are using Mantine for the styling, we should always use Mantine best practices
+- This project uses Bun for its package management. You should use that unless you encounter errors or otherwise instructed to use npm
+- To run tests you should use "bun run test" NOT "bun test"
+- This is both a web desktop and mobile project so please think hard about the responsiveness of the design when making ui changes.
+- If you want to typecheck this project run "bun run typecheck"
+- You should NEVER "npm build"
+- This is a "bun" project, you should use bun instead of NPM
+
+# User Preferences
+
+- I prefer minimal notifications - don't add success notifications for routine actions like uploading photos or removing items. Only show notifications for errors or truly important events that need user attention.
+- I prefer to have event handlers at the lowest level possible rather than prop drilling callbacks up through multiple component layers. Keep the logic close to where it's used.
+- I strongly prefer to inline event handlers directly in JSX rather than extracting them to separate functions. Use inline arrow functions for onClick, onChange, etc. unless the logic is complex or reused multiple times. This makes the code more direct and easier to read.
+- Avoid unnecessary props that are never customized by parent components. If a prop always has the same value, make it a constant or hardcode it. Use shared constants in /shared/constants.ts for values that need to be consistent between frontend and backend.
+- When breaking a large component into multiple related sub-components (like photo uploading/display functionality), organize them into a dedicated subfolder to keep related components together and make the codebase more maintainable.

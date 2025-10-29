@@ -8,28 +8,22 @@ export function LocalWindow({
   height: initialHeight,
   ...rest
 }: Omit<WindowProps, "x" | "y">) {
-  const [geometry, setGeometry] = useState({
-    x: window.innerWidth / 2 - initialWidth / 2,
-    y: window.innerHeight / 2 - initialHeight / 2,
-    width: initialWidth,
-    height: initialHeight,
-  });
-  const [isInitialized, setIsInitialized] = useState(false);
   const { desktopRect } = useOS();
 
-  // Center window on mount
-  useEffect(() => {
-    if (!desktopRect) return;
-    const centerX = (desktopRect.width - initialWidth) / 2;
-    const centerY = (desktopRect.height - initialHeight) / 2;
-    setGeometry({
+  const [geometry, setGeometry] = useState(() => {
+    const rect = desktopRect || {
+      width: window.innerWidth,
+      height: window.innerHeight,
+    };
+    const centerX = (rect.width - initialWidth) / 2;
+    const centerY = (rect.height - initialHeight) / 2;
+    return {
       x: centerX,
       y: centerY,
       width: initialWidth,
       height: initialHeight,
-    });
-    setIsInitialized(true);
-  }, [isInitialized, desktopRect, initialWidth, initialHeight]);
+    };
+  });
 
   return (
     <Window

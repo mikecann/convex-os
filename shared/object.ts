@@ -8,7 +8,7 @@ export const getInObjStrong = function <T extends object, U extends keyof T>(
 export const getInObj = function <T extends object, U extends string>(
   obj: T,
   key: U,
-): any {
+): unknown {
   if (key in obj == false) {
     const keys = Object.keys(obj);
     throw new Error(
@@ -20,17 +20,37 @@ export const getInObj = function <T extends object, U extends string>(
     );
   }
 
-  return (obj as any)[key];
+  return (obj as Record<U, unknown>)[key];
 };
 
 export const findInObj = function <T extends object, U extends string>(
   obj: T,
   key: U,
-): any {
-  return (obj as any)[key];
+): unknown {
+  return (obj as Record<U, unknown>)[key];
 };
 
 export const clone = <T>(obj: T): T => JSON.parse(JSON.stringify(obj));
+
+export function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
+  const ret: Partial<Pick<T, K>> = {};
+  keys.forEach((key) => {
+    ret[key] = obj[key];
+  });
+  return ret as Pick<T, K>;
+}
+
+export function omit<T extends object, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Omit<T, K> {
+  const ret: Partial<T> = {};
+  for (const key in obj) {
+    const k = key as keyof T;
+    if (!keys.includes(k as K)) ret[k] = obj[k];
+  }
+  return ret as Omit<T, K>;
+}
 
 export const mapObj = <T extends string, U, V>(
   obj: Record<T, U>,
@@ -61,7 +81,7 @@ export const mapObjInParallel = async <T extends string, U, V>(
     async ([key, value]) => [key, await mapper(key as T, value as U)] as const,
   );
   const results = await Promise.all(promises);
-  return Object.fromEntries(results) as any;
+  return Object.fromEntries(results) as Record<T, V>;
 };
 
 export const has = <

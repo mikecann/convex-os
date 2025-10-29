@@ -57,57 +57,81 @@ export function TasksSystem({ children }: PropsWithChildren) {
   const taskbarButtonRefs = useRef<Map<string, HTMLElement | null>>(new Map());
 
   const openTask = useCallback((taskDef: TaskDef): Task => {
-    let task: Task;
-    switch (taskDef.kind) {
-      case "image_preview":
-      case "video_preview":
-        task = {
-          id: taskDef.file._id,
-          ...taskDef,
-          title: taskDef.file.name,
-          isMinimized: false,
-        };
-        break;
-      case "sign_in_sign_up":
-        task = {
-          id: "sign_in_sign_up",
-          kind: "sign_in_sign_up",
-          title: "Sign In",
-          isMinimized: false,
-        };
-        break;
+    if (taskDef.kind === "image_preview" || taskDef.kind === "video_preview") {
+      const task: Task = {
+        id: taskDef.file._id,
+        ...taskDef,
+        title: taskDef.file.name,
+        isMinimized: false,
+      };
+
+      setTasks((current) => {
+        const existingIndex = current.findIndex((t) => t.id === task.id);
+
+        if (existingIndex !== -1) {
+          const updated = [...current];
+          const existing = updated[existingIndex];
+          if (!existing) return [...current, task];
+          const refreshedTask: Task = {
+            ...existing,
+            ...task,
+            isMinimized: false,
+          };
+          updated.splice(existingIndex, 1);
+          updated.push(refreshedTask);
+          return updated;
+        }
+
+        return [...current, task];
+      });
+
+      setActiveTaskId(task.id);
+      return task;
     }
 
-    setTasks((current) => {
-      const existingIndex = current.findIndex((t) => t.id === task.id);
+    if (taskDef.kind === "sign_in_sign_up") {
+      const task: Task = {
+        id: "sign_in_sign_up",
+        kind: "sign_in_sign_up",
+        title: "Sign In",
+        isMinimized: false,
+      };
 
-      if (existingIndex !== -1) {
-        const updated = [...current];
-        const existing = updated[existingIndex]! as Task;
-        const refreshedTask: Task = {
-          ...existing,
-          ...task,
-          isMinimized: false,
-        };
-        updated.splice(existingIndex, 1);
-        updated.push(refreshedTask);
-        return updated;
-      }
+      setTasks((current) => {
+        const existingIndex = current.findIndex((t) => t.id === task.id);
 
-      return [...current, task];
-    });
+        if (existingIndex !== -1) {
+          const updated = [...current];
+          const existing = updated[existingIndex];
+          if (!existing) return [...current, task];
+          const refreshedTask: Task = {
+            ...existing,
+            ...task,
+            isMinimized: false,
+          };
+          updated.splice(existingIndex, 1);
+          updated.push(refreshedTask);
+          return updated;
+        }
 
-    setActiveTaskId(task.id);
-    return task;
+        return [...current, task];
+      });
+
+      setActiveTaskId(task.id);
+      return task;
+    }
+
+    throw new Error(`Unknown task kind: ${taskDef satisfies never}`);
   }, []);
 
   const closeTask = useCallback((taskId: string) => {
     let nextActive: string | null = null;
     setTasks((current) => {
       const filtered = current.filter((task) => task.id !== taskId);
-      if (filtered.length > 0) 
-        nextActive = filtered[filtered.length - 1]!.id;
-      
+      if (filtered.length > 0) {
+        const lastTask = filtered[filtered.length - 1];
+        if (lastTask) nextActive = lastTask.id;
+      }
       return filtered;
     });
     setActiveTaskId((currentActive) =>
@@ -167,9 +191,7 @@ export function TasksSystem({ children }: PropsWithChildren) {
           nextTasks.push(task);
         }
 
-        if (!localChanged) 
-          return current;
-        
+        if (!localChanged) return current;
 
         changed = true;
 
@@ -177,22 +199,21 @@ export function TasksSystem({ children }: PropsWithChildren) {
           const stillExists = nextTasks.some(
             (task) => task.id === computedActive,
           );
-          if (!stillExists) 
-            computedActive =
-              nextTasks.length > 0 ? nextTasks[nextTasks.length - 1]!.id : null;
-          
+          if (!stillExists) {
+            const lastTask = nextTasks[nextTasks.length - 1];
+            computedActive = lastTask ? lastTask.id : null;
+          }
         }
 
-        if (!computedActive && nextTasks.length > 0) 
-          computedActive = nextTasks[nextTasks.length - 1]!.id;
-        
+        if (!computedActive && nextTasks.length > 0) {
+          const lastTask = nextTasks[nextTasks.length - 1];
+          if (lastTask) computedActive = lastTask.id;
+        }
 
         return nextTasks;
       });
 
-      if (changed) 
-        setActiveTaskId(computedActive ?? null);
-      
+      if (changed) setActiveTaskId(computedActive ?? null);
     },
     [activeTaskId],
   );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from "react";
 
 interface DropdownOption {
   value: string;
@@ -11,26 +11,32 @@ interface DropdownProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
   id?: string;
 }
 
-export function Dropdown({ options, label, id, className = '', ...props }: DropdownProps) {
-  const dropdownId = id || `dropdown-${Math.random().toString(36).substr(2, 9)}`;
+export function Dropdown({
+  options,
+  label,
+  id,
+  className = "",
+  ...props
+}: DropdownProps) {
+  const generatedId = useId();
+  const dropdownId = id || generatedId;
 
-  if (!label) 
+  if (!label)
     return (
       <select id={dropdownId} className={className} {...props}>
-        {options.map(option => (
+        {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>
         ))}
       </select>
     );
-  
 
   return (
     <div className="field-row">
       <label htmlFor={dropdownId}>{label}</label>
       <select id={dropdownId} className={className} {...props}>
-        {options.map(option => (
+        {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
           </option>

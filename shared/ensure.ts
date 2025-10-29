@@ -68,7 +68,7 @@ export const ensureKind = <
 ): Extract<TKindable, { kind: TKind }> => {
   if (!isKinds(kind)(val))
     throw new Error(`Expected ${kind} but got ${val.kind}`);
-  return val as any;
+  return val as Extract<TKindable, { kind: TKind }>;
 };
 
 export const ensureKindFP =
@@ -80,7 +80,7 @@ export const ensureKindFP =
     if (!isKinds(kind)(val))
       throw new Error(
         err ??
-          `Expected kind '${kind}' but got '${val && "kind" in val ? (val as any).kind : typeof val}'`,
+          `Expected kind '${kind}' but got '${val && "kind" in val ? (val as TKindable & { kind: string }).kind : typeof val}'`,
       );
     return val as Extract<TKindable, { kind: TKind }>;
   };
