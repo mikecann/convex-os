@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+- please use the common components where appropriate that are found in /src/common so instead of using div you should use Box.
