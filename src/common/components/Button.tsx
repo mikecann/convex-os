@@ -4,9 +4,18 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
-export function Button({ children, className = "", ...props }: ButtonProps) {
+export function Button({
+  children,
+  className = "",
+  style,
+  ...props
+}: ButtonProps) {
   return (
-    <button className={className} {...props}>
+    <button
+      className={className}
+      style={{ minWidth: "30px", ...style }}
+      {...props}
+    >
       {children}
     </button>
   );

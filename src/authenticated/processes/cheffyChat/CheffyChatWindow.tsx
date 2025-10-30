@@ -29,10 +29,7 @@ export function CheffyChatWindow({
 
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   // Cheffy agent action - using type assertion until TypeScript server refreshes types
-  const sendMessageAction = useAction(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (api as any).cheffy.chat.sendMessage as FunctionReference<"action">,
-  );
+  const sendMessageAction = useAction(api.cheffy.chat.sendMessage);
 
   const attachments = process.props.input?.attachments ?? [];
 

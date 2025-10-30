@@ -15,8 +15,7 @@ export function MessagesArea({ threadId, isLoading }: MessagesAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { results: messages } = useUIMessages(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (api as any).cheffy.chat.listThreadMessages as FunctionReference<"query">,
+    api.my.cheffy.listThreadMessages,
     threadId ? { threadId } : "skip",
     { initialNumItems: 50 },
   );

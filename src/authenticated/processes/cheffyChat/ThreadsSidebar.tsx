@@ -4,6 +4,7 @@ import { api } from "../../../../convex/_generated/api";
 import { useMutation } from "convex/react";
 import type { FunctionReference } from "convex/server";
 import { Id } from "../../../../convex/_generated/dataModel";
+import { Button } from "../../../common/components/Button";
 
 interface ThreadsSidebarProps {
   isOpen: boolean;
@@ -22,7 +23,7 @@ export function ThreadsSidebar({
 }: ThreadsSidebarProps) {
   const updateProcessProps = useMutation(api.my.processes.updateProps);
   const threads = useQuery(
-    api.cheffy.chat.listThreads,
+    api.my.cheffy.listThreads,
     isOpen
       ? {
           paginationOpts: { numItems: 100, cursor: null },
@@ -66,25 +67,7 @@ export function ThreadsSidebar({
         >
           Threads
         </span>
-        <button
-          onClick={onClose}
-          style={{
-            padding: "2px 8px",
-            border: "1px solid #919B9C",
-            background: "#ECE9D8",
-            cursor: "pointer",
-            fontSize: "11px",
-            fontFamily: "Tahoma, sans-serif",
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = "#D1E9FF";
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = "#ECE9D8";
-          }}
-        >
-          ×
-        </button>
+        <Button onClick={onClose}>×</Button>
       </div>
       <div
         style={{
