@@ -145,7 +145,16 @@ export const processes = {
         const toInsert = {
           userId,
           kind: process.kind,
-          props: process.props,
+          props:
+            process.kind === "cheffy_chat"
+              ? {
+                  ...process.props,
+                  sidebar: process.props.sidebar ?? {
+                    isOpen: false,
+                    width: 250,
+                  },
+                }
+              : process.props,
         } as Infer<typeof processValidator>;
         return await db.insert("processes", toInsert);
       },

@@ -1,14 +1,14 @@
 import { v } from "convex/values";
 import { api, internal } from "../_generated/api";
 import { cheffyAgent } from "./agent";
-import { myAction } from "../lib";
+import { myAction, myMutation } from "../lib";
 import { iife } from "../../shared/misc";
+
+
 
 export const sendMessage = myAction({
   args: {
     processId: v.id("processes"),
-    text: v.string(),
-    attachments: v.array(v.id("files")),
   },
   handler: async (ctx, args) => {
     const process = await ctx.runQuery(
@@ -32,6 +32,11 @@ export const sendMessage = myAction({
       return result.threadId;
     });
 
+    const text = process.props.input?.text;
+    if (!text) return;
+
+    const attachments = process.props.input?.attachments ?? [];
+
     const messageParts: Array<{
       type: string;
       text?: string;
@@ -39,9 +44,9 @@ export const sendMessage = myAction({
       mimeType?: string;
     }> = [];
 
-    if (args.text.trim()) messageParts.push({ type: "text", text: args.text });
+    if (text.trim()) messageParts.push({ type: "text", text });
 
-    for (const fileId of args.attachments) {
+    for (const fileId of attachments) {
       const file = await ctx.runQuery(api.my.files.get, { fileId });
       if (file?.uploadState.kind === "uploaded") {
         const fileUrl = await ctx.storage.getUrl(file.uploadState.storageId);
@@ -54,7 +59,7 @@ export const sendMessage = myAction({
       }
     }
 
-    await cheffyAgent.generateText(ctx, { threadId }, { prompt: args.text });
+    await cheffyAgent.generateText(ctx, { threadId }, { prompt: text });
 
     await ctx.runMutation(internal.internal.cheffy.clearInput, {
       processId: args.processId,

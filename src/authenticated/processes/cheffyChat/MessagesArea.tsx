@@ -3,20 +3,16 @@ import { MessageBubble } from "./MessageBubble";
 import { EmptyCheffyState } from "./EmptyCheffyState";
 import { useUIMessages } from "@convex-dev/agent/react";
 import type { UIMessage } from "@convex-dev/agent";
-import type { FunctionReference } from "convex/server";
 import { api } from "../../../../convex/_generated/api";
+import { useCheffyChatContext } from "./CheffyChatContext";
 
-interface MessagesAreaProps {
-  threadId: string | undefined;
-  isLoading: boolean;
-}
-
-export function MessagesArea({ threadId, isLoading }: MessagesAreaProps) {
+export function MessagesArea() {
+  const { process, isLoading } = useCheffyChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const { results: messages } = useUIMessages(
     api.my.cheffy.listThreadMessages,
-    threadId ? { threadId } : "skip",
+    process.props.threadId ? { threadId: process.props.threadId } : "skip",
     { initialNumItems: 50 },
   );
 
@@ -24,7 +20,7 @@ export function MessagesArea({ threadId, isLoading }: MessagesAreaProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (!threadId && !isLoading) return <EmptyCheffyState />;
+  if (!process.props.threadId && !isLoading) return <EmptyCheffyState />;
 
   if (messages.length === 0 && !isLoading) return <EmptyCheffyState />;
 

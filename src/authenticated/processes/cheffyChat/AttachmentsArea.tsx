@@ -6,16 +6,14 @@ import {
   MIME_ICON_MAP,
   DEFAULT_ICON,
 } from "../../../../shared/fileTypes";
+import { useCheffyChatContext } from "./CheffyChatContext";
+import { useMutation } from "convex/react";
 
-interface AttachmentsAreaProps {
-  attachmentIds: Array<Id<"files">>;
-  onRemove: (fileId: Id<"files">) => void;
-}
+export function AttachmentsArea() {
+  const { process, inputText } = useCheffyChatContext();
+  const updateProcessProps = useMutation(api.my.processes.updateProps);
+  const attachmentIds = process.props.input?.attachments ?? [];
 
-export function AttachmentsArea({
-  attachmentIds,
-  onRemove,
-}: AttachmentsAreaProps) {
   if (attachmentIds.length === 0) return null;
 
   return (
@@ -28,7 +26,24 @@ export function AttachmentsArea({
       }}
     >
       {attachmentIds.map((fileId) => (
-        <AttachmentChip key={fileId} fileId={fileId} onRemove={onRemove} />
+        <AttachmentChip
+          key={fileId}
+          fileId={fileId}
+          onRemove={(fileId: Id<"files">) => {
+            const newAttachments = attachmentIds.filter((id) => id !== fileId);
+            void updateProcessProps({
+              processId: process._id,
+              props: {
+                threadId: process.props.threadId,
+                sidebar: process.props.sidebar,
+                input: {
+                  text: inputText,
+                  attachments: newAttachments,
+                },
+              },
+            });
+          }}
+        />
       ))}
     </div>
   );
@@ -48,13 +63,10 @@ function AttachmentChip({
   // Get file icon based on extension or MIME type
   const getFileIcon = () => {
     const nameExtension = file.name.split(".").pop()?.toLowerCase();
-    if (nameExtension && EXTENSION_ICON_MAP[nameExtension]) 
+    if (nameExtension && EXTENSION_ICON_MAP[nameExtension])
       return EXTENSION_ICON_MAP[nameExtension];
-    
 
-    if (file.type && MIME_ICON_MAP[file.type]) 
-      return MIME_ICON_MAP[file.type];
-    
+    if (file.type && MIME_ICON_MAP[file.type]) return MIME_ICON_MAP[file.type];
 
     return DEFAULT_ICON;
   };

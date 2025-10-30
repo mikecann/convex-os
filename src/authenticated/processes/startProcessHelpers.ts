@@ -128,7 +128,13 @@ export function startCheffyChat(options?: {
 
   return {
     kind: "cheffy_chat" as const,
-    props: options?.input ? { input: options.input } : {},
+    props: {
+      sidebar: {
+        isOpen: false,
+        width: 250,
+      },
+      ...(options?.input ? { input: options.input } : {}),
+    },
     windowCreationParams: {
       x: options?.x ?? 100,
       y: options?.y ?? 100,

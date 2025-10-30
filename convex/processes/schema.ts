@@ -38,6 +38,10 @@ export const processDefinitions = {
     kind: v.literal(processKinds.cheffy_chat),
     props: v.object({
       threadId: v.optional(v.string()),
+      sidebar: v.object({
+        isOpen: v.boolean(),
+        width: v.number(),
+      }),
       input: v.optional(
         v.object({
           text: v.string(),
@@ -145,6 +149,10 @@ export type Process<TKind extends ProcessKinds = ProcessKinds> =
 
 export type ProcessWithWindow<TKind extends ProcessKinds = ProcessKinds> =
   Process<TKind> & { window: Window };
+
+export type ProcessProps<TKind extends ProcessKinds = ProcessKinds> = Infer<
+  (typeof processDefinitions)[TKind]["props"]
+>;
 
 export const processesTable = defineTable(processValidator).index("by_user", [
   "userId",

@@ -1,13 +1,18 @@
 import Flex from "../../../../common/components/Flex";
 import Box from "../../../../common/components/Box";
 import { Button } from "../../../../common/components/Button";
+import { useCheffyChatContext } from "../CheffyChatContext";
+import { useMutation } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
 
 interface SidebarHeaderProps {
   title: string;
-  onClose: () => void;
 }
 
-export function SidebarHeader({ title, onClose }: SidebarHeaderProps) {
+export function SidebarHeader({ title }: SidebarHeaderProps) {
+  const { process } = useCheffyChatContext();
+  const toggleSidebar = useMutation(api.my.cheffy.toggleSidebar);
+
   return (
     <Flex
       padding="8px"
@@ -24,7 +29,13 @@ export function SidebarHeader({ title, onClose }: SidebarHeaderProps) {
       >
         {title}
       </Box>
-      <Button onClick={onClose}>×</Button>
+      <Button
+        onClick={() => {
+          void toggleSidebar({ processId: process._id });
+        }}
+      >
+        ×
+      </Button>
     </Flex>
   );
 }
