@@ -10,6 +10,7 @@ import { AttachmentsArea } from "./AttachmentsArea";
 import { MessagesArea } from "./MessagesArea";
 import { ThreadsSidebar } from "./ThreadsSidebar";
 import { MenuBar } from "../../../common/components/MenuBar";
+import { CommonWindowShell } from "../../../common/components/CommonWindowShell";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
 import { DropZone } from "../../../common/dragDrop/DropZone";
 import {
@@ -75,127 +76,136 @@ export function CheffyChatWindow({
       resizable
       bodyStyle={{
         marginTop: 0,
+        height: "100%",
+        overflow: "hidden",
       }}
     >
-      <MenuBar
-        items={[
-          {
-            label: "View",
-            items: [
+      <CommonWindowShell
+        menubar={
+          <MenuBar
+            items={[
               {
-                label: "Threads",
-                onClick: () => {
-                  setSidebarOpen((prev) => !prev);
-                },
+                label: "View",
+                items: [
+                  {
+                    label: "Threads",
+                    onClick: () => {
+                      setSidebarOpen((prev) => !prev);
+                    },
+                  },
+                ],
               },
-            ],
-          },
-        ]}
-      />
-      <DropZone
-        dropMessage="Drop files here to attach"
-        shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}
-        getDropEffect={() => "copy"}
-        onDrop={async (event) => {
-          const fileId = getDragData(
-            event,
-            "application/x-desktop-file-id",
-          ) as Id<"files">;
-          if (fileId) addAttachment(fileId);
-        }}
+            ]}
+          />
+        }
       >
-        <div
-          style={{
-            width: "100%",
-            height: "100%",
-            display: "flex",
-            flexDirection: "row",
-            backgroundColor: "#f0f0f0",
-            position: "relative",
+        <DropZone
+          dropMessage="Drop files here to attach"
+          shouldAcceptDrag={createDataTypeFilter(
+            "application/x-desktop-file-id",
+          )}
+          getDropEffect={() => "copy"}
+          onDrop={async (event) => {
+            const fileId = getDragData(
+              event,
+              "application/x-desktop-file-id",
+            ) as Id<"files">;
+            if (fileId) addAttachment(fileId);
           }}
         >
-          <ThreadsSidebar
-            isOpen={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            currentThreadId={process.props.threadId}
-            onThreadSelect={(threadId) => {
-              void updateProcessProps({
-                processId: process._id,
-                props: {
-                  threadId,
-                  input: process.props.input,
-                },
-              });
-            }}
-            processId={process._id}
-          />
           <div
             style={{
               flex: 1,
               display: "flex",
-              flexDirection: "column",
-              marginLeft: sidebarOpen ? "250px" : 0,
-              transition: "margin-left 0.2s",
-              minWidth: 0,
+              flexDirection: "row",
+              backgroundColor: "#f0f0f0",
+              minHeight: 0,
+              overflow: "hidden",
+              width: "100%",
+              height: "100%",
             }}
           >
-            {/* Messages Area */}
-            <MessagesArea
-              threadId={process.props.threadId}
-              isLoading={isLoading}
+            <ThreadsSidebar
+              isOpen={sidebarOpen}
+              onClose={() => setSidebarOpen(false)}
+              currentThreadId={process.props.threadId}
+              onThreadSelect={(threadId) => {
+                void updateProcessProps({
+                  processId: process._id,
+                  props: {
+                    threadId,
+                    input: process.props.input,
+                  },
+                });
+              }}
+              processId={process._id}
             />
-
             <div
               style={{
-                padding: "8px",
-                backgroundColor: "#ece9d8",
+                flex: 1,
+                display: "flex",
+                flexDirection: "column",
+                minWidth: 0,
+                minHeight: 0,
               }}
             >
-              <AttachmentsArea
-                attachmentIds={attachments}
-                onRemove={(fileId) => {
-                  const newAttachments = attachments.filter(
-                    (id) => id !== fileId,
-                  );
-                  void updateProcessProps({
-                    processId: process._id,
-                    props: {
-                      threadId: process.props.threadId,
-                      input: {
-                        text: inputText,
-                        attachments: newAttachments,
+              <MessagesArea
+                threadId={process.props.threadId}
+                isLoading={isLoading}
+              />
+
+              <div
+                style={{
+                  padding: "8px",
+                  backgroundColor: "#ece9d8",
+                }}
+              >
+                <AttachmentsArea
+                  attachmentIds={attachments}
+                  onRemove={(fileId) => {
+                    const newAttachments = attachments.filter(
+                      (id) => id !== fileId,
+                    );
+                    void updateProcessProps({
+                      processId: process._id,
+                      props: {
+                        threadId: process.props.threadId,
+                        input: {
+                          text: inputText,
+                          attachments: newAttachments,
+                        },
                       },
-                    },
-                  });
-                }}
-              />
-
-              <ChatWindowInputBox
-                message={inputText}
-                onMessageChange={setInputText}
-                onSend={async (message) => {
-                  if (!message.trim() && attachments.length === 0) return;
-
-                  setIsLoading(true);
-
-                  sendMessageAction({
-                    processId: process._id,
-                    text: message,
-                    attachments,
-                  })
-                    .then(() => {
-                      setIsLoading(false);
-                    })
-                    .catch((err) => {
-                      console.error("Failed to send message:", err);
-                      setIsLoading(false);
                     });
-                }}
-              />
+                  }}
+                />
+
+                <ChatWindowInputBox
+                  message={inputText}
+                  onMessageChange={setInputText}
+                  onSend={async (message) => {
+                    if (!message.trim() && attachments.length === 0) return;
+
+                    setIsLoading(true);
+
+                    sendMessageAction({
+                      processId: process._id,
+                      text: message,
+                      attachments,
+                    })
+                      .then(() => {
+                        setIsLoading(false);
+                      })
+                      .catch((err) => {
+                        console.error("Failed to send message:", err);
+                        setIsLoading(false);
+                      });
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </DropZone>
+        </DropZone>
+      </CommonWindowShell>
     </ConnectedWindow>
   );
 }

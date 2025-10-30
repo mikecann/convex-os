@@ -34,15 +34,12 @@ export function ThreadsSidebar({
 
   return (
     <Vertical
+      width="250px"
+      background="#ECE9D8"
       style={{
-        position: "absolute",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        width: "250px",
-        background: "#ECE9D8",
+        flexShrink: 0,
         borderRight: "1px solid #919B9C",
-        zIndex: 1000,
+        minHeight: 0,
       }}
     >
       <SidebarHeader title="Threads" onClose={onClose} />

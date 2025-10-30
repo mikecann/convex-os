@@ -34,6 +34,7 @@ export function MessagesArea({ threadId, isLoading }: MessagesAreaProps) {
         flex: 1,
         overflowY: "auto",
         padding: "24px",
+        minHeight: 0,
       }}
     >
       {messages.map((message) => (
