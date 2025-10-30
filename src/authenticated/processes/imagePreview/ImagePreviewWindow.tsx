@@ -12,6 +12,7 @@ import { DropZone } from "../../../common/dragDrop/DropZone";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { isImageFile } from "../../../../shared/fileTypes";
 import { MenuBar } from "../../../common/components/MenuBar";
+import { CommonWindowShell } from "../../../common/components/CommonWindowShell";
 import { useStartCenteredApp } from "../useStartCenteredApp";
 
 export function ImagePreviewWindow({
@@ -39,38 +40,44 @@ export function ImagePreviewWindow({
       resizable
       bodyStyle={{
         marginTop: 0,
+        height: "100%",
+        overflow: "hidden",
       }}
     >
-      <MenuBar
-        items={[
-          {
-            label: "File",
-            items: [
+      <CommonWindowShell
+        menubar={
+          <MenuBar
+            items={[
               {
-                label: "Open...",
-                onClick: () => {
-                  startCenteredApp({
-                    kind: "file_browser",
-                    props: {
-                      parentProcessId: process._id,
-                      fileTypeFilter: "image",
+                label: "File",
+                items: [
+                  {
+                    label: "Open...",
+                    onClick: () => {
+                      startCenteredApp({
+                        kind: "file_browser",
+                        props: {
+                          parentProcessId: process._id,
+                          fileTypeFilter: "image",
+                        },
+                        windowCreationParams: {
+                          x: 0,
+                          y: 0,
+                          width: 600,
+                          height: 500,
+                          title: "Open",
+                          icon: "/xp/folder.png",
+                        },
+                      });
                     },
-                    windowCreationParams: {
-                      x: 0,
-                      y: 0,
-                      width: 600,
-                      height: 500,
-                      title: "Open",
-                      icon: "/xp/folder.png",
-                    },
-                  });
-                },
+                  },
+                ],
               },
-            ],
-          },
-        ]}
-      />
-      <DropZone
+            ]}
+          />
+        }
+      >
+        <DropZone
         dropMessage="Drop image here"
         shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}
         getDropEffect={() => "copy"}
@@ -184,6 +191,7 @@ export function ImagePreviewWindow({
           );
         })}
       </DropZone>
+      </CommonWindowShell>
     </ConnectedWindow>
   );
 }
