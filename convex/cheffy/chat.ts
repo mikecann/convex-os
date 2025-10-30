@@ -1,51 +1,43 @@
 import { v } from "convex/values";
-import { action, query } from "../_generated/server";
+import {
+  action,
+  internalMutation,
+  internalQuery,
+  query,
+} from "../_generated/server";
 import { api, internal } from "../_generated/api";
 import { cheffyAgent } from "./agent";
 import { listUIMessages } from "@convex-dev/agent";
 import { components } from "../_generated/api";
 import { paginationOptsValidator } from "convex/server";
-import { myQuery } from "../lib";
+import { myQuery, myAction } from "../lib";
+import { processes } from "../processes/model";
+import { iife } from "../../shared/misc";
 
-export const sendMessage = action({
+export const sendMessage = myAction({
   args: {
     processId: v.id("processes"),
     text: v.string(),
     attachments: v.array(v.id("files")),
   },
-  returns: v.array(
-    v.object({
-      role: v.string(),
-      content: v.string(),
-      timestamp: v.number(),
-    }),
-  ),
-  handler: async (
-    ctx,
-    args,
-  ): Promise<Array<{ role: string; content: string; timestamp: number }>> => {
-    const process = await ctx.runQuery(internal.cheffy.queries.getProcess, {
+  handler: async (ctx, args) => {
+    const process = await ctx.runQuery(internal.cheffy.chat.getChatProcess, {
       processId: args.processId,
     });
 
-    if (!process) throw new Error("Process not found");
+    if (process.kind != "cheffy_chat") throw new Error("Process not cheffy");
 
-    let threadId: string | undefined = process.props.threadId;
-    let thread;
-
-    if (threadId) {
-      const result = await cheffyAgent.continueThread(ctx, { threadId });
-      thread = result.thread;
-    } else {
-      const result = await cheffyAgent.createThread(ctx);
-      threadId = result.threadId;
-      thread = result.thread;
-
-      await ctx.runMutation(internal.cheffy.mutations.updateThreadId, {
+    const threadId = await iife(async () => {
+      if (process.props.threadId) return process.props.threadId;
+      const result = await cheffyAgent.createThread(ctx, {
+        userId: ctx.userId,
+      });
+      await ctx.runMutation(internal.cheffy.chat.setChatThreadId, {
         processId: args.processId,
         threadId,
       });
-    }
+      return result.threadId;
+    });
 
     const messageParts: Array<{
       type: string;
@@ -69,27 +61,11 @@ export const sendMessage = action({
       }
     }
 
-    const result = await thread.generateText({
-      prompt: args.text,
-    });
+    await cheffyAgent.generateText(ctx, { threadId }, { prompt: args.text });
 
     await ctx.runMutation(internal.cheffy.mutations.clearInput, {
       processId: args.processId,
     });
-
-    // Return a simplified version - just the user message and agent response
-    return [
-      {
-        role: "user",
-        content: args.text,
-        timestamp: Date.now(),
-      },
-      {
-        role: "assistant",
-        content: result.text,
-        timestamp: Date.now(),
-      },
-    ];
   },
 });
 
@@ -97,5 +73,58 @@ export const listThreadMessages = myQuery({
   args: { threadId: v.string(), paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
     return await listUIMessages(ctx, components.agent, args);
+  },
+});
+
+export const createThread = internalQuery({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: async (ctx, args) => {
+    return processes.forProcess(args.processId).get(ctx.db);
+  },
+});
+
+export const getChatProcess = internalQuery({
+  args: {
+    processId: v.id("processes"),
+  },
+  handler: async (ctx, args) =>
+    processes.forProcess(args.processId).getKind(ctx.db, "cheffy_chat"),
+});
+
+export const setChatThreadId = internalMutation({
+  args: {
+    processId: v.id("processes"),
+    threadId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const process = await processes
+      .forProcess(args.processId)
+      .getKind(ctx.db, "cheffy_chat");
+
+    await ctx.db.patch(args.processId, {
+      props: {
+        ...process.props,
+        threadId: args.threadId,
+      },
+    });
+    return process;
+  },
+});
+
+export const listThreads = myQuery({
+  args: {
+    paginationOpts: paginationOptsValidator,
+  },
+  handler: async (ctx, args) => {
+    return await ctx.runQuery(
+      components.agent.threads.listThreadsByUserId,
+      {
+        userId: ctx.userId,
+        order: "desc",
+        paginationOpts: args.paginationOpts,
+      },
+    );
   },
 });

@@ -1,5 +1,6 @@
-import { mutation, query } from "./_generated/server";
+import { action, mutation, query } from "./_generated/server";
 import {
+  customAction,
   customMutation,
   customQuery,
 } from "convex-helpers/server/customFunctions";
@@ -38,6 +39,20 @@ export const myMutation = customMutation(mutation, {
             await _ctx.db.get(userId),
             `couldnt find user with id ${userId}`,
           ),
+      },
+      args: {},
+    };
+  },
+});
+
+export const myAction = customAction(action, {
+  args: {},
+  input: async (_ctx, args) => {
+    const userId = await getAuthUserId(_ctx);
+    if (userId === null) throw new Error(`Couldnt find user with id ${userId}`);
+    return {
+      ctx: {
+        userId,
       },
       args: {},
     };

@@ -5,6 +5,7 @@ import { DatabaseReader, DatabaseWriter } from "../_generated/server";
 import {
   Process,
   processCreationValidator,
+  ProcessKinds,
   processStartingValidator,
   processValidator,
 } from "./schema";
@@ -22,6 +23,16 @@ export const processes = {
         return this.find(db).then(
           ensureFP(`could not find process ${processId}`),
         );
+      },
+
+      async getKind<TKind extends ProcessKinds>(
+        db: DatabaseReader,
+        kind: TKind,
+      ): Promise<Process<TKind>> {
+        const process = await this.get(db);
+        if (process.kind != kind)
+          throw new Error(`Process ${processId} is not a ${kind}`);
+        return process as Process<TKind>;
       },
 
       async minimize(db: DatabaseWriter) {
