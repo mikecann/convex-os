@@ -4,11 +4,28 @@ import { api } from "../../../../convex/_generated/api";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
 import { useCheffyChatContext } from "./CheffyChatContext";
 import { Button } from "../../../common/components/Button";
+import { optimisticallySendMessage } from "@convex-dev/agent/react";
 
 export function ChatWindowInputBox() {
   const { process } = useCheffyChatContext();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const sendMessage = useMutation(api.my.cheffy.sendMessage);
+  const sendMessage = useMutation(api.my.cheffy.sendMessage).withOptimisticUpdate(
+    (localStore, { processId }) => {
+      const processDoc = localStore.getQuery(api.my.processes.get, {
+        processId,
+      });
+      if (!processDoc || processDoc.kind !== "cheffy_chat") return;
+      if (!processDoc.props.threadId) return;
+
+      const text = processDoc.props.input?.text?.trim();
+      if (!text) return;
+
+      optimisticallySendMessage(api.my.cheffy.listThreadMessages)(localStore, {
+        threadId: processDoc.props.threadId,
+        prompt: text,
+      });
+    },
+  );
   const updateText = useMutation(api.my.cheffy.updateText);
 
   const [message, setMessage] = useDebouncedServerSync(

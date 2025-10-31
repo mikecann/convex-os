@@ -1,7 +1,12 @@
+import { DotLoader } from "react-spinners";
 import { UIMessage } from "@convex-dev/agent";
 
 export function MessageBubble({ message }: { message: UIMessage }) {
   const isUser = message.role === "user";
+  const isStreaming =
+    !isUser &&
+    (message.status === "pending" ||
+      (!message.text && message.status !== "success"));
 
   return (
     <div
@@ -46,9 +51,24 @@ export function MessageBubble({ message }: { message: UIMessage }) {
             fontFamily: "MS Sans Serif, Arial, sans-serif",
             wordWrap: "break-word",
             whiteSpace: "pre-wrap",
+            minHeight: "20px",
+            display: "flex",
+            alignItems: "center",
           }}
         >
-          {message.text}
+          {isStreaming ? (
+            <DotLoader
+              color="#666"
+              size={8}
+              speedMultiplier={0.8}
+              cssOverride={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            />
+          ) : (
+            message.text
+          )}
         </div>
       </div>
       {message._creationTime && (

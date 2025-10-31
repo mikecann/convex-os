@@ -136,22 +136,6 @@ export const sendMessage = myMutation({
       },
     });
 
-    const thread = await ctx.runQuery(components.agent.threads.getThread, {
-      threadId,
-    });
-
-    const shouldGenerateTitle =
-      thread &&
-      !thread.title &&
-      (
-        await ctx.runQuery(components.agent.messages.listMessagesByThreadId, {
-          threadId,
-          order: "asc",
-          excludeToolMessages: true,
-          paginationOpts: { numItems: 2, cursor: null },
-        })
-      ).page.length === 1;
-
     await ctx.scheduler.runAfter(
       0,
       internal.internal.cheffy.generateResponseAsync,
@@ -161,7 +145,9 @@ export const sendMessage = myMutation({
       },
     );
 
-    if (shouldGenerateTitle)
+    if (
+      await cheffy.forProcess(args.processId).shouldGenerateTitle(ctx, threadId)
+    )
       await ctx.scheduler.runAfter(
         0,
         internal.internal.cheffy.generateThreadTitleAsync,

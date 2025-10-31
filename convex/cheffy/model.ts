@@ -108,6 +108,15 @@ export const cheffy = {
           attachments: newAttachments,
         });
       },
+
+      async shouldGenerateTitle(ctx: QueryCtx, threadId: string) {
+        const thread = await ctx.runQuery(components.agent.threads.getThread, {
+          threadId,
+        });
+        if (!thread) return false;
+        if (!thread.title) return true;
+        return false;
+      },
     };
   },
 };
