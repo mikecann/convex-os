@@ -142,6 +142,8 @@ export function Window({
     viewState,
     desktopRect,
     style,
+    isDragging,
+    isResizing,
   });
 
   return (

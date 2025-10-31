@@ -10,6 +10,8 @@ interface UseWindowStyleProps {
   viewState: WindowViewState;
   desktopRect: DOMRect | null;
   style?: React.CSSProperties;
+  isDragging?: boolean;
+  isResizing?: boolean;
 }
 
 export function useWindowStyle({
@@ -20,6 +22,8 @@ export function useWindowStyle({
   viewState,
   desktopRect,
   style,
+  isDragging = false,
+  isResizing = false,
 }: UseWindowStyleProps): React.CSSProperties {
   return useMemo(() => {
     const baseStyle: React.CSSProperties = {
@@ -41,7 +45,11 @@ export function useWindowStyle({
       display: "flex",
       flexDirection: "column",
       boxSizing: "border-box",
-      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
+      ...(isDragging || isResizing
+        ? {}
+        : {
+            transition: "all 0.2s ease-in-out, opacity 0.3s ease-in-out",
+          }),
       ...(style || {}),
     };
 
@@ -60,5 +68,15 @@ export function useWindowStyle({
       : "grayscale(100%)";
 
     return baseStyle;
-  }, [x, y, width, height, viewState, desktopRect, style]);
+  }, [
+    x,
+    y,
+    width,
+    height,
+    viewState,
+    desktopRect,
+    style,
+    isDragging,
+    isResizing,
+  ]);
 }
