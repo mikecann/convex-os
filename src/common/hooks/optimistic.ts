@@ -1,5 +1,6 @@
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import { optimisticallySendMessage } from "@convex-dev/agent/react";
 
 export function useOptimisticUpdatePosition() {
   return useMutation(api.my.files.updatePosition).withOptimisticUpdate(
@@ -29,6 +30,41 @@ export function useOptimisticUpdatePositions() {
         });
         localStore.setQuery(api.my.files.list, {}, updated);
       }
+    },
+  );
+}
+
+export function useOptimisticSendMessage() {
+  return useMutation(api.my.cheffy.sendMessage).withOptimisticUpdate(
+    (localStore, { processId }) => {
+      const processDoc = localStore.getQuery(api.my.processes.get, {
+        processId,
+      });
+      if (!processDoc || processDoc.kind !== "cheffy_chat") return;
+      if (!processDoc.props.threadId) return;
+
+      const text = processDoc.props.input?.text?.trim();
+      if (!text) return;
+
+      optimisticallySendMessage(api.my.cheffy.listThreadMessages)(localStore, {
+        threadId: processDoc.props.threadId,
+        prompt: text,
+      });
+
+      localStore.setQuery(
+        api.my.processes.get,
+        { processId },
+        {
+          ...processDoc,
+          props: {
+            ...processDoc.props,
+            input: {
+              text: "",
+              attachments: processDoc.props.input?.attachments ?? [],
+            },
+          },
+        },
+      );
     },
   );
 }
