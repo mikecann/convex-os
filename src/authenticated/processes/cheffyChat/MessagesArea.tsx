@@ -11,7 +11,7 @@ export function MessagesArea() {
   const { results: messages } = useUIMessages(
     api.my.cheffy.listThreadMessages,
     process.props.threadId ? { threadId: process.props.threadId } : "skip",
-    { initialNumItems: 50 },
+    { initialNumItems: 50, stream: true },
   );
 
   useEffect(() => {

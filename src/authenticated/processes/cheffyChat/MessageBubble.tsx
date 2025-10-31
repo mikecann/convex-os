@@ -1,5 +1,5 @@
 import { DotLoader } from "react-spinners";
-import { UIMessage } from "@convex-dev/agent";
+import { UIMessage, useSmoothText } from "@convex-dev/agent/react";
 
 export function MessageBubble({ message }: { message: UIMessage }) {
   const isUser = message.role === "user";
@@ -7,6 +7,9 @@ export function MessageBubble({ message }: { message: UIMessage }) {
     !isUser &&
     (message.status === "pending" ||
       (!message.text && message.status !== "success"));
+  const [visibleText] = useSmoothText(message.text, {
+    startStreaming: message.status === "pending",
+  });
 
   return (
     <div
@@ -56,7 +59,7 @@ export function MessageBubble({ message }: { message: UIMessage }) {
             alignItems: "center",
           }}
         >
-          {isStreaming ? (
+          {isStreaming && !visibleText ? (
             <DotLoader
               color="#666"
               size={8}
@@ -67,7 +70,7 @@ export function MessageBubble({ message }: { message: UIMessage }) {
               }}
             />
           ) : (
-            message.text
+            visibleText
           )}
         </div>
       </div>

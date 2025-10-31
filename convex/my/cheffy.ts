@@ -1,5 +1,11 @@
 import { Infer, v } from "convex/values";
-import { listUIMessages, saveMessage, vUserMessage } from "@convex-dev/agent";
+import {
+  listUIMessages,
+  saveMessage,
+  vUserMessage,
+  vStreamArgs,
+  syncStreams,
+} from "@convex-dev/agent";
 import { components, internal } from "../_generated/api";
 import { paginationOptsValidator } from "convex/server";
 import { myMutation, myQuery } from "../lib";
@@ -11,9 +17,15 @@ import { files } from "../files/model";
 import { MessageContentParts } from "../../node_modules/@convex-dev/agent/src/validators";
 
 export const listThreadMessages = myQuery({
-  args: { threadId: v.string(), paginationOpts: paginationOptsValidator },
+  args: {
+    threadId: v.string(),
+    paginationOpts: paginationOptsValidator,
+    streamArgs: vStreamArgs,
+  },
   handler: async (ctx, args) => {
-    return await listUIMessages(ctx, components.agent, args);
+    const paginated = await listUIMessages(ctx, components.agent, args);
+    const streams = await syncStreams(ctx, components.agent, args);
+    return { ...paginated, streams };
   },
 });
 
