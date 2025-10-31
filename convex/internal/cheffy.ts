@@ -58,32 +58,14 @@ export const sendMessage = internalAction({
           data: v.string(),
           mediaType: v.string(),
         }),
+        v.object({
+          type: v.literal("text"),
+          text: v.string(),
+        }),
       ),
     ),
   },
   handler: async (ctx, { attachments, text, threadId }) => {
-    // const messageParts: Array<{
-    //   type: string;
-    //   text?: string;
-    //   data?: string;
-    //   mimeType?: string;
-    // }> = [];
-
-    // if (text) messageParts.push({ type: "text", text });
-
-    // for (const fileId of attachments) {
-    //   const file = await ctx.runQuery(api.my.files.get, { fileId });
-    //   if (file?.uploadState.kind === "uploaded") {
-    //     const fileUrl = await ctx.storage.getUrl(file.uploadState.storageId);
-    //     if (fileUrl && file.type.startsWith("image/"))
-    //       messageParts.push({
-    //         type: "image",
-    //         data: fileUrl,
-    //         mimeType: file.type,
-    //       });
-    //   }
-    // }
-
     await cheffyAgent.generateText(
       ctx,
       { threadId },
@@ -102,9 +84,5 @@ export const sendMessage = internalAction({
         ],
       },
     );
-
-    // await ctx.runMutation(internal.internal.cheffy.clearInput, {
-    //   processId: args.processId,
-    // });
   },
 });

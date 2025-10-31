@@ -21,10 +21,14 @@ export function ChatWindowInputBox() {
     },
   );
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = message.trim();
     if (!text) return;
+    await updateText({
+      processId: process._id,
+      text,
+    });
     sendMessage({
       processId: process._id,
     });

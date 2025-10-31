@@ -118,3 +118,76 @@ export function isTextFile(file: FileWithNameAndType): boolean {
 export function getFileExtension(filename: string): string | null {
   return filename.split(".").pop()?.toLowerCase() ?? null;
 }
+
+const EXTENSION_TO_MIME_TYPE: Record<string, string> = {
+  // Images
+  png: "image/png",
+  jpg: "image/jpeg",
+  jpeg: "image/jpeg",
+  gif: "image/gif",
+  bmp: "image/bmp",
+  svg: "image/svg+xml",
+  webp: "image/webp",
+  // Videos
+  mp4: "video/mp4",
+  webm: "video/webm",
+  ogg: "video/ogg",
+  mov: "video/quicktime",
+  avi: "video/x-msvideo",
+  mkv: "video/x-matroska",
+  // Audio
+  mp3: "audio/mpeg",
+  wav: "audio/wav",
+  flac: "audio/flac",
+  // Text files
+  txt: "text/plain",
+  md: "text/markdown",
+  json: "application/json",
+  xml: "text/xml",
+  csv: "text/csv",
+  log: "text/plain",
+  js: "text/javascript",
+  ts: "text/typescript",
+  tsx: "text/typescript",
+  jsx: "text/javascript",
+  css: "text/css",
+  html: "text/html",
+  py: "text/x-python",
+  java: "text/x-java-source",
+  c: "text/x-c",
+  cpp: "text/x-c++",
+  h: "text/x-c",
+  hpp: "text/x-c++",
+  rs: "text/x-rust",
+  go: "text/x-go",
+  sh: "text/x-shellscript",
+  bat: "text/x-msdos-batch",
+  yaml: "text/yaml",
+  yml: "text/yaml",
+  toml: "text/x-toml",
+  ini: "text/plain",
+  conf: "text/plain",
+  cfg: "text/plain",
+  // Documents
+  pdf: "application/pdf",
+  doc: "application/msword",
+  docx: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  // Archives
+  zip: "application/zip",
+  rar: "application/x-rar-compressed",
+  "7z": "application/x-7z-compressed",
+  // Executables
+  exe: "application/x-msdownload",
+  dmg: "application/x-apple-diskimage",
+};
+
+export function getMimeTypeFromFilename(
+  filename: string,
+  fallbackType?: string,
+): string {
+  const extension = getFileExtension(filename);
+  if (extension && EXTENSION_TO_MIME_TYPE[extension])
+    return EXTENSION_TO_MIME_TYPE[extension];
+
+  return fallbackType || "application/octet-stream";
+}

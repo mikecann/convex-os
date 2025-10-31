@@ -108,6 +108,12 @@ export const sendMessage = myMutation({
               image: file.uploadState.url,
             } as const;
 
+          if (file.type.startsWith("text/"))
+            return {
+              type: "text",
+              text: file.uploadState.url,
+            } as const;
+
           return {
             type: "file",
             data: file.uploadState.url,

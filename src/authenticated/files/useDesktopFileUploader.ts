@@ -4,6 +4,7 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { playSound } from "../../common/sounds/soundEffects";
+import { getMimeTypeFromFilename } from "../../../shared/fileTypes";
 
 export type DesktopFileUpload = {
   file: File;
@@ -39,12 +40,18 @@ export function useDesktopFileUploader() {
     try {
       setStatus({ kind: "uploading", completed: 0, total: uploads.length });
 
-      const createPayload = uploads.map(({ file, position }) => ({
-        name: file.name,
-        size: file.size,
-        type: file.type || "application/octet-stream",
-        position,
-      }));
+      const createPayload = uploads.map(({ file, position }) => {
+        const inferredType =
+          file.type && file.type !== "application/octet-stream"
+            ? file.type
+            : getMimeTypeFromFilename(file.name, file.type);
+        return {
+          name: file.name,
+          size: file.size,
+          type: inferredType,
+          position,
+        };
+      });
 
       const createdFileIds = await createFiles({ files: createPayload });
 
@@ -60,10 +67,15 @@ export function useDesktopFileUploader() {
           await new Promise<void>((resolve, reject) => {
             const xhr = new XMLHttpRequest();
             xhr.open("POST", uploadUrl);
-            xhr.setRequestHeader(
-              "Content-Type",
-              userFile.file.type || "application/octet-stream",
-            );
+            const contentType =
+              userFile.file.type &&
+              userFile.file.type !== "application/octet-stream"
+                ? userFile.file.type
+                : getMimeTypeFromFilename(
+                    userFile.file.name,
+                    userFile.file.type,
+                  );
+            xhr.setRequestHeader("Content-Type", contentType);
 
             xhr.upload.onprogress = (event) => {
               if (!event.lengthComputable) return;

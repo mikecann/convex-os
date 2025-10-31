@@ -148,7 +148,7 @@ export function TextPreviewWindow({
   window: Doc<"windows">;
 }) {
   const file = useQuery(
-    api.my.files.get,
+    api.my.files.find,
     process.props.fileId ? { fileId: process.props.fileId } : "skip",
   );
   const updateProcessProps = useMutation(api.my.processes.updateProps);
@@ -238,67 +238,69 @@ export function TextPreviewWindow({
         }
       >
         <DropZone
-        dropMessage="Drop text file here"
-        shouldAcceptDrag={createDataTypeFilter("application/x-desktop-file-id")}
-        getDropEffect={() => "copy"}
-        onDrop={async (event) => {
-          const fileId = getDragData(
-            event,
+          dropMessage="Drop text file here"
+          shouldAcceptDrag={createDataTypeFilter(
             "application/x-desktop-file-id",
-          ) as Id<"files">;
-          if (!fileId) return;
+          )}
+          getDropEffect={() => "copy"}
+          onDrop={async (event) => {
+            const fileId = getDragData(
+              event,
+              "application/x-desktop-file-id",
+            ) as Id<"files">;
+            if (!fileId) return;
 
-          const fileType = getDragData(
-            event,
-            "application/x-desktop-file-type",
-          ) as string;
-          const fileName = getDragData(
-            event,
-            "application/x-desktop-file-name",
-          ) as string;
+            const fileType = getDragData(
+              event,
+              "application/x-desktop-file-type",
+            ) as string;
+            const fileName = getDragData(
+              event,
+              "application/x-desktop-file-name",
+            ) as string;
 
-          if (!isTextFile({ name: fileName, type: fileType })) {
-            onError("Invalid file type. Only text files are supported.");
-            return;
-          }
+            if (!isTextFile({ name: fileName, type: fileType })) {
+              onError("Invalid file type. Only text files are supported.");
+              return;
+            }
 
-          await updateProcessProps({
-            processId: process._id,
-            props: { fileId },
-          }).catch(onError);
+            await updateProcessProps({
+              processId: process._id,
+              props: { fileId },
+            }).catch(onError);
 
-          await updateWindowTitle({
-            windowId: window._id,
-            title: `${fileName} - Text Preview`,
-          }).catch(onError);
-        }}
-      >
-        {iife(() => {
-          if (!file)
-            return (
-              <CenteredMessage>
-                Drop a text file here to preview it.
-              </CenteredMessage>
-            );
+            await updateWindowTitle({
+              windowId: window._id,
+              title: `${fileName} - Text Preview`,
+            }).catch(onError);
+          }}
+        >
+          {iife(() => {
+            if (!file)
+              return (
+                <CenteredMessage>
+                  Drop a text file here to preview it.
+                </CenteredMessage>
+              );
 
-          if (file.uploadState.kind !== "uploaded")
-            return (
-              <CenteredMessage>
-                Text preview is not available yet. Please wait for the upload to
-                finish.
-              </CenteredMessage>
-            );
+            if (file.uploadState.kind !== "uploaded")
+              return (
+                <CenteredMessage>
+                  Text preview is not available yet. Please wait for the upload
+                  to finish.
+                </CenteredMessage>
+              );
 
-          if (isLoading) return <CenteredMessage>Loading...</CenteredMessage>;
+            if (isLoading) return <CenteredMessage>Loading...</CenteredMessage>;
 
-          if (loadError)
-            return (
-              <CenteredMessage color="#ffb4b4">{loadError}</CenteredMessage>
-            );
+            if (loadError)
+              return (
+                <CenteredMessage color="#ffb4b4">{loadError}</CenteredMessage>
+              );
 
-          return <TextContent content={textContent} filename={file.name} />;
-        })}
-      </DropZone>
+            return <TextContent content={textContent} filename={file.name} />;
+          })}
+        </DropZone>
       </CommonWindowShell>
     </ConnectedWindow>
   );
