@@ -1,8 +1,10 @@
 import { useRef, DragEvent as ReactDragEvent } from "react";
-import { useMutation } from "convex/react";
-import { api } from "../../../../convex/_generated/api";
 import { Id } from "../../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
+import {
+  useOptimisticUpdatePosition,
+  useOptimisticUpdatePositions,
+} from "../../../common/hooks/optimistic";
 import {
   snapToGrid,
   findNearestAvailablePosition,
@@ -19,8 +21,8 @@ export function useDragAndDrop(
   containerRef: React.RefObject<HTMLDivElement | null>,
   isRenaming: boolean,
 ) {
-  const updatePosition = useMutation(api.my.files.updatePosition);
-  const updatePositions = useMutation(api.my.files.updatePositions);
+  const updatePosition = useOptimisticUpdatePosition();
+  const updatePositions = useOptimisticUpdatePositions();
   const onError = useErrorHandler();
   const dragOffsetRef = useRef({ x: 0, y: 0 });
   const selectedFilesOffsetsRef = useRef<
@@ -45,15 +47,13 @@ export function useDragAndDrop(
 
     // If this file is selected and there are multiple selected files,
     // calculate offsets for all selected files relative to this one
-    if (isSelected && selectedFiles.length > 1) 
+    if (isSelected && selectedFiles.length > 1)
       selectedFilesOffsetsRef.current = selectedFiles.map((f) => ({
         fileId: f._id,
         offsetX: f.position.x - file.position.x,
         offsetY: f.position.y - file.position.y,
       }));
-     else 
-      selectedFilesOffsetsRef.current = [];
-    
+    else selectedFilesOffsetsRef.current = [];
 
     event.dataTransfer.effectAllowed = "copyMove";
     event.dataTransfer.setData("application/x-desktop-file-id", file._id);
