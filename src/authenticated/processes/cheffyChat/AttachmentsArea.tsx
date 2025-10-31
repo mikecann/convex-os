@@ -10,8 +10,8 @@ import { useCheffyChatContext } from "./CheffyChatContext";
 import { useMutation } from "convex/react";
 
 export function AttachmentsArea() {
-  const { process, inputText } = useCheffyChatContext();
-  const updateProcessProps = useMutation(api.my.processes.updateProps);
+  const { process } = useCheffyChatContext();
+  const removeAttachment = useMutation(api.my.cheffy.removeAttachment);
   const attachmentIds = process.props.input?.attachments ?? [];
 
   if (attachmentIds.length === 0) return null;
@@ -29,18 +29,10 @@ export function AttachmentsArea() {
         <AttachmentChip
           key={fileId}
           fileId={fileId}
-          onRemove={(fileId: Id<"files">) => {
-            const newAttachments = attachmentIds.filter((id) => id !== fileId);
-            void updateProcessProps({
+          onRemove={() => {
+            void removeAttachment({
               processId: process._id,
-              props: {
-                threadId: process.props.threadId,
-                sidebar: process.props.sidebar,
-                input: {
-                  text: inputText,
-                  attachments: newAttachments,
-                },
-              },
+              fileId,
             });
           }}
         />
@@ -54,7 +46,7 @@ function AttachmentChip({
   onRemove,
 }: {
   fileId: Id<"files">;
-  onRemove: (fileId: Id<"files">) => void;
+  onRemove: () => void;
 }) {
   const file = useQuery(api.my.files.get, { fileId });
 
@@ -104,7 +96,7 @@ function AttachmentChip({
         {file.name}
       </span>
       <button
-        onClick={() => onRemove(fileId)}
+        onClick={onRemove}
         style={{
           width: "auto",
           height: "auto",

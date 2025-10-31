@@ -18,6 +18,12 @@ export const files = {
       get(db: DatabaseReader) {
         return this.find(db).then(ensureFP(`could not find file ${fileId}`));
       },
+
+      async getUploaded(db: DatabaseReader) {
+        const file = await this.get(db);
+        if (file.uploadState.kind !== "uploaded") throw new Error("File is not uploaded");
+        return file;
+      },
     };
   },
 

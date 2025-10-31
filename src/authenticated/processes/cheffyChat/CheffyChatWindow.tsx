@@ -9,6 +9,7 @@ import { CheffyDropZone } from "./CheffyDropZone";
 import { CheffyChatProvider } from "./CheffyChatContext";
 import { Process } from "../../../../convex/processes/schema";
 import { Doc } from "../../../../convex/_generated/dataModel";
+import Box from "../../../common/components/Box";
 
 export function CheffyChatWindow({
   process,
@@ -32,8 +33,8 @@ export function CheffyChatWindow({
         overflow: "hidden",
       }}
     >
-      <CommonWindowShell menubar={<CheffyMenuBar />}>
-        <CheffyChatProvider process={process}>
+      <CheffyChatProvider process={process}>
+        <CommonWindowShell menubar={<CheffyMenuBar />}>
           <CheffyDropZone>
             <div
               ref={containerRef}
@@ -49,7 +50,7 @@ export function CheffyChatWindow({
               }}
             >
               <ResizableSidebarContainer containerRef={containerRef} />
-              <div
+              <Box
                 style={{
                   flex: 1,
                   display: "flex",
@@ -60,11 +61,11 @@ export function CheffyChatWindow({
               >
                 <MessagesArea />
                 <ChatInputArea />
-              </div>
+              </Box>
             </div>
           </CheffyDropZone>
-        </CheffyChatProvider>
-      </CommonWindowShell>
+        </CommonWindowShell>
+      </CheffyChatProvider>
     </ConnectedWindow>
   );
 }

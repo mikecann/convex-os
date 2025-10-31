@@ -1,15 +1,7 @@
-interface MessageBubbleProps {
-  role: "user" | "assistant";
-  content: string;
-  timestamp?: number;
-}
+import { UIMessage } from "@convex-dev/agent";
 
-export function MessageBubble({
-  role,
-  content,
-  timestamp,
-}: MessageBubbleProps) {
-  const isUser = role === "user";
+export function MessageBubble({ message }: { message: UIMessage }) {
+  const isUser = message.role === "user";
 
   return (
     <div
@@ -56,10 +48,10 @@ export function MessageBubble({
             whiteSpace: "pre-wrap",
           }}
         >
-          {content}
+          {message.text}
         </div>
       </div>
-      {timestamp && (
+      {message._creationTime && (
         <span
           style={{
             fontSize: "11px",
@@ -69,7 +61,7 @@ export function MessageBubble({
             marginRight: isUser ? "0" : "0",
           }}
         >
-          {new Date(timestamp).toLocaleTimeString()}
+          {new Date(message._creationTime).toLocaleTimeString()}
         </span>
       )}
     </div>

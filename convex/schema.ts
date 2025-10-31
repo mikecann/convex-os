@@ -10,3 +10,5 @@ export default defineSchema({
   processes: processesTable,
   windows: windowsTable,
 });
+
+

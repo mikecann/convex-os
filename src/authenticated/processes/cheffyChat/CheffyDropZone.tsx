@@ -10,7 +10,8 @@ import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 
 export function CheffyDropZone({ children }: { children: ReactNode }) {
-  const addAttachment = useMutation(api.cheffy.chat.addAttachment);
+  const { process } = useCheffyChatContext();
+  const addAttachment = useMutation(api.my.cheffy.addAttachment);
 
   return (
     <DropZone
@@ -22,27 +23,14 @@ export function CheffyDropZone({ children }: { children: ReactNode }) {
           event,
           "application/x-desktop-file-id",
         ) as Id<"files">;
-        if (fileId) {
-          const newAttachments = [...attachments];
-          if (!newAttachments.includes(fileId)) {
-            newAttachments.push(fileId);
-            void updateProcessProps({
-              processId: process._id,
-              props: {
-                threadId: process.props.threadId,
-                sidebar: process.props.sidebar,
-                input: {
-                  text: inputText,
-                  attachments: newAttachments,
-                },
-              },
-            });
-          }
-        }
+        if (fileId)
+          void addAttachment({
+            processId: process._id,
+            fileId,
+          });
       }}
     >
       {children}
     </DropZone>
   );
 }
-

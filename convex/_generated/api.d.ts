@@ -10,8 +10,7 @@
 
 import type * as auth from "../auth.js";
 import type * as cheffy_agent from "../cheffy/agent.js";
-import type * as cheffy_chat from "../cheffy/chat.js";
-import type * as cheffy_lib from "../cheffy/lib.js";
+import type * as cheffy_model from "../cheffy/model.js";
 import type * as files_model from "../files/model.js";
 import type * as http from "../http.js";
 import type * as internal_cheffy from "../internal/cheffy.js";
@@ -42,8 +41,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
   "cheffy/agent": typeof cheffy_agent;
-  "cheffy/chat": typeof cheffy_chat;
-  "cheffy/lib": typeof cheffy_lib;
+  "cheffy/model": typeof cheffy_model;
   "files/model": typeof files_model;
   http: typeof http;
   "internal/cheffy": typeof internal_cheffy;

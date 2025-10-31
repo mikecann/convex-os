@@ -88,6 +88,26 @@ export const cheffy = {
           },
         });
       },
+
+      async addAttachment(db: DatabaseWriter, fileId: Id<"files">) {
+        const process = await this.get(db);
+        const currentAttachments = process.props.input?.attachments ?? [];
+
+        if (!currentAttachments.includes(fileId))
+          await this.patchInput(db, {
+            attachments: [...currentAttachments, fileId],
+          });
+      },
+
+      async removeAttachment(db: DatabaseWriter, fileId: Id<"files">) {
+        const process = await this.get(db);
+        const currentAttachments = process.props.input?.attachments ?? [];
+        const newAttachments = currentAttachments.filter((id) => id !== fileId);
+
+        await this.patchInput(db, {
+          attachments: newAttachments,
+        });
+      },
     };
   },
 };

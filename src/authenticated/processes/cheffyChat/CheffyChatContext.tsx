@@ -6,8 +6,6 @@ import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServer
 
 interface CheffyChatContextValue {
   process: Process<"cheffy_chat">;
-  isLoading: boolean;
-  setIsLoading: (loading: boolean) => void;
 }
 
 const CheffyChatContext = createContext<CheffyChatContextValue | null>(null);
@@ -30,14 +28,10 @@ export function CheffyChatProvider({
   process,
   children,
 }: CheffyChatProviderProps) {
-  const [isLoading, setIsLoading] = useState(false);
-
   return (
     <CheffyChatContext.Provider
       value={{
         process,
-        isLoading,
-        setIsLoading,
       }}
     >
       {children}

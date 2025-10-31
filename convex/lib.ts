@@ -6,6 +6,8 @@ import {
 } from "convex-helpers/server/customFunctions";
 import { getAuthUserId } from "@convex-dev/auth/server";
 import { ensure } from "../shared/ensure";
+import { typedV } from "convex-helpers/validators";
+import schema from "./schema";
 
 export const myQuery = customQuery(query, {
   args: {},
@@ -58,3 +60,5 @@ export const myAction = customAction(action, {
     };
   },
 });
+
+export const vv = typedV(schema);

@@ -1,25 +1,34 @@
 import { useRef } from "react";
+import { useAction, useMutation } from "convex/react";
+import { api } from "../../../../convex/_generated/api";
+import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
+import { useCheffyChatContext } from "./CheffyChatContext";
+import { Button } from "../../../common/components/Button";
 
-interface ChatWindowInputBoxProps {
-  message: string;
-  onMessageChange: (message: string) => void;
-  onSend: (message: string) => void;
-}
-
-export function ChatWindowInputBox({
-  message,
-  onMessageChange,
-  onSend,
-}: ChatWindowInputBoxProps) {
+export function ChatWindowInputBox() {
+  const { process } = useCheffyChatContext();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const sendMessage = useMutation(api.my.cheffy.sendMessage);
+  const updateText = useMutation(api.my.cheffy.updateText);
+
+  const [message, setMessage] = useDebouncedServerSync(
+    process.props.input?.text ?? "",
+    (text) => {
+      void updateText({
+        processId: process._id,
+        text,
+      });
+    },
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim()) {
-      onSend(message);
-      onMessageChange("");
-      if (textareaRef.current) textareaRef.current.style.height = "auto";
-    }
+    const text = message.trim();
+    if (!text) return;
+    sendMessage({
+      processId: process._id,
+    });
+    if (textareaRef.current) textareaRef.current.style.height = "auto";
   };
 
   return (
@@ -36,7 +45,7 @@ export function ChatWindowInputBox({
           ref={textareaRef}
           value={message}
           onChange={(e) => {
-            onMessageChange(e.target.value);
+            setMessage(e.target.value);
             // Auto-resize textarea
             e.target.style.height = "auto";
             e.target.style.height = e.target.scrollHeight + "px";
@@ -60,7 +69,7 @@ export function ChatWindowInputBox({
           }}
           rows={3}
         />
-        <button
+        <Button
           type="submit"
           disabled={!message.trim()}
           style={{
@@ -69,7 +78,7 @@ export function ChatWindowInputBox({
           }}
         >
           Send
-        </button>
+        </Button>
       </div>
     </form>
   );
