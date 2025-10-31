@@ -1,5 +1,4 @@
-import { useQuery } from "convex/react";
-import { api } from "../../../../../convex/_generated/api";
+import { type RefObject } from "react";
 import Vertical from "../../../../common/components/Vertical";
 import Box from "../../../../common/components/Box";
 import { SidebarHeader } from "./SidebarHeader";
@@ -8,13 +7,15 @@ import { useCheffyChatContext } from "../CheffyChatContext";
 
 interface ThreadsSidebarProps {
   width: number;
+  sidebarRef?: RefObject<HTMLDivElement | null>;
 }
 
-export function ThreadsSidebar({ width }: ThreadsSidebarProps) {
+export function ThreadsSidebar({ width, sidebarRef }: ThreadsSidebarProps) {
 
 
   return (
     <Vertical
+      ref={sidebarRef}
       width={`${width}px`}
       background="#ECE9D8"
       style={{

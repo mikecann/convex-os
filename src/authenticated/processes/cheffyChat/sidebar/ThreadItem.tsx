@@ -7,6 +7,7 @@ interface ThreadItemProps {
   summary: string | undefined;
   isSelected: boolean;
   onSelect: () => void;
+  onDelete: () => void;
 }
 
 export function ThreadItem({
@@ -15,6 +16,7 @@ export function ThreadItem({
   summary,
   isSelected,
   onSelect,
+  onDelete,
 }: ThreadItemProps) {
   return (
     <div
@@ -40,29 +42,62 @@ export function ThreadItem({
         borderRadius: "2px",
         marginBottom: "2px",
         padding: "8px",
+        display: "flex",
+        alignItems: "flex-start",
+        gap: "8px",
       }}
     >
-      <Box
-        style={{
-          fontWeight: isSelected ? "bold" : "normal",
-          marginBottom: "4px",
-        }}
-      >
-        {title || "Untitled Thread"}
-      </Box>
-      {summary ? (
+      <Box style={{ flex: 1, minWidth: 0 }}>
         <Box
           style={{
-            fontSize: "10px",
-            color: "#666",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
+            fontWeight: isSelected ? "bold" : "normal",
+            marginBottom: "4px",
           }}
         >
-          {summary}
+          {title || "Untitled Thread"}
         </Box>
-      ) : null}
+        {summary ? (
+          <Box
+            style={{
+              fontSize: "10px",
+              color: "#666",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+            }}
+          >
+            {summary}
+          </Box>
+        ) : null}
+      </Box>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        style={{
+          width: "auto",
+          height: "auto",
+          minWidth: "0",
+          minHeight: "0",
+          background: "none",
+          border: "none",
+          cursor: "pointer",
+          padding: "0",
+          margin: "0",
+          fontSize: "14px",
+          lineHeight: "1",
+          color: "#666",
+          boxShadow: "none",
+          outline: "none",
+          backgroundColor: "transparent",
+          backgroundImage: "none",
+          flexShrink: 0,
+        }}
+        title="Delete thread"
+      >
+        ×
+      </button>
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { useRef, useEffect, type RefObject } from "react";
+import { useRef, useEffect, useLayoutEffect, type RefObject } from "react";
 import { ThreadsSidebar } from "./sidebar/ThreadsSidebar";
 import { useCheffyChatContext } from "./CheffyChatContext";
 import { useMutation } from "convex/react";
@@ -15,43 +15,55 @@ export function ResizableSidebarContainer({
   const setSidebarWidthMutation = useMutation(api.my.cheffy.setSidebarWidth);
   const toggleSidebar = useMutation(api.my.cheffy.toggleSidebar);
   const isResizingRef = useRef(false);
+  const sidebarRef = useRef<HTMLDivElement | null>(null);
+  const currentWidthRef = useRef(process.props.sidebar.width);
 
   useEffect(() => {
-    if (!isResizingRef.current) return;
+    currentWidthRef.current = process.props.sidebar.width;
+  }, [process.props.sidebar.width]);
 
-    const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
-
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const newWidth = e.clientX - containerRect.left;
-
-      if (newWidth >= 200 && newWidth <= 600)
-        void setSidebarWidthMutation({
-          processId: process._id,
-          width: newWidth,
-        });
-    };
-
-    const handleMouseUp = () => {
-      isResizingRef.current = false;
-    };
-
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
-  });
+  useLayoutEffect(() => {
+    if (isResizingRef.current || !sidebarRef.current) return;
+    sidebarRef.current.style.width = `${process.props.sidebar.width}px`;
+  }, [process.props.sidebar.width]);
 
   if (!process.props.sidebar.isOpen) return null;
 
   return (
     <>
-      <ThreadsSidebar width={process.props.sidebar.width} />
+      <ThreadsSidebar
+        width={process.props.sidebar.width}
+        sidebarRef={sidebarRef}
+      />
       <div
         onMouseDown={() => {
+          if (!containerRef.current || !sidebarRef.current) return;
           isResizingRef.current = true;
+
+          const handleMouseMove = (e: MouseEvent) => {
+            if (!containerRef.current || !sidebarRef.current) return;
+
+            const containerRect = containerRef.current.getBoundingClientRect();
+            const newWidth = e.clientX - containerRect.left;
+
+            if (newWidth >= 200 && newWidth <= 600) {
+              currentWidthRef.current = newWidth;
+              sidebarRef.current.style.width = `${newWidth}px`;
+            }
+          };
+
+          const handleMouseUp = () => {
+            isResizingRef.current = false;
+            void setSidebarWidthMutation({
+              processId: process._id,
+              width: currentWidthRef.current,
+            });
+            document.removeEventListener("mousemove", handleMouseMove);
+            document.removeEventListener("mouseup", handleMouseUp);
+          };
+
+          document.addEventListener("mousemove", handleMouseMove);
+          document.addEventListener("mouseup", handleMouseUp);
         }}
         style={{
           width: "4px",

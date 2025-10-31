@@ -11,6 +11,8 @@ export function ThreadsList() {
     paginationOpts: { numItems: 100, cursor: null },
   });
   const setThreadId = useMutation(api.my.cheffy.setThreadId);
+  const deleteThread = useMutation(api.my.cheffy.deleteThread);
+  const createThread = useMutation(api.my.cheffy.createThread);
 
   const handleThreadSelect = (threadId: string) => {
     void setThreadId({
@@ -23,16 +25,45 @@ export function ThreadsList() {
 
   if (threads.page.length === 0)
     return (
-      <Box
-        padding="8px"
-        style={{
-          fontSize: "11px",
-          fontFamily: "Tahoma, sans-serif",
-          color: "#666",
-        }}
-      >
-        No threads yet
-      </Box>
+      <Vertical gap="8px">
+        <Box
+          padding="8px"
+          style={{
+            fontSize: "11px",
+            fontFamily: "Tahoma, sans-serif",
+            color: "#666",
+          }}
+        >
+          No threads yet
+        </Box>
+        <button
+          onClick={() => {
+            void createThread({ processId: process._id });
+          }}
+          style={{
+            width: "100%",
+            height: "auto",
+            minWidth: "0",
+            minHeight: "0",
+            background: "none",
+            border: "1px solid #919B9C",
+            cursor: "pointer",
+            padding: "6px 8px",
+            margin: "0 4px",
+            fontSize: "11px",
+            fontFamily: "Tahoma, sans-serif",
+            lineHeight: "1",
+            color: "#333",
+            boxShadow: "none",
+            outline: "none",
+            backgroundColor: "transparent",
+            borderRadius: "2px",
+          }}
+          title="New thread"
+        >
+          + New Thread
+        </button>
+      </Vertical>
     );
 
   return (
@@ -47,8 +78,41 @@ export function ThreadsList() {
           onSelect={() => {
             handleThreadSelect(thread._id);
           }}
+          onDelete={() => {
+            void deleteThread({
+              processId: process._id,
+              threadId: thread._id,
+            });
+          }}
         />
       ))}
+      <button
+        onClick={() => {
+          void createThread({ processId: process._id });
+        }}
+        style={{
+          width: "100%",
+          height: "auto",
+          minWidth: "0",
+          minHeight: "0",
+          background: "none",
+          border: "1px solid #919B9C",
+          cursor: "pointer",
+          padding: "6px 8px",
+          margin: "4px",
+          fontSize: "11px",
+          fontFamily: "Tahoma, sans-serif",
+          lineHeight: "1",
+          color: "#333",
+          boxShadow: "none",
+          outline: "none",
+          backgroundColor: "transparent",
+          borderRadius: "2px",
+        }}
+        title="New thread"
+      >
+        + New Thread
+      </button>
     </Vertical>
   );
 }

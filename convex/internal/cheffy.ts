@@ -5,7 +5,6 @@ import {
   internalQuery,
 } from "../_generated/server";
 import { processes } from "../processes/model";
-import { vv } from "../lib";
 import { cheffyAgent } from "../cheffy/agent";
 
 export const createThread = internalQuery({
@@ -43,46 +42,9 @@ export const clearInput = internalMutation({
   },
 });
 
-export const sendMessage = internalAction({
-  args: {
-    threadId: v.string(),
-    text: v.string(),
-    attachments: v.array(
-      v.union(
-        v.object({
-          type: v.literal("image"),
-          image: v.string(),
-        }),
-        v.object({
-          type: v.literal("file"),
-          data: v.string(),
-          mediaType: v.string(),
-        }),
-        v.object({
-          type: v.literal("text"),
-          text: v.string(),
-        }),
-      ),
-    ),
-  },
-  handler: async (ctx, { attachments, text, threadId }) => {
-    await cheffyAgent.generateText(
-      ctx,
-      { threadId },
-      {
-        messages: [
-          {
-            role: "user",
-            content: [
-              ...attachments,
-              {
-                type: "text",
-                text,
-              },
-            ],
-          },
-        ],
-      },
-    );
+export const generateResponseAsync = internalAction({
+  args: { threadId: v.string(), promptMessageId: v.string() },
+  handler: async (ctx, { threadId, promptMessageId }) => {
+    await cheffyAgent.generateText(ctx, { threadId }, { promptMessageId });
   },
 });

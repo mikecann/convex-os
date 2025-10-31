@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { forwardRef, type CSSProperties, type ReactNode } from "react";
 import {
   type Align,
   type BaseStyleProps,
@@ -18,16 +18,19 @@ interface VerticalProps extends BaseStyleProps {
   style?: CSSProperties;
 }
 
-export default function Vertical({
-  children,
-  align,
-  justify,
-  wrap,
-  reverse,
-  className,
-  style: styleOverride,
-  ...styleProps
-}: VerticalProps) {
+const Vertical = forwardRef<HTMLDivElement, VerticalProps>(function Vertical(
+  {
+    children,
+    align,
+    justify,
+    wrap,
+    reverse,
+    className,
+    style: styleOverride,
+    ...styleProps
+  },
+  ref,
+) {
   const baseStyle = createBaseStyle(styleProps);
   const mappedAlign = mapAlignToCss(align);
   const mappedJustify = mapJustifyToCss(justify);
@@ -43,8 +46,10 @@ export default function Vertical({
   };
 
   return (
-    <div className={className} style={style}>
+    <div ref={ref} className={className} style={style}>
       {children}
     </div>
   );
-}
+});
+
+export default Vertical;
