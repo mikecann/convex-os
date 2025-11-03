@@ -1,7 +1,12 @@
 import { MenuItem } from "./types";
 
 export const leftMenuItems: MenuItem[] = [
-  { icon: "/xp/ie.png", label: "Internet", subtitle: "Internet Explorer" },
+  {
+    icon: "/xp/ie.png",
+    label: "Internet",
+    subtitle: "Internet Explorer",
+    processKind: "internet_explorer",
+  },
   { icon: "/xp/outlook.png", label: "E-mail", subtitle: "Outlook Express" },
   {
     icon: "/xp/image.png",

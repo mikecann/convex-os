@@ -14,6 +14,7 @@ import {
   startVideoPlayer,
   startTextPreview,
   startCheffyChat,
+  startInternetExplorer,
 } from "../../processes/startProcessHelpers";
 import { useStartCenteredApp } from "../../processes/useStartCenteredApp";
 
@@ -42,6 +43,8 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         processParams = startTextPreview();
       else if (item.processKind === "cheffy_chat")
         processParams = startCheffyChat();
+      else if (item.processKind === "internet_explorer")
+        processParams = startInternetExplorer();
 
       if (processParams) void startCenteredApp(processParams);
 

@@ -13,6 +13,7 @@ const processKinds = produceLiteral([
   "text_preview",
   "cheffy_chat",
   "file_browser",
+  "internet_explorer",
 ]);
 
 export const processDefinitions = {
@@ -59,6 +60,14 @@ export const processDefinitions = {
       ),
     }),
   },
+  internet_explorer: {
+    kind: v.literal(processKinds.internet_explorer),
+    props: v.object({
+      url: v.optional(v.string()),
+      history: v.optional(v.array(v.string())),
+      historyIndex: v.optional(v.number()),
+    }),
+  },
 } satisfies Record<keyof typeof processKinds, Record<string, unknown>>;
 
 export const processValidator = v.union(
@@ -82,6 +91,10 @@ export const processValidator = v.union(
     ...processDefinitions.file_browser,
     ...processCommon,
   }),
+  v.object({
+    ...processDefinitions.internet_explorer,
+    ...processCommon,
+  }),
 );
 
 export const processCreationValidator = v.union(
@@ -99,6 +112,9 @@ export const processCreationValidator = v.union(
   }),
   v.object({
     ...processDefinitions.file_browser,
+  }),
+  v.object({
+    ...processDefinitions.internet_explorer,
   }),
 );
 
@@ -132,6 +148,10 @@ export const processStartingValidator = v.union(
     ...processDefinitions.file_browser,
     windowCreationParams: v.object(windowCreationParams),
   }),
+  v.object({
+    ...processDefinitions.internet_explorer,
+    windowCreationParams: v.object(windowCreationParams),
+  }),
 );
 
 export const processPropsUpdateValidator = v.union(
@@ -140,6 +160,7 @@ export const processPropsUpdateValidator = v.union(
   processDefinitions.text_preview.props,
   processDefinitions.cheffy_chat.props,
   processDefinitions.file_browser.props,
+  processDefinitions.internet_explorer.props,
 );
 
 export type ProcessKinds = Infer<typeof processValidator>["kind"];

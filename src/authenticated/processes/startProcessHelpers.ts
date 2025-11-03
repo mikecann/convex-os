@@ -39,6 +39,12 @@ const processConfigs: Record<ProcessKinds, ProcessConfig> = {
     defaultWidth: 600,
     defaultHeight: 500,
   },
+  internet_explorer: {
+    title: "Internet Explorer",
+    icon: "/xp/ie.png",
+    defaultWidth: 800,
+    defaultHeight: 600,
+  },
 };
 
 export function startImagePreview(options?: {
@@ -141,6 +147,32 @@ export function startCheffyChat(options?: {
       width: config.defaultWidth,
       height: config.defaultHeight,
       title: config.title,
+      icon: config.icon,
+    },
+  };
+}
+
+export function startInternetExplorer(options?: {
+  x?: number;
+  y?: number;
+  url?: string;
+}) {
+  const config = processConfigs.internet_explorer;
+  const defaultUrl = options?.url || "https://www.mikecann.blog";
+
+  return {
+    kind: "internet_explorer" as const,
+    props: {
+      url: defaultUrl,
+      history: [defaultUrl],
+      historyIndex: 0,
+    },
+    windowCreationParams: {
+      x: options?.x ?? 100,
+      y: options?.y ?? 100,
+      width: config.defaultWidth,
+      height: config.defaultHeight,
+      title: `${defaultUrl} - ${config.title}`,
       icon: config.icon,
     },
   };

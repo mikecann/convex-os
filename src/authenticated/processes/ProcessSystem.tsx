@@ -7,6 +7,7 @@ import { VideoPlayerWindow } from "./videoPlayer/VideoPlayerWindow";
 import { TextPreviewWindow } from "./textPreview/TextPreviewWindow";
 import { CheffyChatWindow } from "./cheffyChat/CheffyChatWindow";
 import { FileBrowserWindow } from "./fileBrowser/FileBrowserWindow";
+import { InternetExplorerWindow } from "./internetExplorer/InternetExplorerWindow";
 import { Doc } from "../../../convex/_generated/dataModel";
 
 const processToComponentMap: {
@@ -20,6 +21,7 @@ const processToComponentMap: {
   text_preview: TextPreviewWindow,
   cheffy_chat: CheffyChatWindow,
   file_browser: FileBrowserWindow,
+  internet_explorer: InternetExplorerWindow,
 };
 
 export function ProcessSystem() {
