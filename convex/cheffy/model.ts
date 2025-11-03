@@ -1,9 +1,16 @@
 import { components } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
-import { DatabaseReader, DatabaseWriter, QueryCtx } from "../_generated/server";
+import {
+  DatabaseReader,
+  DatabaseWriter,
+  QueryCtx,
+  MutationCtx,
+} from "../_generated/server";
 import { toggleSidebar } from "../my/cheffy";
 import { processes } from "../processes/model";
 import { ProcessProps } from "../processes/schema";
+import { cheffyAgent } from "./agent";
+import { files } from "../files/model";
 
 export const cheffy = {
   forProcess(processId: Id<"processes">) {
@@ -116,6 +123,76 @@ export const cheffy = {
         if (!thread) return false;
         if (!thread.title) return true;
         return false;
+      },
+
+      async hasMessageInProgress(ctx: QueryCtx, threadId: string) {
+        const messages = await ctx.runQuery(
+          components.agent.messages.listMessagesByThreadId,
+          {
+            threadId,
+            order: "desc",
+            paginationOpts: { numItems: 1, cursor: null },
+            statuses: ["pending"],
+          },
+        );
+
+        return messages.page.length > 0;
+      },
+
+      async getOrCreateThreadId(
+        ctx: MutationCtx,
+        userId: Id<"users">,
+      ): Promise<string> {
+        const process = await this.get(ctx.db);
+        if (process.props.threadId) return process.props.threadId;
+
+        const result = await cheffyAgent.createThread(ctx, {
+          userId,
+        });
+        await this.patchProps(ctx.db, {
+          threadId: result.threadId,
+        });
+        return result.threadId;
+      },
+
+      async convertAttachmentsToContent(
+        db: DatabaseReader,
+        fileIds: Id<"files">[],
+      ): Promise<
+        Array<
+          | { type: "image"; image: string }
+          | { type: "text"; text: string }
+          | { type: "file"; data: string; mediaType: string }
+        >
+      > {
+        return Promise.all(
+          fileIds.map(async (fileId) => {
+            const file = await files.forFile(fileId).getUploaded(db);
+
+            if (file.uploadState.kind !== "uploaded")
+              throw new Error("File is not uploaded");
+
+            const url = file.uploadState.url;
+
+            if (file.type.startsWith("image/"))
+              return {
+                type: "image" as const,
+                image: url,
+              };
+
+            if (file.type.startsWith("text/"))
+              return {
+                type: "text" as const,
+                text: url,
+              };
+
+            return {
+              type: "file" as const,
+              data: url,
+              mediaType: file.type,
+            };
+          }),
+        );
       },
     };
   },

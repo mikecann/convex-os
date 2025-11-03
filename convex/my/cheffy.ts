@@ -14,7 +14,6 @@ import { myMutation, myQuery } from "../lib";
 import { processes } from "../processes/model";
 import { cheffy } from "../cheffy/model";
 import { cheffyAgent } from "../cheffy/agent";
-import { iife } from "../../shared/misc";
 import { files } from "../files/model";
 
 export const listThreadMessages = myQuery({
@@ -111,44 +110,23 @@ export const sendMessage = myMutation({
     const text = process.props.input?.text;
     if (!text) throw new Error("No text in input");
 
-    const threadId = await iife(async () => {
-      if (process.props.threadId) return process.props.threadId;
-      const result = await cheffyAgent.createThread(ctx, {
-        userId: ctx.userId,
-      });
-      await cheffy.forProcess(args.processId).patchProps(ctx.db, {
-        threadId: result.threadId,
-      });
-      return result.threadId;
-    });
+    const threadId = await cheffy
+      .forProcess(args.processId)
+      .getOrCreateThreadId(ctx, ctx.userId);
+
+    if (
+      await cheffy
+        .forProcess(args.processId)
+        .hasMessageInProgress(ctx, threadId)
+    )
+      throw new Error(
+        "Cannot send message while another message is in progress",
+      );
 
     const attachments = process.props.input?.attachments ?? [];
-    const attachmentsContent = await Promise.all(
-      attachments.map(async (fileId) => {
-        const file = await files.forFile(fileId).getUploaded(ctx.db);
-
-        if (file.uploadState.kind !== "uploaded")
-          throw new Error("File is not uploaded");
-
-        if (file.type.startsWith("image/"))
-          return {
-            type: "image" as const,
-            image: file.uploadState.url,
-          };
-
-        if (file.type.startsWith("text/"))
-          return {
-            type: "text" as const,
-            text: file.uploadState.url,
-          };
-
-        return {
-          type: "file" as const,
-          data: file.uploadState.url,
-          mediaType: file.type,
-        };
-      }),
-    );
+    const attachmentsContent = await cheffy
+      .forProcess(args.processId)
+      .convertAttachmentsToContent(ctx.db, attachments);
 
     const { messageId } = await saveMessage(ctx, components.agent, {
       threadId,

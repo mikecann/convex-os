@@ -1,16 +1,27 @@
 import { useRef } from "react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
 import { useOptimisticSendMessage } from "../../../common/hooks/optimistic";
 import { useCheffyChatContext } from "./CheffyChatContext";
 import { Button } from "../../../common/components/Button";
+import { useUIMessages } from "@convex-dev/agent/react";
 
 export function ChatWindowInputBox() {
   const { process } = useCheffyChatContext();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const updateText = useMutation(api.my.cheffy.updateText);
   const sendMessage = useOptimisticSendMessage();
+
+  const { results: messages } = useUIMessages(
+    api.my.cheffy.listThreadMessages,
+    process.props.threadId ? { threadId: process.props.threadId } : "skip",
+    { initialNumItems: 50, stream: true },
+  );
+
+  const hasMessageInProgress = messages.some(
+    (msg) => msg.role !== "user" && msg.status === "pending",
+  );
 
   const [message, setMessage] = useDebouncedServerSync(
     process.props.input?.text ?? "",
@@ -25,7 +36,7 @@ export function ChatWindowInputBox() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const text = message.trim();
-    if (!text) return;
+    if (!text || hasMessageInProgress) return;
 
     await updateText({
       processId: process._id,
@@ -81,7 +92,7 @@ export function ChatWindowInputBox() {
         />
         <Button
           type="submit"
-          disabled={!message.trim()}
+          disabled={!message.trim() || hasMessageInProgress}
           style={{
             minWidth: "75px",
             height: "23px",
