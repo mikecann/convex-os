@@ -21,13 +21,13 @@ export function EmptyCheffyState() {
             bottom: "100%",
             left: "50%",
             transform: "translateX(-50%)",
-            marginBottom: "20px",
+            marginBottom: "0px",
             backgroundColor: "white",
             border: "2px solid #242424",
             borderRadius: "20px",
             padding: "20px 30px",
             boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-            minWidth: "300px",
+            minWidth: "200px",
             textAlign: "center",
             whiteSpace: "nowrap",
           }}
@@ -54,7 +54,7 @@ export function EmptyCheffyState() {
         </div>
 
         {/* Cheffy Character */}
-        <div style={{ transform: "scale(1.5)" }}>
+        <div style={{ transform: "scale(1.2)" }}>
           <CheffyCharacter />
         </div>
       </div>
