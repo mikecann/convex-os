@@ -1,5 +1,8 @@
 import { DotLoader } from "react-spinners";
 import { UIMessage, useSmoothText } from "@convex-dev/agent/react";
+import { useQuery } from "convex/react";
+import { api } from "../../../../../convex/_generated/api";
+import { AttachmentChip } from "./AttachmentChip";
 
 export function MessageBubble({ message }: { message: UIMessage }) {
   const isUser = message.role === "user";
@@ -11,6 +14,11 @@ export function MessageBubble({ message }: { message: UIMessage }) {
     startStreaming: message.status === "pending",
   });
 
+  const metadata = useQuery(
+    api.my.cheffy.getMessageMetadata,
+    isUser && message.id ? { messageId: message.id } : "skip",
+  );
+
   return (
     <div
       style={{
@@ -20,6 +28,22 @@ export function MessageBubble({ message }: { message: UIMessage }) {
         marginBottom: "16px",
       }}
     >
+      {isUser && metadata && metadata.fileIds.length > 0 && (
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "8px",
+            marginBottom: "8px",
+            maxWidth: "80%",
+            justifyContent: "flex-end",
+          }}
+        >
+          {metadata.fileIds.map((fileId) => (
+            <AttachmentChip key={fileId} fileId={fileId} />
+          ))}
+        </div>
+      )}
       <div
         style={{
           display: "flex",

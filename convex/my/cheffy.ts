@@ -5,6 +5,8 @@ import {
   vUserMessage,
   vStreamArgs,
   syncStreams,
+  Message,
+  storeFile,
 } from "@convex-dev/agent";
 import { components, internal } from "../_generated/api";
 import { paginationOptsValidator } from "convex/server";
@@ -14,7 +16,6 @@ import { cheffy } from "../cheffy/model";
 import { cheffyAgent } from "../cheffy/agent";
 import { iife } from "../../shared/misc";
 import { files } from "../files/model";
-import { MessageContentParts } from "../../node_modules/@convex-dev/agent/src/validators";
 
 export const listThreadMessages = myQuery({
   args: {
@@ -26,6 +27,22 @@ export const listThreadMessages = myQuery({
     const paginated = await listUIMessages(ctx, components.agent, args);
     const streams = await syncStreams(ctx, components.agent, args);
     return { ...paginated, streams };
+  },
+});
+
+export const getMessageMetadata = myQuery({
+  args: {
+    messageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const metadata = await ctx.db
+      .query("cheffyMessageMetadata")
+      .withIndex("by_messageId", (q) => q.eq("messageId", args.messageId))
+      .first();
+
+    if (!metadata || metadata.userId !== ctx.userId) return null;
+
+    return metadata;
   },
 });
 
@@ -119,11 +136,11 @@ export const sendMessage = myMutation({
             image: file.uploadState.url,
           };
 
-        if (file.type.startsWith("text/"))
-          return {
-            type: "text" as const,
-            text: file.uploadState.url,
-          };
+        // if (file.type.startsWith("text/"))
+        //   return {
+        //     type: "text" as const,
+        //     text: file.uploadState.url,
+        //   };
 
         return {
           type: "file" as const,
@@ -135,7 +152,6 @@ export const sendMessage = myMutation({
 
     const { messageId } = await saveMessage(ctx, components.agent, {
       threadId,
-      metadata: {},
       message: {
         role: "user",
         content: [
@@ -147,6 +163,14 @@ export const sendMessage = myMutation({
         ],
       },
     });
+
+    if (attachments.length > 0) {
+      await ctx.db.insert("cheffyMessageMetadata", {
+        messageId,
+        userId: ctx.userId,
+        fileIds: attachments,
+      });
+    }
 
     await ctx.scheduler.runAfter(
       0,

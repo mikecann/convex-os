@@ -45,17 +45,7 @@ export const clearInput = internalMutation({
   },
 });
 
-export const generateResponseAsync = internalAction({
-  args: { threadId: v.string(), promptMessageId: v.string() },
-  handler: async (ctx, { threadId, promptMessageId }) => {
-    await cheffyAgent.streamText(
-      ctx,
-      { threadId },
-      { promptMessageId },
-      { saveStreamDeltas: true },
-    );
-  },
-});
+export const generateResponseAsync = cheffyAgent.asTextAction({});
 
 export const generateThreadTitleAsync = internalAction({
   args: { threadId: v.string() },

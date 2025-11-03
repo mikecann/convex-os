@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { MessageBubble } from "./MessageBubble";
+import { MessageBubble } from "./MessageBubble/MessageBubble";
 import { useUIMessages } from "@convex-dev/agent/react";
 import { api } from "../../../../convex/_generated/api";
 import { useCheffyChatContext } from "./CheffyChatContext";

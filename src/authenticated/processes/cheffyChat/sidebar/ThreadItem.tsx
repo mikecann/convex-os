@@ -75,6 +75,15 @@ export function ThreadItem({
           e.stopPropagation();
           onDelete();
         }}
+        onMouseEnter={(e: MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.color = "#000";
+          e.currentTarget.style.backgroundColor = "#e0e0e0";
+          e.currentTarget.style.borderRadius = "2px";
+        }}
+        onMouseLeave={(e: MouseEvent<HTMLButtonElement>) => {
+          e.currentTarget.style.color = "#666";
+          e.currentTarget.style.backgroundColor = "transparent";
+        }}
         style={{
           width: "auto",
           height: "auto",
@@ -83,7 +92,7 @@ export function ThreadItem({
           background: "none",
           border: "none",
           cursor: "pointer",
-          padding: "0",
+          padding: "2px 4px",
           margin: "0",
           fontSize: "14px",
           lineHeight: "1",
@@ -93,6 +102,7 @@ export function ThreadItem({
           backgroundColor: "transparent",
           backgroundImage: "none",
           flexShrink: 0,
+          transition: "background-color 0.15s ease, color 0.15s ease",
         }}
         title="Delete thread"
       >
