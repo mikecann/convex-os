@@ -6,4 +6,3 @@ export const cheffyMessageMetadataTable = defineTable({
   userId: v.id("users"),
   fileIds: v.array(v.id("files")),
 }).index("by_messageId", ["messageId"]);
-

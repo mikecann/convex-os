@@ -12,5 +12,3 @@ export default defineSchema({
   windows: windowsTable,
   cheffyMessageMetadata: cheffyMessageMetadataTable,
 });
-
-

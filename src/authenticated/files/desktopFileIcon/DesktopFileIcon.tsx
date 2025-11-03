@@ -2,13 +2,12 @@ import { useState, RefObject, type MouseEvent as ReactMouseEvent } from "react";
 import { Doc } from "../../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { DesktopFileImage } from "../DesktopFileImage";
-import { getProcessStartingParams } from "../openFileHelpers";
 import { FileIconLabel } from "./FileIconLabel";
 import { FileIconRenameInput } from "./FileIconRenameInput";
 import { FileIconUploadStatus } from "./FileIconUploadStatus";
 import { useDragAndDrop } from "./useDragAndDrop";
 import { useRename } from "./useRename";
-import { useStartCenteredApp } from "../../processes/useStartCenteredApp";
+import { useOpenFileInPreview } from "../../processes/useOpenFileInPreview";
 
 export type DesktopFileDoc = Doc<"files">;
 
@@ -34,7 +33,7 @@ export function DesktopFileIcon({
   onClickWithoutDrag,
 }: DesktopFileIconProps) {
   const [isDragging, setIsDragging] = useState(false);
-  const startCenteredApp = useStartCenteredApp();
+  const openFileInPreview = useOpenFileInPreview();
   const onError = useErrorHandler();
 
   const {
@@ -84,14 +83,10 @@ export function DesktopFileIcon({
         void handleDragEnd(event);
       }}
       onDoubleClick={() => {
-        const process = getProcessStartingParams(file);
-        if (!process) {
-          onError(
-            new Error("Cannot start process for file of type " + file.type),
-          );
-          return;
-        }
-        void startCenteredApp(process);
+        openFileInPreview(file, {
+          x: file.position.x,
+          y: file.position.y,
+        });
       }}
       onKeyDown={(event) => {
         if (event.key === "Escape" && isRenaming) {

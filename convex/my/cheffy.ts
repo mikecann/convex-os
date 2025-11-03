@@ -136,11 +136,11 @@ export const sendMessage = myMutation({
             image: file.uploadState.url,
           };
 
-        // if (file.type.startsWith("text/"))
-        //   return {
-        //     type: "text" as const,
-        //     text: file.uploadState.url,
-        //   };
+        if (file.type.startsWith("text/"))
+          return {
+            type: "text" as const,
+            text: file.uploadState.url,
+          };
 
         return {
           type: "file" as const,
@@ -164,13 +164,12 @@ export const sendMessage = myMutation({
       },
     });
 
-    if (attachments.length > 0) {
+    if (attachments.length > 0)
       await ctx.db.insert("cheffyMessageMetadata", {
         messageId,
         userId: ctx.userId,
         fileIds: attachments,
       });
-    }
 
     await ctx.scheduler.runAfter(
       0,

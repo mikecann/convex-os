@@ -5,20 +5,12 @@ import {
   EXTENSION_ICON_MAP,
   MIME_ICON_MAP,
   DEFAULT_ICON,
-  isImageFile,
-  isVideoFile,
-  isTextFile,
 } from "../../../../../shared/fileTypes";
-import {
-  startImagePreview,
-  startVideoPlayer,
-  startTextPreview,
-} from "../../startProcessHelpers";
-import { useStartCenteredApp } from "../../useStartCenteredApp";
+import { useOpenFileInPreview } from "../../useOpenFileInPreview";
 
 export function AttachmentChip({ fileId }: { fileId: Id<"files"> }) {
   const file = useQuery(api.my.files.get, { fileId });
-  const startCenteredApp = useStartCenteredApp();
+  const openFileInPreview = useOpenFileInPreview();
 
   if (!file) return null;
 
@@ -32,34 +24,11 @@ export function AttachmentChip({ fileId }: { fileId: Id<"files"> }) {
     return DEFAULT_ICON;
   };
 
-  const handleClick = () => {
-    if (isImageFile(file)) {
-      void startCenteredApp(
-        startImagePreview({
-          fileId: file._id,
-          fileName: file.name,
-        }),
-      );
-    } else if (isVideoFile(file)) {
-      void startCenteredApp(
-        startVideoPlayer({
-          fileId: file._id,
-          fileName: file.name,
-        }),
-      );
-    } else if (isTextFile(file)) {
-      void startCenteredApp(
-        startTextPreview({
-          fileId: file._id,
-          fileName: file.name,
-        }),
-      );
-    }
-  };
-
   return (
     <div
-      onClick={handleClick}
+      onClick={() => {
+        openFileInPreview(file);
+      }}
       style={{
         display: "flex",
         alignItems: "center",
