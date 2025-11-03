@@ -21,10 +21,11 @@ function ToolbarSeparator() {
     <div
       style={{
         width: "1px",
-        height: "32px",
+        height: "20px",
         backgroundColor: "#8b8b8b",
         margin: "5px 2px",
         flexShrink: 0,
+        alignSelf: "center",
       }}
     />
   );
