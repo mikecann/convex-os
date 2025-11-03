@@ -1,3 +1,5 @@
+import { Button } from "../../../common/components/Button";
+
 interface StartMenuBottomButtonsProps {
   onLogOff: () => void;
   onTurnOff: () => void;
@@ -23,7 +25,7 @@ export function StartMenuBottomButtons({
         zIndex: 10,
       }}
     >
-      <button
+      <Button
         style={{
           display: "flex",
           alignItems: "center",
@@ -54,9 +56,9 @@ export function StartMenuBottomButtons({
           style={{ width: "16px", height: "16px" }}
         />
         <span>Log Off</span>
-      </button>
+      </Button>
 
-      <button
+      <Button
         style={{
           display: "flex",
           alignItems: "center",
@@ -87,7 +89,7 @@ export function StartMenuBottomButtons({
           style={{ width: "16px", height: "16px" }}
         />
         <span>Turn Off Computer</span>
-      </button>
+      </Button>
     </div>
   );
 }

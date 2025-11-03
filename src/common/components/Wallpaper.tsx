@@ -18,8 +18,9 @@ export function Wallpaper({
     backgroundSize: "cover",
     backgroundPosition: "center",
     backgroundRepeat: "no-repeat",
-    minHeight: fullScreen ? "100vh" : "auto",
-    width: fullScreen ? "100vw" : "auto",
+    minHeight: fullScreen ? "100%" : "auto",
+    width: fullScreen ? "100%" : "auto",
+    height: fullScreen ? "100%" : "auto",
     ...style,
   };
 

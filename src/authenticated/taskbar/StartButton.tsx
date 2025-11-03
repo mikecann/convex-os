@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { playSound } from "../../common/sounds/soundEffects";
+import { Button } from "../../common/components/Button";
 
 interface StartButtonProps {
   onClick?: () => void;
@@ -9,7 +10,7 @@ export function StartButton({ onClick }: StartButtonProps) {
   const [isPressed, setIsPressed] = useState(false);
 
   return (
-    <button
+    <Button
       className="start-button"
       onClick={() => {
         playSound("start", 0.4);
@@ -61,6 +62,6 @@ export function StartButton({ onClick }: StartButtonProps) {
       >
         start
       </span>
-    </button>
+    </Button>
   );
 }

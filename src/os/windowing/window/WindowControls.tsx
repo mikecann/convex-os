@@ -1,5 +1,6 @@
 import React from "react";
 import { playSound } from "../../../common/sounds/soundEffects";
+import { Button } from "../../../common/components/Button";
 
 interface WindowControlsProps {
   showCloseButton?: boolean;
@@ -23,7 +24,7 @@ export function WindowControls({
   return (
     <div className="title-bar-controls" style={{ display: "flex" }}>
       {showMinimiseButton && onMinimize ? (
-        <button
+        <Button
           className="minimise"
           aria-label="Minimize"
           onClick={(event) => {
@@ -32,10 +33,10 @@ export function WindowControls({
             onMinimize();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></button>
+        ></Button>
       ) : null}
       {showMaximizeButton ? (
-        <button
+        <Button
           className={isMaximized ? "restore" : "maximise"}
           aria-label={isMaximized ? "Restore" : "Maximize"}
           onClick={(event) => {
@@ -43,17 +44,17 @@ export function WindowControls({
             onToggleMaximize?.();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></button>
+        ></Button>
       ) : null}
       {showCloseButton && onClose ? (
-        <button
+        <Button
           aria-label="Close"
           onClick={(event) => {
             event.stopPropagation();
             onClose();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></button>
+        ></Button>
       ) : null}
     </div>
   );

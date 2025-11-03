@@ -187,6 +187,7 @@ export function Window({
           display: "flex",
           flexDirection: "column",
           overflow: "hidden",
+          pointerEvents: isResizing || isDragging ? "none" : "auto",
           ...bodyStyle,
         }}
       >

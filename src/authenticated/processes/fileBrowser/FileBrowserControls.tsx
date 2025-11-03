@@ -1,4 +1,5 @@
 import { Doc } from "../../../../convex/_generated/dataModel";
+import { Button } from "../../../common/components/Button";
 
 export type FileTypeFilter =
   | "all"
@@ -122,7 +123,7 @@ export function FileBrowserControls({
           </select>
         </div>
         <div style={{ display: "flex", gap: "8px" }}>
-          <button
+          <Button
             onClick={onOpen}
             disabled={isOpenDisabled}
             style={{
@@ -132,8 +133,8 @@ export function FileBrowserControls({
             }}
           >
             Open
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={onCancel}
             style={{
               padding: "4px 16px",
@@ -142,7 +143,7 @@ export function FileBrowserControls({
             }}
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </div>
     </div>

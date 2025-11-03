@@ -5,6 +5,7 @@ import { api } from "../../../convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { TaskbarContextMenu } from "./TaskbarContextMenu";
+import { Button } from "../../common/components/Button";
 
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
@@ -37,7 +38,7 @@ export function TaskbarButton({
 
   return (
     <>
-      <button
+      <Button
         key={process._id}
         ref={(element) => {
           if (element) taskbarButtonRefs.current.set(process._id, element);
@@ -90,7 +91,7 @@ export function TaskbarButton({
           style={{ width: "16px", height: "16px" }}
         />
         {processName ?? `${process.kind} ${process._id}`}
-      </button>
+      </Button>
       {contextMenu && (
         <TaskbarContextMenu
           processId={process._id}

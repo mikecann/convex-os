@@ -4,6 +4,7 @@ import { Id } from "../../../convex/_generated/dataModel";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { useOS } from "../../os/OperatingSystem";
+import { Button } from "../../common/components/Button";
 
 interface TaskbarContextMenuProps {
   processId: Id<"processes">;
@@ -22,7 +23,7 @@ function MenuItem({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <Button
       onClick={onClick}
       style={{
         display: "block",
@@ -45,7 +46,7 @@ function MenuItem({
       }}
     >
       {children}
-    </button>
+    </Button>
   );
 }
 

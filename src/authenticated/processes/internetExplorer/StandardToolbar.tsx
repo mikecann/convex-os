@@ -5,73 +5,114 @@ import { LinksBar } from "./LinksBar";
 interface StandardToolbarProps {
   canGoBack: boolean;
   canGoForward: boolean;
+  url: string;
+  isLoading: boolean;
   onBack: () => void;
   onForward: () => void;
   onStop: () => void;
   onRefresh: () => void;
   onHome: () => void;
+  onUrlChange: (url: string) => void;
+  onGo: () => void;
+}
+
+function ToolbarSeparator() {
+  return (
+    <div
+      style={{
+        width: "1px",
+        height: "32px",
+        backgroundColor: "#8b8b8b",
+        margin: "5px 2px",
+        flexShrink: 0,
+      }}
+    />
+  );
 }
 
 export function StandardToolbar({
   canGoBack,
   canGoForward,
+  url,
+  isLoading,
   onBack,
   onForward,
   onStop,
   onRefresh,
   onHome,
+  onUrlChange,
+  onGo,
 }: StandardToolbarProps) {
   return (
     <div
       style={{
         display: "flex",
-        alignItems: "center",
-        gap: "2px",
-        padding: "2px",
-        borderBottom: "1px solid #8b8b8b",
+        flexDirection: "column",
         backgroundColor: "#ece9d8",
+        borderBottom: "1px solid #8b8b8b",
         flexShrink: 0,
       }}
     >
-      <ToolbarButton
-        onClick={onBack}
-        disabled={!canGoBack}
-        title="Back"
-        icon={<span style={{ color: canGoBack ? "#008000" : "#888" }}>◀</span>}
-      />
-      <ToolbarButton
-        onClick={onForward}
-        disabled={!canGoForward}
-        title="Forward"
-        icon={
-          <span style={{ color: canGoForward ? "#008000" : "#888" }}>▶</span>
-        }
-      />
-      <ToolbarButton
-        onClick={onStop}
-        title="Stop"
-        icon={<span style={{ color: "#c00", fontSize: "14px" }}>✕</span>}
-      />
-      <ToolbarButton
-        onClick={onRefresh}
-        title="Refresh"
-        icon={<span style={{ color: "#008000", fontSize: "12px" }}>↻</span>}
-      />
-      <ToolbarButton
-        onClick={onHome}
-        title="Home"
-        icon={<span style={{ fontSize: "14px" }}>⌂</span>}
-      />
-      <ToolbarButton
-        title="Search"
-        icon={<span style={{ fontSize: "12px" }}>🔍</span>}
-      />
-      <ToolbarButton
-        title="Favorites"
-        icon={<span style={{ fontSize: "12px", color: "#ffd700" }}>★</span>}
-      />
+      {/* Top row - Navigation buttons */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: "2px",
+          padding: "4px 2px",
+          flexWrap: "nowrap",
+        }}
+      >
+        <ToolbarButton
+          onClick={onBack}
+          disabled={!canGoBack}
+          title="Back"
+          iconSrc="/xp/toolbar/back.png"
+        />
+        <ToolbarButton
+          onClick={onForward}
+          disabled={!canGoForward}
+          title="Forward"
+          iconSrc="/xp/toolbar/forward.png"
+        />
+        <ToolbarSeparator />
+        <ToolbarButton
+          onClick={onStop}
+          title="Stop"
+          iconSrc="/xp/toolbar/removepaper.png"
+        />
+        <ToolbarButton
+          onClick={onRefresh}
+          title="Refresh"
+          iconSrc="/xp/toolbar/recyclepaper.png"
+        />
+        <ToolbarSeparator />
+        <ToolbarButton
+          onClick={onHome}
+          title="Home"
+          iconSrc="/xp/toolbar/home.png"
+        />
+        <ToolbarButton title="Search" iconSrc="/xp/toolbar/search.png" />
+        <ToolbarButton title="Favorites" iconSrc="/xp/toolbar/star.png" />
+      </div>
 
-      <LinksBar />
+      {/* Bottom row - Address bar and Links bar */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          padding: "2px",
+          borderTop: "1px solid #c3c3c3",
+        }}
+      >
+        <AddressBar
+          url={url}
+          isLoading={isLoading}
+          onUrlChange={onUrlChange}
+          onGo={onGo}
+        />
+        <LinksBar />
+      </div>
     </div>
   );
 }

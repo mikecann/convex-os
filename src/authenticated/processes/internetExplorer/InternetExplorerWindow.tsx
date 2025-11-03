@@ -9,8 +9,6 @@ import { MenuBar } from "./MenuBar";
 import { StandardToolbar } from "./StandardToolbar";
 import { BrowserContent } from "./BrowserContent";
 import { StatusBar } from "./StatusBar";
-import Horizontal from "../../../common/components/Horizontal";
-import { AddressBar } from "./AddressBar";
 
 const DEFAULT_URL = "https://www.mikecann.blog";
 
@@ -96,18 +94,14 @@ export function InternetExplorerWindow({
           backgroundColor: "#fff",
         }}
       >
-        <Horizontal style={{ backgroundColor: "#ece9d8" }}>
-          <MenuBar />
-          <AddressBar
-            url={urlInput}
-            isLoading={isLoading}
-            onUrlChange={setUrlInput}
-            onGo={() => navigateToUrl(urlInput)}
-          />
-        </Horizontal>
+        <MenuBar />
         <StandardToolbar
           canGoBack={canGoBack}
           canGoForward={canGoForward}
+          url={urlInput}
+          isLoading={isLoading}
+          onUrlChange={setUrlInput}
+          onGo={() => navigateToUrl(urlInput)}
           onBack={() => {
             if (historyIndex <= 0) return;
             const newIndex = historyIndex - 1;

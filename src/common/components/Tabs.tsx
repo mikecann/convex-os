@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Button } from "./Button";
 
 interface TabPanel {
   id: string;
@@ -30,7 +31,7 @@ export function Tabs({
     <section className={`tabs ${className}`}>
       <menu role="tablist">
         {tabs.map((tab) => (
-          <button
+          <Button
             key={tab.id}
             role="tab"
             aria-controls={tab.id}
@@ -38,7 +39,7 @@ export function Tabs({
             onClick={() => handleTabClick(tab.id)}
           >
             {tab.title}
-          </button>
+          </Button>
         ))}
       </menu>
       {tabs.map((tab) => (

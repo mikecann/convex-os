@@ -1,48 +1,68 @@
 import React from "react";
+import { Button } from "../../../common/components/Button";
 
 interface ToolbarButtonProps {
   onClick?: () => void;
   disabled?: boolean;
   title: string;
-  icon: React.ReactNode;
+  iconSrc: string;
+  showLabel?: boolean;
 }
-
-const toolbarButtonStyle: React.CSSProperties = {
-  width: "24px",
-  height: "22px",
-  padding: 0,
-  border: "1px outset #ece9d8",
-  backgroundColor: "#ece9d8",
-  cursor: "pointer",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  fontSize: "12px",
-  fontFamily: "Tahoma, sans-serif",
-  flexShrink: 0,
-};
-
-const disabledToolbarButtonStyle: React.CSSProperties = {
-  ...toolbarButtonStyle,
-  opacity: 0.5,
-  cursor: "not-allowed",
-};
 
 export function ToolbarButton({
   onClick,
   disabled,
   title,
-  icon,
+  iconSrc,
+  showLabel = true,
 }: ToolbarButtonProps) {
   return (
-    <button
+    <Button
       onClick={onClick}
       disabled={disabled}
-      style={disabled ? disabledToolbarButtonStyle : toolbarButtonStyle}
+      style={{
+        padding: "6px 10px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "4px",
+      }}
       title={title}
+      onMouseDown={(e) => {
+        if (!disabled) e.currentTarget.style.borderStyle = "inset";
+      }}
+      onMouseUp={(e) => {
+        if (!disabled) e.currentTarget.style.borderStyle = "outset";
+      }}
+      onMouseLeave={(e) => {
+        if (!disabled) e.currentTarget.style.borderStyle = "outset";
+      }}
     >
-      {icon}
-    </button>
+      <img
+        src={iconSrc}
+        alt={title}
+        style={{
+          width: "16px",
+          height: "16px",
+          imageRendering: "pixelated",
+          display: "block",
+        }}
+      />
+      {showLabel && (
+        <span
+          style={{
+            fontSize: "9px",
+            color: "#000",
+            textAlign: "center",
+            whiteSpace: "nowrap",
+            lineHeight: "9px",
+            height: "9px",
+            display: "block",
+          }}
+        >
+          {title}
+        </span>
+      )}
+    </Button>
   );
 }
-

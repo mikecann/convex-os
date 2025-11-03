@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { Button } from "./Button";
 
 export type MenuItem = {
   label: string;
@@ -43,7 +44,7 @@ export function MenuBar({ items }: MenuBarProps) {
     >
       {items.map((item, index) => (
         <div key={index} style={{ position: "relative" }}>
-          <button
+          <Button
             onClick={() => {
               if (openMenuIndex === index) setOpenMenuIndex(null);
               else setOpenMenuIndex(index);
@@ -67,7 +68,7 @@ export function MenuBar({ items }: MenuBarProps) {
             }}
           >
             {item.label}
-          </button>
+          </Button>
           {openMenuIndex === index && item.items && (
             <div
               style={{
