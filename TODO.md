@@ -1,1 +1,0 @@
-- rename project to convex-os

@@ -31,6 +31,10 @@ export function Clock() {
         cursor: "default",
         userSelect: "none",
         fontWeight: "400",
+        lineHeight: "1",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
       }}
     >
       {formatTime(time)}

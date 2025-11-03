@@ -20,6 +20,7 @@ import type * as my_files from "../my/files.js";
 import type * as my_processes from "../my/processes.js";
 import type * as my_user from "../my/user.js";
 import type * as my_windows from "../my/windows.js";
+import type * as playground from "../playground.js";
 import type * as processes_model from "../processes/model.js";
 import type * as users_model from "../users/model.js";
 import type * as windows_lib from "../windows/lib.js";
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   "my/processes": typeof my_processes;
   "my/user": typeof my_user;
   "my/windows": typeof my_windows;
+  playground: typeof playground;
   "processes/model": typeof processes_model;
   "users/model": typeof users_model;
   "windows/lib": typeof windows_lib;

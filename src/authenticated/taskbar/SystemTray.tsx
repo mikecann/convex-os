@@ -6,7 +6,7 @@ export function SystemTray() {
     <div
       style={{
         marginLeft: "auto",
-        height: "100%",
+        height: "38px",
         width: "fit-content",
         color: "white",
         borderTop: "1px solid #075dca",
@@ -14,14 +14,16 @@ export function SystemTray() {
         borderRight: "1px solid transparent",
         borderLeft: "1px solid black",
         backgroundImage:
-          "linear-gradient(0deg, #0a5bc6 0%, #1198e9 6%, #1198e9 51%, #1198e9 63%, #1198e9 77%, #19b9f3 95%, #075dca 97%)",
+          "linear-gradient(0deg, #0a5bc6 0%, #1198e9 6%, #1198e9 51%, #1198e9 63%, #1198e9 77%, #19b9f3 95%, #1198e9 97%)",
         boxShadow: "2px 0px 3px #20e2fc inset",
+        boxSizing: "border-box",
         display: "flex",
         alignItems: "center",
         justifyContent: "flex-end",
         paddingLeft: "8px",
         paddingRight: "8px",
-        paddingTop: "1px",
+        paddingTop: "0px",
+        paddingBottom: "0px",
         fontSize: "14px",
         gap: "4px",
       }}

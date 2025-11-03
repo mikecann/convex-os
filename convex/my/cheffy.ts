@@ -7,6 +7,7 @@ import {
   syncStreams,
   Message,
   storeFile,
+  getFile,
 } from "@convex-dev/agent";
 import { components, internal } from "../_generated/api";
 import { paginationOptsValidator } from "convex/server";
@@ -42,6 +43,25 @@ export const getMessageMetadata = myQuery({
     if (!metadata || metadata.userId !== ctx.userId) return null;
 
     return metadata;
+  },
+});
+
+export const getMessageError = myQuery({
+  args: {
+    messageId: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const messages = await ctx.runQuery(
+      components.agent.messages.getMessagesByIds,
+      {
+        messageIds: [args.messageId],
+      },
+    );
+
+    const message = messages[0];
+    if (!message) return null;
+
+    return message.error ?? null;
   },
 });
 

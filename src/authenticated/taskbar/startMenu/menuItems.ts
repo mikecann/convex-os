@@ -30,7 +30,6 @@ export const leftMenuItems: MenuItem[] = [
         "_blank",
       ),
   },
-  { icon: "/xp/help.png", label: "Tour Windows XP" },
 ];
 
 export const rightMenuItems: MenuItem[] = [
