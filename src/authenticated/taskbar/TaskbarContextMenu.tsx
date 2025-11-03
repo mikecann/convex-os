@@ -3,8 +3,8 @@ import { api } from "../../../convex/_generated/api";
 import { Id } from "../../../convex/_generated/dataModel";
 import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
-import { useOS } from "../../os/OperatingSystem";
 import { Button } from "../../common/components/Button";
+import { useOS } from "../../os/OperatingSystemContext";
 
 interface TaskbarContextMenuProps {
   processId: Id<"processes">;

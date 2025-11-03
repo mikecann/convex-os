@@ -1,9 +1,9 @@
-import { useOS } from "../OperatingSystem";
 import { Window, WindowProps } from "./window/Window";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
 import { useOptimisticFocusWindow } from "../../common/hooks/optimistic";
+import { useOS } from "../OperatingSystemContext";
 
 export function ConnectedWindow({
   window,

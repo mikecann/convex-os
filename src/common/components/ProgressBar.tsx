@@ -12,15 +12,7 @@ export function ProgressBar({
   max = 100,
   ...props
 }: ProgressBarProps) {
-  if (indeterminate)
-    return <progress className={className} {...props} />;
+  if (indeterminate) return <progress className={className} {...props} />;
 
-  return (
-    <progress
-      className={className}
-      max={max}
-      value={value}
-      {...props}
-    />
-  );
+  return <progress className={className} max={max} value={value} {...props} />;
 }

@@ -10,10 +10,6 @@ import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
 import { OperatingSystemContext } from "./OperatingSystemContext";
 import { Id } from "../../convex/_generated/dataModel";
 
-// Re-export useOS for convenience
-// eslint-disable-next-line react-refresh/only-export-components
-export { useOS } from "./OperatingSystemContext";
-
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
 export function OperatingSystem({ children }: PropsWithChildren) {

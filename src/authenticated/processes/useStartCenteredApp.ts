@@ -1,8 +1,8 @@
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
-import { useOS } from "../../os/OperatingSystem";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { FunctionArgs } from "convex/server";
+import { useOS } from "../../os/OperatingSystemContext";
 
 type ProcessParams = FunctionArgs<typeof api.my.processes.start>["process"];
 
@@ -32,4 +32,3 @@ export function useStartCenteredApp() {
       });
   };
 }
-

@@ -1,12 +1,12 @@
 import { Doc } from "../../../convex/_generated/dataModel";
 import { ProcessKinds } from "../../../convex/processes/schema";
-import { useOS } from "../../os/OperatingSystem";
 import { api } from "../../../convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { TaskbarContextMenu } from "./TaskbarContextMenu";
 import { Button } from "../../common/components/Button";
 import { useOptimisticFocusProcess } from "../../common/hooks/optimistic";
+import { useOS } from "../../os/OperatingSystemContext";
 
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
