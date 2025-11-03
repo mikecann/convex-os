@@ -6,7 +6,6 @@ interface TitleBarProps {
   icon?: string;
   draggable: boolean;
   handleMouseDown: (event: React.MouseEvent) => void;
-  titleBarStyle?: React.CSSProperties;
   onToggleMaximize?: () => void;
   showCloseButton?: boolean;
   showMaximizeButton?: boolean;
@@ -21,7 +20,6 @@ export function TitleBar({
   icon,
   draggable,
   handleMouseDown,
-  titleBarStyle,
   onToggleMaximize,
   showCloseButton,
   showMaximizeButton,
@@ -36,7 +34,6 @@ export function TitleBar({
       style={{
         userSelect: "none",
         cursor: draggable ? "move" : "default",
-        ...titleBarStyle,
       }}
       onMouseDown={handleMouseDown}
       onDoubleClick={onToggleMaximize}

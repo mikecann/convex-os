@@ -74,11 +74,6 @@ export function InternetExplorerWindow({
     <ConnectedWindow
       window={window}
       resizable
-      titleBarStyle={{
-        background: "linear-gradient(to bottom, #316ac5 0%, #1e3a8a 100%)",
-        color: "#fff",
-        fontWeight: "normal",
-      }}
       statusBar={<StatusBar />}
       showCloseButton
       showMaximizeButton

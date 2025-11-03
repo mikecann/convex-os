@@ -25,7 +25,6 @@ export interface WindowProps {
   style?: React.CSSProperties;
   statusBar?: React.ReactNode;
   bodyStyle?: React.CSSProperties;
-  titleBarStyle?: React.CSSProperties;
   draggable?: boolean;
   onClose?: () => void;
   showCloseButton?: boolean;
@@ -57,7 +56,6 @@ export function Window({
   style,
   statusBar,
   bodyStyle,
-  titleBarStyle,
   draggable = true,
   onClose,
   showCloseButton = false,
@@ -171,7 +169,6 @@ export function Window({
           });
           setIsDragging(true);
         }}
-        titleBarStyle={titleBarStyle}
         onToggleMaximize={onToggleMaximize}
         showCloseButton={showCloseButton}
         showMaximizeButton={showMaximizeButton}

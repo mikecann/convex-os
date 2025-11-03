@@ -33,6 +33,7 @@ export function WindowControls({
             onMinimize();
           }}
           onMouseDown={(event) => event.stopPropagation()}
+          style={{ minWidth: "20px" }}
         />
       ) : null}
       {showMaximizeButton ? (
@@ -44,6 +45,7 @@ export function WindowControls({
             onToggleMaximize?.();
           }}
           onMouseDown={(event) => event.stopPropagation()}
+          style={{ minWidth: "20px" }}
         />
       ) : null}
       {showCloseButton && onClose ? (
@@ -54,6 +56,7 @@ export function WindowControls({
             onClose();
           }}
           onMouseDown={(event) => event.stopPropagation()}
+          style={{ minWidth: "20px" }}
         />
       ) : null}
     </div>

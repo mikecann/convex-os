@@ -3,6 +3,7 @@ import { MessageBubble } from "./MessageBubble/MessageBubble";
 import { useUIMessages } from "@convex-dev/agent/react";
 import { api } from "../../../../convex/_generated/api";
 import { useCheffyChatContext } from "./useCheffyChatContext";
+import { EmptyCheffyState } from "./EmptyCheffyState";
 
 export function MessagesArea() {
   const { process } = useCheffyChatContext();
@@ -17,6 +18,10 @@ export function MessagesArea() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  if (messages.length === 0) {
+    return <EmptyCheffyState />;
+  }
 
   return (
     <div
