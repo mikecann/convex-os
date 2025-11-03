@@ -6,7 +6,7 @@ import {
   MIME_ICON_MAP,
   DEFAULT_ICON,
 } from "../../../../shared/fileTypes";
-import { useCheffyChatContext } from "./CheffyChatContext";
+import { useCheffyChatContext } from "./useCheffyChatContext";
 import { useMutation } from "convex/react";
 
 export function AttachmentsArea() {

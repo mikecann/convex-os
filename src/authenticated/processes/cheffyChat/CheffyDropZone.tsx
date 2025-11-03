@@ -3,7 +3,7 @@ import {
   createDataTypeFilter,
   getDragData,
 } from "../../../common/dragDrop/helpers";
-import { useCheffyChatContext } from "./CheffyChatContext";
+import { useCheffyChatContext } from "./useCheffyChatContext";
 import { Id } from "../../../../convex/_generated/dataModel";
 import type { ReactNode } from "react";
 import { useMutation } from "convex/react";

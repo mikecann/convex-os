@@ -1,7 +1,7 @@
 import Flex from "../../../../common/components/Flex";
 import Box from "../../../../common/components/Box";
 import { Button } from "../../../../common/components/Button";
-import { useCheffyChatContext } from "../CheffyChatContext";
+import { useCheffyChatContext } from "../useCheffyChatContext";
 import { useMutation } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 

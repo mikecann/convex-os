@@ -42,42 +42,41 @@ export function useOpenFileInPreview() {
     ): void => {
       const fileType = getFileTypeKind(file);
 
-      switch (fileType.kind) {
-        case "image":
-          void startCenteredApp(
-            startImagePreview({
-              fileId: file._id,
-              fileName: file.name,
-              x: options?.x,
-              y: options?.y,
-            }),
-          );
-          return;
-        case "video":
-          void startCenteredApp(
-            startVideoPlayer({
-              fileId: file._id,
-              fileName: file.name,
-              x: options?.x,
-              y: options?.y,
-            }),
-          );
-          return;
-        case "text":
-          void startCenteredApp(
-            startTextPreview({
-              fileId: file._id,
-              fileName: file.name,
-              x: options?.x,
-              y: options?.y,
-            }),
-          );
-          return;
-        case "unsupported":
-          return;
-        default:
-          exhaustiveCheck(fileType);
+      if (fileType.kind === "image") {
+        void startCenteredApp(
+          startImagePreview({
+            fileId: file._id,
+            fileName: file.name,
+            x: options?.x,
+            y: options?.y,
+          }),
+        );
+        return;
       }
+      if (fileType.kind === "video") {
+        void startCenteredApp(
+          startVideoPlayer({
+            fileId: file._id,
+            fileName: file.name,
+            x: options?.x,
+            y: options?.y,
+          }),
+        );
+        return;
+      }
+      if (fileType.kind === "text") {
+        void startCenteredApp(
+          startTextPreview({
+            fileId: file._id,
+            fileName: file.name,
+            x: options?.x,
+            y: options?.y,
+          }),
+        );
+        return;
+      }
+      if (fileType.kind === "unsupported") return;
+      exhaustiveCheck(fileType);
     },
     [startCenteredApp],
   );

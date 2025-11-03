@@ -78,12 +78,11 @@ export function useOptimisticFocusWindow() {
       let targetWindow = allWindows?.find((w) => w._id === windowId);
       let targetProcessId: Id<"processes"> | null = null;
 
-      if (targetWindow) {
-        targetProcessId = targetWindow.processId;
-      } else {
+      if (targetWindow) targetProcessId = targetWindow.processId;
+      else {
         // If not found in the main list, check all process-specific lists
         const processes = localStore.getQuery(api.my.processes.list);
-        if (processes) {
+        if (processes)
           for (const process of processes) {
             const processWindows = localStore.getQuery(
               api.my.windows.listForProcess,
@@ -96,7 +95,6 @@ export function useOptimisticFocusWindow() {
               break;
             }
           }
-        }
       }
 
       if (!targetWindow || !targetProcessId) return;
@@ -181,7 +179,7 @@ export function useOptimisticFocusWindow() {
       // Update the main windows list if it exists
       if (allWindows !== undefined) {
         const updated = allWindows.map((w) => {
-          if (w._id === windowId) {
+          if (w._id === windowId) 
             return {
               ...w,
               viewState:
@@ -196,12 +194,12 @@ export function useOptimisticFocusWindow() {
                       viewStackOrder: 0,
                     } as const),
             };
-          }
+          
           if (
             w.viewState.kind === "open" &&
             w.viewState.isActive &&
             w.processId !== targetProcessId
-          ) {
+          ) 
             return {
               ...w,
               viewState: {
@@ -209,7 +207,7 @@ export function useOptimisticFocusWindow() {
                 isActive: false,
               } as const,
             };
-          }
+          
           return w;
         });
         localStore.setQuery(api.my.windows.list, {}, updated);
@@ -346,7 +344,7 @@ export function useOptimisticFocusProcess() {
       const allWindows = localStore.getQuery(api.my.windows.list);
       if (allWindows !== undefined) {
         const updated = allWindows.map((w) => {
-          if (w.processId === processId) {
+          if (w.processId === processId) 
             return {
               ...w,
               viewState:
@@ -361,12 +359,12 @@ export function useOptimisticFocusProcess() {
                       viewStackOrder: 0,
                     } as const),
             };
-          }
+          
           if (
             w.viewState.kind === "open" &&
             w.viewState.isActive &&
             w.processId !== processId
-          ) {
+          ) 
             return {
               ...w,
               viewState: {
@@ -374,7 +372,7 @@ export function useOptimisticFocusProcess() {
                 isActive: false,
               } as const,
             };
-          }
+          
           return w;
         });
         localStore.setQuery(api.my.windows.list, {}, updated);

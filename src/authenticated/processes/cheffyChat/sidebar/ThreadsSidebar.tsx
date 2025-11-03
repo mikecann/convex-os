@@ -3,7 +3,7 @@ import Vertical from "../../../../common/components/Vertical";
 import Box from "../../../../common/components/Box";
 import { SidebarHeader } from "./SidebarHeader";
 import { ThreadsList } from "./ThreadsList";
-import { useCheffyChatContext } from "../CheffyChatContext";
+import { useCheffyChatContext } from "../useCheffyChatContext";
 
 interface ThreadsSidebarProps {
   width: number;

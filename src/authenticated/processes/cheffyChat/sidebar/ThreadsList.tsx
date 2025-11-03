@@ -1,7 +1,7 @@
 import Box from "../../../../common/components/Box";
 import Vertical from "../../../../common/components/Vertical";
 import { ThreadItem } from "./ThreadItem";
-import { useCheffyChatContext } from "../CheffyChatContext";
+import { useCheffyChatContext } from "../useCheffyChatContext";
 import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../../convex/_generated/api";
 

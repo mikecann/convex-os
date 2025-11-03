@@ -33,7 +33,7 @@ export function WindowControls({
             onMinimize();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></Button>
+        />
       ) : null}
       {showMaximizeButton ? (
         <Button
@@ -44,7 +44,7 @@ export function WindowControls({
             onToggleMaximize?.();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></Button>
+        />
       ) : null}
       {showCloseButton && onClose ? (
         <Button
@@ -54,7 +54,7 @@ export function WindowControls({
             onClose();
           }}
           onMouseDown={(event) => event.stopPropagation()}
-        ></Button>
+        />
       ) : null}
     </div>
   );

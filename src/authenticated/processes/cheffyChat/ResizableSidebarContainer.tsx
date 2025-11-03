@@ -1,6 +1,6 @@
 import { useRef, useEffect, useLayoutEffect, type RefObject } from "react";
 import { ThreadsSidebar } from "./sidebar/ThreadsSidebar";
-import { useCheffyChatContext } from "./CheffyChatContext";
+import { useCheffyChatContext } from "./useCheffyChatContext";
 import { useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 

@@ -1,6 +1,6 @@
 import { AttachmentsArea } from "./AttachmentsArea";
 import { ChatWindowInputBox } from "./ChatWindowInputBox";
-import { useCheffyChatContext } from "./CheffyChatContext";
+import { useCheffyChatContext } from "./useCheffyChatContext";
 import { useAction, useMutation } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";

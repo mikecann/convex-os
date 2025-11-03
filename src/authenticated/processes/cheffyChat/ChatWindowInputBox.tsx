@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "convex/react";
 import { api } from "../../../../convex/_generated/api";
 import { useDebouncedServerSync } from "../../../common/hooks/useDebouncedServerSync";
 import { useOptimisticSendMessage } from "../../../common/hooks/optimistic";
-import { useCheffyChatContext } from "./CheffyChatContext";
+import { useCheffyChatContext } from "./useCheffyChatContext";
 import { Button } from "../../../common/components/Button";
 import { useUIMessages } from "@convex-dev/agent/react";
 
