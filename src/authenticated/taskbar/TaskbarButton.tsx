@@ -82,15 +82,26 @@ export function TaskbarButton({
             : "1px 1px 2px rgba(0,0,0,0.4)",
           cursor: "pointer",
           minWidth: "120px",
+          maxWidth: "200px",
           outline: "none",
           transition: "background 0.15s ease",
+          overflow: "hidden",
         }}
       >
         <img
           src={process_ICON_MAP[process.kind]}
-          style={{ width: "16px", height: "16px" }}
+          style={{ width: "16px", height: "16px", flexShrink: 0 }}
         />
-        {processName ?? `${process.kind} ${process._id}`}
+        <span
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            minWidth: 0,
+          }}
+        >
+          {processName ?? `${process.kind} ${process._id}`}
+        </span>
       </Button>
       {contextMenu && (
         <TaskbarContextMenu
