@@ -59,9 +59,9 @@ export function ConfirmationDialog({
       style={{ minWidth: "280px" }}
       viewState={{ kind: "open", viewStackOrder: 999, isActive: true }}
       width={320}
-      height={200}
+      height={120}
     >
-      <Vertical gap={16} style={{ padding: "16px" }}>
+      <Vertical gap={12} style={{ padding: "12px" }}>
         <div>{message}</div>
         <Horizontal gap={12} justify="end">
           <Button
