@@ -6,6 +6,7 @@ import { useMutation, useQuery } from "convex/react";
 import { useState } from "react";
 import { TaskbarContextMenu } from "./TaskbarContextMenu";
 import { Button } from "../../common/components/Button";
+import { useOptimisticFocusProcess } from "../../common/hooks/optimistic";
 
 const process_ICON_MAP: Record<ProcessKinds, string> = {
   image_preview: "/xp/paint.png",
@@ -25,7 +26,7 @@ export function TaskbarButton({
 }) {
   const { taskbarButtonRefs } = useOS();
   const minimize = useMutation(api.my.processes.minimize);
-  const focus = useMutation(api.my.processes.focus);
+  const focus = useOptimisticFocusProcess();
   const close = useMutation(api.my.processes.close);
   const processName = useQuery(api.my.processes.findName, {
     processId: process._id,

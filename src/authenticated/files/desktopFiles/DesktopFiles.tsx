@@ -9,12 +9,13 @@ import { DragOverlay } from "./DragOverlay";
 import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { useFileSelection } from "./useFileSelection";
 import { useFileDrop } from "./useFileDrop";
+import { useOptimisticDeactivateActive } from "../../../common/hooks/optimistic";
 
 export function DesktopFiles() {
   const containerRef = useRef<HTMLDivElement>(null);
   const files = useQuery(api.my.files.list) ?? [];
   const deleteFiles = useMutation(api.my.files.deleteAll);
-  const deactivateActiveWindow = useMutation(api.my.windows.deactivateActive);
+  const deactivateActiveWindow = useOptimisticDeactivateActive();
   const { uploadFiles } = useDesktopFileUploader();
   const onError = useErrorHandler();
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
