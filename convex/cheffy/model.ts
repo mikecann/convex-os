@@ -1,4 +1,4 @@
-import { components } from "../_generated/api";
+import { components, internal } from "../_generated/api";
 import { Id } from "../_generated/dataModel";
 import {
   DatabaseReader,
@@ -6,6 +6,7 @@ import {
   QueryCtx,
   MutationCtx,
 } from "../_generated/server";
+import { saveMessage } from "@convex-dev/agent";
 import { toggleSidebar } from "../my/cheffy";
 import { processes } from "../processes/model";
 import { ProcessProps } from "../processes/schema";
@@ -193,6 +194,68 @@ export const cheffy = {
             };
           }),
         );
+      },
+
+      async sendMessage(ctx: MutationCtx, userId: Id<"users">) {
+        const process = await this.get(ctx.db);
+
+        const text = process.props.input?.text;
+        if (!text) throw new Error("No text in input");
+
+        const threadId = await this.getOrCreateThreadId(ctx, userId);
+
+        if (await this.hasMessageInProgress(ctx, threadId))
+          throw new Error(
+            "Cannot send message while another message is in progress",
+          );
+
+        const attachments = process.props.input?.attachments ?? [];
+        const attachmentsContent = await this.convertAttachmentsToContent(
+          ctx.db,
+          attachments,
+        );
+
+        const { messageId } = await saveMessage(ctx, components.agent, {
+          threadId,
+          message: {
+            role: "user",
+            content: [
+              ...attachmentsContent,
+              {
+                type: "text",
+                text,
+              },
+            ],
+          },
+        });
+
+        if (attachments.length > 0)
+          await ctx.db.insert("cheffyMessageMetadata", {
+            messageId,
+            userId,
+            fileIds: attachments,
+          });
+
+        await ctx.scheduler.runAfter(
+          0,
+          internal.internal.cheffy.generateResponseAsync,
+          {
+            threadId,
+            promptMessageId: messageId,
+          },
+        );
+
+        if (await this.shouldGenerateTitle(ctx, threadId))
+          await ctx.scheduler.runAfter(
+            0,
+            internal.internal.cheffy.generateThreadTitleAsync,
+            { threadId },
+          );
+
+        await this.patchInput(ctx.db, {
+          text: "",
+          attachments: [],
+        });
       },
     };
   },
