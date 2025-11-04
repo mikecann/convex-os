@@ -29,11 +29,13 @@ export const leftMenuItems: MenuItem[] = [
   {
     icon: "/convex.svg",
     label: "Convex Dashboard",
-    onClick: () =>
-      window.open(
-        "https://dashboard.convex.dev/d/local-cvx_devx-desktop_ai",
-        "_blank",
-      ),
+    onClick: () => {
+      const convexUrl = import.meta.env.VITE_CONVEX_URL as string;
+      // Extract deployment ID from URL like https://{deployment-id}.convex.cloud
+      const deploymentIdMatch = convexUrl.match(/https?:\/\/([^.]+)\.convex\./);
+      const deploymentId = deploymentIdMatch?.[1] ?? "unknown";
+      window.open(`https://dashboard.convex.dev/d/${deploymentId}`, "_blank");
+    },
   },
 ];
 
