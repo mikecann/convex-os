@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 import { createPortal } from "react-dom";
 import { Button } from "../../common/components/Button";
 import { useOS } from "../../os/OperatingSystemContext";
+import { useOptimisticMinimizeProcess } from "../../common/hooks/optimistic";
 
 interface TaskbarContextMenuProps {
   processId: Id<"processes">;
@@ -69,7 +70,7 @@ export function TaskbarContextMenu({
   onClose,
 }: TaskbarContextMenuProps) {
   const close = useMutation(api.my.processes.close);
-  const minimize = useMutation(api.my.processes.minimize);
+  const minimize = useOptimisticMinimizeProcess();
   const restore = useMutation(api.my.processes.restore);
   const centerOnScreen = useMutation(api.my.processes.centerOnScreen);
   const { desktopRect } = useOS();

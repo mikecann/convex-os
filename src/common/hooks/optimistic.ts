@@ -126,11 +126,12 @@ export function useOptimisticFocusWindow() {
                     ? ({
                         ...w.viewState,
                         isActive: true,
+                        viewStackOrder: 9999,
                       } as const)
                     : ({
                         kind: "open" as const,
                         isActive: true,
-                        viewStackOrder: 0,
+                        viewStackOrder: 9999,
                       } as const),
               }
             : w.viewState.kind === "open" && w.viewState.isActive
@@ -139,6 +140,7 @@ export function useOptimisticFocusWindow() {
                   viewState: {
                     ...w.viewState,
                     isActive: false,
+                    viewStackOrder: 9999,
                   } as const,
                 }
               : w,
@@ -151,7 +153,10 @@ export function useOptimisticFocusWindow() {
       }
 
       // If there was a previously active process, deactivate its windows
-      if (currentActiveProcessId && currentActiveProcessId !== targetProcessId) {
+      if (
+        currentActiveProcessId &&
+        currentActiveProcessId !== targetProcessId
+      ) {
         const oldProcessWindows = localStore.getQuery(
           api.my.windows.listForProcess,
           { processId: currentActiveProcessId },
@@ -179,7 +184,7 @@ export function useOptimisticFocusWindow() {
       // Update the main windows list if it exists
       if (allWindows !== undefined) {
         const updated = allWindows.map((w) => {
-          if (w._id === windowId) 
+          if (w._id === windowId)
             return {
               ...w,
               viewState:
@@ -194,12 +199,12 @@ export function useOptimisticFocusWindow() {
                       viewStackOrder: 0,
                     } as const),
             };
-          
+
           if (
             w.viewState.kind === "open" &&
             w.viewState.isActive &&
             w.processId !== targetProcessId
-          ) 
+          )
             return {
               ...w,
               viewState: {
@@ -207,7 +212,7 @@ export function useOptimisticFocusWindow() {
                 isActive: false,
               } as const,
             };
-          
+
           return w;
         });
         localStore.setQuery(api.my.windows.list, {}, updated);
@@ -291,7 +296,10 @@ export function useOptimisticFocusProcess() {
         api.my.windows.listForProcess,
         { processId },
       );
-      if (targetProcessWindows !== undefined && targetProcessWindows.length > 0) {
+      if (
+        targetProcessWindows !== undefined &&
+        targetProcessWindows.length > 0
+      ) {
         // Activate all windows for this process
         const updated = targetProcessWindows.map((w) => ({
           ...w,
@@ -300,11 +308,12 @@ export function useOptimisticFocusProcess() {
               ? ({
                   ...w.viewState,
                   isActive: true,
+                  viewStackOrder: 9999,
                 } as const)
               : ({
                   kind: "open" as const,
                   isActive: true,
-                  viewStackOrder: 0,
+                  viewStackOrder: 9999,
                 } as const),
         }));
         localStore.setQuery(
@@ -344,7 +353,7 @@ export function useOptimisticFocusProcess() {
       const allWindows = localStore.getQuery(api.my.windows.list);
       if (allWindows !== undefined) {
         const updated = allWindows.map((w) => {
-          if (w.processId === processId) 
+          if (w.processId === processId)
             return {
               ...w,
               viewState:
@@ -359,12 +368,12 @@ export function useOptimisticFocusProcess() {
                       viewStackOrder: 0,
                     } as const),
             };
-          
+
           if (
             w.viewState.kind === "open" &&
             w.viewState.isActive &&
             w.processId !== processId
-          ) 
+          )
             return {
               ...w,
               viewState: {
@@ -372,9 +381,166 @@ export function useOptimisticFocusProcess() {
                 isActive: false,
               } as const,
             };
-          
+
           return w;
         });
+        localStore.setQuery(api.my.windows.list, {}, updated);
+      }
+    },
+  );
+}
+
+export function useOptimisticMinimizeProcess() {
+  return useMutation(api.my.processes.minimize).withOptimisticUpdate(
+    (localStore, { processId }) => {
+      // Get current active process
+      const currentActiveProcessId = localStore.getQuery(
+        api.my.processes.activeProcessId,
+      );
+
+      // If this is the active process, clear activeProcessId
+      if (currentActiveProcessId === processId)
+        localStore.setQuery(api.my.processes.activeProcessId, {}, null);
+
+      // Get windows for the target process
+      const targetProcessWindows = localStore.getQuery(
+        api.my.windows.listForProcess,
+        { processId },
+      );
+      if (
+        targetProcessWindows !== undefined &&
+        targetProcessWindows.length > 0
+      ) {
+        // Minimize all open or maximized windows for this process
+        const updated = targetProcessWindows.map((w) =>
+          w.viewState.kind === "open" || w.viewState.kind === "maximized"
+            ? {
+                ...w,
+                viewState: { kind: "minimized" } as const,
+              }
+            : w,
+        );
+        localStore.setQuery(
+          api.my.windows.listForProcess,
+          { processId },
+          updated,
+        );
+      }
+
+      // Update the main windows list if it exists
+      const allWindows = localStore.getQuery(api.my.windows.list);
+      if (allWindows !== undefined) {
+        const updated = allWindows.map((w) =>
+          w.processId === processId &&
+          (w.viewState.kind === "open" || w.viewState.kind === "maximized")
+            ? {
+                ...w,
+                viewState: { kind: "minimized" } as const,
+              }
+            : w,
+        );
+        localStore.setQuery(api.my.windows.list, {}, updated);
+      }
+    },
+  );
+}
+
+export function useOptimisticMinimizeWindow() {
+  return useMutation(api.my.windows.minimize).withOptimisticUpdate(
+    (localStore, { windowId }) => {
+      // Find the window being minimized in any windows list query
+      const allWindows = localStore.getQuery(api.my.windows.list);
+      let targetWindow = allWindows?.find((w) => w._id === windowId);
+      let targetProcessId: Id<"processes"> | null = null;
+
+      if (targetWindow) targetProcessId = targetWindow.processId;
+      else {
+        // If not found in the main list, check all process-specific lists
+        const processes = localStore.getQuery(api.my.processes.list);
+        if (processes)
+          for (const process of processes) {
+            const processWindows = localStore.getQuery(
+              api.my.windows.listForProcess,
+              { processId: process._id },
+            );
+            const found = processWindows?.find((w) => w._id === windowId);
+            if (found) {
+              targetWindow = found;
+              targetProcessId = found.processId;
+              break;
+            }
+          }
+      }
+
+      if (!targetWindow || !targetProcessId) return;
+
+      // Only minimize if window is open or maximized
+      if (
+        targetWindow.viewState.kind !== "open" &&
+        targetWindow.viewState.kind !== "maximized"
+      )
+        return;
+
+      // If this window was active, check if we need to clear activeProcessId
+      const wasActive =
+        targetWindow.viewState.kind === "open" &&
+        targetWindow.viewState.isActive;
+      const currentActiveProcessId = localStore.getQuery(
+        api.my.processes.activeProcessId,
+      );
+
+      if (wasActive && currentActiveProcessId === targetProcessId) {
+        // Check if there are other active windows in this process
+        const processWindows = localStore.getQuery(
+          api.my.windows.listForProcess,
+          { processId: targetProcessId },
+        );
+        const hasOtherActiveWindow =
+          processWindows?.some(
+            (w) =>
+              w._id !== windowId &&
+              w.viewState.kind === "open" &&
+              w.viewState.isActive,
+          ) ?? false;
+
+        // If no other active windows, clear activeProcessId
+        if (!hasOtherActiveWindow)
+          localStore.setQuery(api.my.processes.activeProcessId, {}, null);
+      }
+
+      // Update windows for the target process
+      const targetProcessWindows = localStore.getQuery(
+        api.my.windows.listForProcess,
+        { processId: targetProcessId },
+      );
+      if (targetProcessWindows !== undefined) {
+        const updated = targetProcessWindows.map((w) =>
+          w._id === windowId &&
+          (w.viewState.kind === "open" || w.viewState.kind === "maximized")
+            ? {
+                ...w,
+                viewState: { kind: "minimized" } as const,
+              }
+            : w,
+        );
+        localStore.setQuery(
+          api.my.windows.listForProcess,
+          { processId: targetProcessId },
+          updated,
+        );
+      }
+
+      // Update the main windows list if it exists
+      if (allWindows !== undefined) {
+        const updated = allWindows.map((w) =>
+          w._id === windowId &&
+          (w.viewState.kind === "open" || w.viewState.kind === "maximized")
+            ? {
+                ...w,
+                viewState: { kind: "minimized" } as const,
+              }
+            : w,
+        );
         localStore.setQuery(api.my.windows.list, {}, updated);
       }
     },

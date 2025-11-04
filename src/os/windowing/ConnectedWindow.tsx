@@ -2,7 +2,10 @@ import { Window, WindowProps } from "./window/Window";
 import { useMutation } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { Doc } from "../../../convex/_generated/dataModel";
-import { useOptimisticFocusWindow } from "../../common/hooks/optimistic";
+import {
+  useOptimisticFocusWindow,
+  useOptimisticMinimizeWindow,
+} from "../../common/hooks/optimistic";
 import { useOS } from "../OperatingSystemContext";
 
 export function ConnectedWindow({
@@ -26,7 +29,7 @@ export function ConnectedWindow({
   const os = useOS();
   const focusWindow = useOptimisticFocusWindow();
   const closeWindow = useMutation(api.my.windows.close);
-  const minimizeWindow = useMutation(api.my.windows.minimize);
+  const minimizeWindow = useOptimisticMinimizeWindow();
   const toggleMaximize = useMutation(api.my.windows.toggleMaximize);
   const updateGeometry = useMutation(api.my.windows.updateGeometry);
 
