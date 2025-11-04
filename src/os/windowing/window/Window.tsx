@@ -6,6 +6,7 @@ import { useDragging } from "./useDragging";
 import { useResizing } from "./useResizing";
 import { useWindowStyle } from "./useWindowStyle";
 import { useOS } from "../../OperatingSystemContext";
+import Box from "../../../common/components/Box";
 
 export type ResizeCorner =
   | "bottom-right"
@@ -145,7 +146,7 @@ export function Window({
   });
 
   return (
-    <div
+    <Box
       ref={windowRef}
       className={`window ${className}`}
       style={windowStyle}
@@ -173,11 +174,11 @@ export function Window({
         showCloseButton={showCloseButton}
         showMaximizeButton={showMaximizeButton}
         showMinimiseButton={showMinimiseButton}
-        isMaximized={viewState.kind == "maximized"}
+        isMaximized={viewState.kind === "maximized"}
         onClose={onClose}
         onMinimize={onMinimize}
       />
-      <div
+      <Box
         className="window-body"
         style={{
           flex: "1 1 auto",
@@ -189,11 +190,11 @@ export function Window({
         }}
       >
         {children}
-      </div>
-      {statusBar && <div className="status-bar">{statusBar}</div>}
+      </Box>
+      {statusBar ? <Box className="status-bar">{statusBar}</Box> : null}
       <ResizeHandles
         startResize={(corner: ResizeCorner, event: React.MouseEvent) => {
-          if (!resizable || viewState.kind == "maximized") return;
+          if (!resizable || viewState.kind === "maximized") return;
           event.preventDefault();
           event.stopPropagation();
 
@@ -209,8 +210,8 @@ export function Window({
           setIsResizing(true);
         }}
         resizable={resizable}
-        isMaximized={viewState.kind == "maximized"}
+        isMaximized={viewState.kind === "maximized"}
       />
-    </div>
+    </Box>
   );
 }

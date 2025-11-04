@@ -36,7 +36,7 @@ export function CheffyChatWindow({
       <CheffyChatProvider process={process}>
         <CommonWindowShell menubar={<CheffyMenuBar />}>
           <CheffyDropZone>
-            <div
+            <Box
               ref={containerRef}
               style={{
                 flex: 1,
@@ -62,7 +62,7 @@ export function CheffyChatWindow({
                 <MessagesArea />
                 <ChatInputArea />
               </Box>
-            </div>
+            </Box>
           </CheffyDropZone>
         </CommonWindowShell>
       </CheffyChatProvider>

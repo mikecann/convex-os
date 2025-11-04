@@ -13,6 +13,7 @@ import {
 import { useErrorHandler } from "../../../common/errors/useErrorHandler";
 import { FileGrid } from "./FileGrid";
 import { FileBrowserControls, FileTypeFilter } from "./FileBrowserControls";
+import Box from "../../../common/components/Box";
 
 export function FileBrowserWindow({
   process,
@@ -93,7 +94,7 @@ export function FileBrowserWindow({
 
   return (
     <ModalWindow window={window} showCloseButton resizable>
-      <div
+      <Box
         style={{
           display: "flex",
           flexDirection: "column",
@@ -120,7 +121,7 @@ export function FileBrowserWindow({
           }}
           isOpenDisabled={!selectedFileId}
         />
-      </div>
+      </Box>
     </ModalWindow>
   );
 }

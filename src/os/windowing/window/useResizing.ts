@@ -43,28 +43,52 @@ function calculateNewDimensions(
   if (origin.corner === "bottom-right") {
     newWidth = origin.startWidth + deltaX;
     newHeight = origin.startHeight + deltaY;
-  } else if (origin.corner === "bottom-left") {
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "bottom-left") {
     newWidth = origin.startWidth - deltaX;
     newLeft = origin.startLeft + deltaX;
     newHeight = origin.startHeight + deltaY;
-  } else if (origin.corner === "top-right") {
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "top-right") {
     newWidth = origin.startWidth + deltaX;
     newHeight = origin.startHeight - deltaY;
     newTop = origin.startTop + deltaY;
-  } else if (origin.corner === "top-left") {
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "top-left") {
     newWidth = origin.startWidth - deltaX;
     newLeft = origin.startLeft + deltaX;
     newHeight = origin.startHeight - deltaY;
     newTop = origin.startTop + deltaY;
-  } else if (origin.corner === "top") {
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "top") {
     newHeight = origin.startHeight - deltaY;
     newTop = origin.startTop + deltaY;
-  } else if (origin.corner === "bottom")
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "bottom") {
     newHeight = origin.startHeight + deltaY;
-  else if (origin.corner === "left") {
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "left") {
     newWidth = origin.startWidth - deltaX;
     newLeft = origin.startLeft + deltaX;
-  } else if (origin.corner === "right") newWidth = origin.startWidth + deltaX;
+    return { newWidth, newHeight, newLeft, newTop };
+  }
+
+  if (origin.corner === "right") {
+    newWidth = origin.startWidth + deltaX;
+    return { newWidth, newHeight, newLeft, newTop };
+  }
 
   return { newWidth, newHeight, newLeft, newTop };
 }

@@ -4,6 +4,7 @@ import { TaskbarButton } from "./TaskbarButton";
 import { SystemTray } from "./SystemTray";
 import { useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
+import Box from "../../common/components/Box";
 
 interface TaskbarProps {
   onStartClick?: () => void;
@@ -13,7 +14,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
   const processes = useQuery(api.my.processes.list) ?? [];
   const activeProcessId = useQuery(api.my.processes.activeProcessId);
   return (
-    <div
+    <Box
       className="taskbar"
       style={{
         width: "100%",
@@ -32,7 +33,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
       }}
     >
       <StartButton onClick={onStartClick} />
-      <div
+      <Box
         style={{
           flex: 1,
           display: "flex",
@@ -49,8 +50,8 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
             isActive={process._id === activeProcessId}
           />
         ))}
-      </div>
+      </Box>
       <SystemTray />
-    </div>
+    </Box>
   );
 }

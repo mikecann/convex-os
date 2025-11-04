@@ -49,26 +49,14 @@ export type Justify =
   | "space-evenly";
 
 const toCssSpace = (value?: SpaceValue) => {
-  if (value === undefined) 
-    return undefined;
-  
-
-  if (typeof value === "number") 
-    return `${value}px`;
-  
-
+  if (value === undefined) return undefined;
+  if (typeof value === "number") return `${value}px`;
   return value;
 };
 
 const toCssSize = (value?: SizeValue) => {
-  if (value === undefined) 
-    return undefined;
-  
-
-  if (typeof value === "number") 
-    return `${value}px`;
-  
-
+  if (value === undefined) return undefined;
+  if (typeof value === "number") return `${value}px`;
   return value;
 };
 
@@ -94,14 +82,10 @@ const applySpacing = (style: CSSProperties, props: SpacingProps) => {
   } = props;
 
   const resolvedGap = toCssSpace(gap);
-  if (resolvedGap !== undefined) 
-    style.gap = resolvedGap;
-  
+  if (resolvedGap !== undefined) style.gap = resolvedGap;
 
   const resolvedMargin = toCssSpace(margin);
-  if (resolvedMargin !== undefined) 
-    style.margin = resolvedMargin;
-  
+  if (resolvedMargin !== undefined) style.margin = resolvedMargin;
 
   const resolvedMarginX = toCssSpace(marginX);
   if (resolvedMarginX !== undefined) {
@@ -116,29 +100,21 @@ const applySpacing = (style: CSSProperties, props: SpacingProps) => {
   }
 
   const resolvedMarginTop = toCssSpace(marginTop);
-  if (resolvedMarginTop !== undefined) 
-    style.marginTop = resolvedMarginTop;
-  
+  if (resolvedMarginTop !== undefined) style.marginTop = resolvedMarginTop;
 
   const resolvedMarginRight = toCssSpace(marginRight);
-  if (resolvedMarginRight !== undefined) 
+  if (resolvedMarginRight !== undefined)
     style.marginRight = resolvedMarginRight;
-  
 
   const resolvedMarginBottom = toCssSpace(marginBottom);
-  if (resolvedMarginBottom !== undefined) 
+  if (resolvedMarginBottom !== undefined)
     style.marginBottom = resolvedMarginBottom;
-  
 
   const resolvedMarginLeft = toCssSpace(marginLeft);
-  if (resolvedMarginLeft !== undefined) 
-    style.marginLeft = resolvedMarginLeft;
-  
+  if (resolvedMarginLeft !== undefined) style.marginLeft = resolvedMarginLeft;
 
   const resolvedPadding = toCssSpace(padding);
-  if (resolvedPadding !== undefined) 
-    style.padding = resolvedPadding;
-  
+  if (resolvedPadding !== undefined) style.padding = resolvedPadding;
 
   const resolvedPaddingX = toCssSpace(paddingX);
   if (resolvedPaddingX !== undefined) {
@@ -153,79 +129,54 @@ const applySpacing = (style: CSSProperties, props: SpacingProps) => {
   }
 
   const resolvedPaddingTop = toCssSpace(paddingTop);
-  if (resolvedPaddingTop !== undefined) 
-    style.paddingTop = resolvedPaddingTop;
-  
+  if (resolvedPaddingTop !== undefined) style.paddingTop = resolvedPaddingTop;
 
   const resolvedPaddingRight = toCssSpace(paddingRight);
-  if (resolvedPaddingRight !== undefined) 
+  if (resolvedPaddingRight !== undefined)
     style.paddingRight = resolvedPaddingRight;
-  
 
   const resolvedPaddingBottom = toCssSpace(paddingBottom);
-  if (resolvedPaddingBottom !== undefined) 
+  if (resolvedPaddingBottom !== undefined)
     style.paddingBottom = resolvedPaddingBottom;
-  
 
   const resolvedPaddingLeft = toCssSpace(paddingLeft);
-  if (resolvedPaddingLeft !== undefined) 
+  if (resolvedPaddingLeft !== undefined)
     style.paddingLeft = resolvedPaddingLeft;
-  
 };
 
 const applySizing = (style: CSSProperties, props: SizingProps) => {
   const { width, minWidth, maxWidth, height, minHeight, maxHeight } = props;
 
   const resolvedWidth = toCssSize(width);
-  if (resolvedWidth !== undefined) 
-    style.width = resolvedWidth;
-  
+  if (resolvedWidth !== undefined) style.width = resolvedWidth;
 
   const resolvedMinWidth = toCssSize(minWidth);
-  if (resolvedMinWidth !== undefined) 
-    style.minWidth = resolvedMinWidth;
-  
+  if (resolvedMinWidth !== undefined) style.minWidth = resolvedMinWidth;
 
   const resolvedMaxWidth = toCssSize(maxWidth);
-  if (resolvedMaxWidth !== undefined) 
-    style.maxWidth = resolvedMaxWidth;
-  
+  if (resolvedMaxWidth !== undefined) style.maxWidth = resolvedMaxWidth;
 
   const resolvedHeight = toCssSize(height);
-  if (resolvedHeight !== undefined) 
-    style.height = resolvedHeight;
-  
+  if (resolvedHeight !== undefined) style.height = resolvedHeight;
 
   const resolvedMinHeight = toCssSize(minHeight);
-  if (resolvedMinHeight !== undefined) 
-    style.minHeight = resolvedMinHeight;
-  
+  if (resolvedMinHeight !== undefined) style.minHeight = resolvedMinHeight;
 
   const resolvedMaxHeight = toCssSize(maxHeight);
-  if (resolvedMaxHeight !== undefined) 
-    style.maxHeight = resolvedMaxHeight;
-  
+  if (resolvedMaxHeight !== undefined) style.maxHeight = resolvedMaxHeight;
 };
 
 const applyDecoration = (style: CSSProperties, props: DecorationProps) => {
   const { background, border, borderRadius, shadow } = props;
 
-  if (background !== undefined) 
-    style.background = background;
-  
-
-  if (border !== undefined) 
-    style.border = border;
-  
+  if (background !== undefined) style.background = background;
+  if (border !== undefined) style.border = border;
 
   const resolvedBorderRadius = toCssSpace(borderRadius);
-  if (resolvedBorderRadius !== undefined) 
+  if (resolvedBorderRadius !== undefined)
     style.borderRadius = resolvedBorderRadius;
-  
 
-  if (shadow !== undefined) 
-    style.boxShadow = shadow;
-  
+  if (shadow !== undefined) style.boxShadow = shadow;
 };
 
 export const createBaseStyle = (props: BaseStyleProps) => {
@@ -241,55 +192,22 @@ export const createBaseStyle = (props: BaseStyleProps) => {
 export const mapAlignToCss = (
   align?: Align,
 ): CSSProperties["alignItems"] | undefined => {
-  if (align === undefined) 
-    return undefined;
-  
-
-  if (align === "start") 
-    return "flex-start";
-  
-
-  if (align === "center") 
-    return "center";
-  
-
-  if (align === "end") 
-    return "flex-end";
-  
-
-  if (align === "stretch") 
-    return "stretch";
-  
-
+  if (align === undefined) return undefined;
+  if (align === "start") return "flex-start";
+  if (align === "center") return "center";
+  if (align === "end") return "flex-end";
+  if (align === "stretch") return "stretch";
   return "baseline";
 };
 
 export const mapJustifyToCss = (
   justify?: Justify,
 ): CSSProperties["justifyContent"] | undefined => {
-  if (justify === undefined) 
-    return undefined;
-  
-
-  if (justify === "start") 
-    return "flex-start";
-  
-
-  if (justify === "center") 
-    return "center";
-  
-
-  if (justify === "end") 
-    return "flex-end";
-  
-
-  if (justify === "space-between") 
-    return "space-between";
-  
-
-  if (justify === "space-around") 
-    return "space-around";
-  
-
+  if (justify === undefined) return undefined;
+  if (justify === "start") return "flex-start";
+  if (justify === "center") return "center";
+  if (justify === "end") return "flex-end";
+  if (justify === "space-between") return "space-between";
+  if (justify === "space-around") return "space-around";
   return "space-evenly";
 };

@@ -9,6 +9,7 @@ import { StartMenuLeftColumn } from "./StartMenuLeftColumn";
 import { StartMenuRightColumn } from "./StartMenuRightColumn";
 import { StartMenuBottomButtons } from "./StartMenuBottomButtons";
 import { leftMenuItems, rightMenuItems } from "./menuItems";
+import Box from "../../../common/components/Box";
 import {
   startImagePreview,
   startVideoPlayer,
@@ -35,16 +36,22 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
 
     if (item.processKind) {
       let processParams;
-      if (item.processKind === "image_preview")
+
+      if (item.processKind === "image_preview") {
         processParams = startImagePreview();
-      else if (item.processKind === "video_player")
+      }
+      if (item.processKind === "video_player") {
         processParams = startVideoPlayer();
-      else if (item.processKind === "text_preview")
+      }
+      if (item.processKind === "text_preview") {
         processParams = startTextPreview();
-      else if (item.processKind === "cheffy_chat")
+      }
+      if (item.processKind === "cheffy_chat") {
         processParams = startCheffyChat();
-      else if (item.processKind === "internet_explorer")
+      }
+      if (item.processKind === "internet_explorer") {
         processParams = startInternetExplorer();
+      }
 
       if (processParams) void startCenteredApp(processParams);
 
@@ -60,7 +67,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
   return (
     <>
       {/* Backdrop to close menu when clicked outside */}
-      <div
+      <Box
         style={{
           position: "fixed",
           top: 0,
@@ -73,7 +80,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
       />
 
       {/* Start Menu */}
-      <div
+      <Box
         style={{
           position: "fixed",
           bottom: "38px",
@@ -94,7 +101,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
         <StartMenuUserHeader userName={userName} />
 
         {/* Main menu content */}
-        <div
+        <Box
           style={{
             display: "flex",
             height: "325px",
@@ -112,7 +119,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
             items={rightMenuItems}
             onItemClick={handleMenuItemClick}
           />
-        </div>
+        </Box>
 
         <StartMenuBottomButtons
           onLogOff={() => {
@@ -128,7 +135,7 @@ export function StartMenu({ isOpen, onClose }: StartMenuProps) {
             onClose();
           }}
         />
-      </div>
+      </Box>
     </>
   );
 }

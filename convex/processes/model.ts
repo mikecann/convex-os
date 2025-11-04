@@ -30,7 +30,7 @@ export const processes = {
         kind: TKind,
       ): Promise<Process<TKind>> {
         const process = await this.get(db);
-        if (process.kind != kind)
+        if (process.kind !== kind)
           throw new Error(`Process ${processId} is not a ${kind}`);
         return process as Process<TKind>;
       },
@@ -167,55 +167,14 @@ export const processes = {
           process: process,
         });
 
-        if (process.kind === "image_preview") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else if (process.kind === "video_player") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else if (process.kind === "text_preview") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else if (process.kind === "cheffy_chat") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else if (process.kind === "file_browser") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else if (process.kind === "internet_explorer") {
-          const windowId = await windows.forProcess(processId).create(db, {
-            params: {
-              ...process.windowCreationParams,
-              viewState: { kind: "open", viewStackOrder: 0, isActive: false },
-            },
-          });
-          await windows.forWindow(windowId).focus(db);
-        } else exhaustiveCheck(process);
+        // Create window for all process types
+        const windowId = await windows.forProcess(processId).create(db, {
+          params: {
+            ...process.windowCreationParams,
+            viewState: { kind: "open", viewStackOrder: 0, isActive: false },
+          },
+        });
+        await windows.forWindow(windowId).focus(db);
 
         return processId;
       },

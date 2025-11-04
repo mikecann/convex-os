@@ -109,7 +109,7 @@ export const files = {
           async startUpload({ db, storage }: MutationCtx) {
             const file = await this.get(db);
 
-            if (file.uploadState.kind != "created")
+            if (file.uploadState.kind !== "created")
               throw new ConvexError(`File ${fileId} is not in a created state`);
 
             const uploadUrl = await storage.generateUploadUrl();
@@ -131,7 +131,7 @@ export const files = {
           ) {
             const file = await this.get(db);
 
-            if (file.uploadState.kind != "uploading")
+            if (file.uploadState.kind !== "uploading")
               throw new ConvexError(
                 `File ${fileId} is not in a uploading state`,
               );
@@ -150,7 +150,7 @@ export const files = {
           ) {
             const file = await this.get(db);
 
-            if (file.uploadState.kind != "uploading")
+            if (file.uploadState.kind !== "uploading")
               throw new ConvexError(
                 `File ${fileId} is not in a uploading state`,
               );
@@ -176,7 +176,7 @@ export const files = {
           ) {
             const file = await this.get(db);
 
-            if (file.uploadState.kind != "uploading")
+            if (file.uploadState.kind !== "uploading")
               throw new ConvexError(
                 `File ${fileId} is not in a uploading state`,
               );

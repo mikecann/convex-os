@@ -180,7 +180,7 @@ export const windows = {
         const window = await this.get(db);
         const userId = await this.getUserId(db);
 
-        if (window.viewState.kind == "maximized") {
+        if (window.viewState.kind === "maximized") {
           const topmostViewStackOrder = await windows
             .forUser(userId)
             .getTopmostViewStackOrder(db);
@@ -196,7 +196,7 @@ export const windows = {
           });
         }
 
-        if (window.viewState.kind == "open") 
+        if (window.viewState.kind === "open") 
           return await db.patch(window._id, {
             ...window,
             viewState: { kind: "maximized" },

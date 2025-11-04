@@ -10,6 +10,7 @@ import { DeleteConfirmationDialog } from "./DeleteConfirmationDialog";
 import { useFileSelection } from "./useFileSelection";
 import { useFileDrop } from "./useFileDrop";
 import { useOptimisticDeactivateActive } from "../../../common/hooks/optimistic";
+import Box from "../../../common/components/Box";
 
 export function DesktopFiles() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,7 +41,7 @@ export function DesktopFiles() {
 
   return (
     <>
-      <div
+      <Box
         ref={containerRef}
         onMouseDown={handleMouseDown}
         onDrop={handleDrop}
@@ -113,9 +114,9 @@ export function DesktopFiles() {
             />
           );
         })}
-        {isDragOver && <DragOverlay />}
-        {selectionRect && <SelectionRectangle rect={selectionRect} />}
-      </div>
+        {isDragOver ? <DragOverlay /> : null}
+        {selectionRect ? <SelectionRectangle rect={selectionRect} /> : null}
+      </Box>
       <DeleteConfirmationDialog
         isOpen={isConfirmOpen}
         fileCount={selectedIds.length}

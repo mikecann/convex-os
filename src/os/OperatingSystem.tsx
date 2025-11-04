@@ -9,6 +9,7 @@ import { Wallpaper } from "../common/components/Wallpaper";
 import { ErrorsRenderer } from "../common/errors/ErrorsRenderer";
 import { OperatingSystemContext } from "./OperatingSystemContext";
 import { Id } from "../../convex/_generated/dataModel";
+import Box from "../common/components/Box";
 
 type TaskbarButtonRefs = Map<Id<"processes">, HTMLElement | null>;
 
@@ -37,7 +38,7 @@ export function OperatingSystem({ children }: PropsWithChildren) {
 
   return (
     <OperatingSystemContext.Provider value={contextValue}>
-      <div
+      <Box
         style={{
           width: "100vw",
           height: "100vh",
@@ -50,7 +51,7 @@ export function OperatingSystem({ children }: PropsWithChildren) {
         }}
       >
         <Wallpaper fullScreen>
-          <div
+          <Box
             style={{
               width: "100%",
               height: "100%",
@@ -59,7 +60,7 @@ export function OperatingSystem({ children }: PropsWithChildren) {
               overflow: "hidden",
             }}
           >
-            <div
+            <Box
               ref={desktopRef}
               style={{
                 flex: 1,
@@ -68,10 +69,10 @@ export function OperatingSystem({ children }: PropsWithChildren) {
             >
               <ErrorsRenderer />
               {children}
-            </div>
-          </div>
+            </Box>
+          </Box>
         </Wallpaper>
-      </div>
+      </Box>
     </OperatingSystemContext.Provider>
   );
 }
