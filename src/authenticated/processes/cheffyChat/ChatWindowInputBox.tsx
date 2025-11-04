@@ -19,9 +19,7 @@ export function ChatWindowInputBox() {
     { initialNumItems: 50, stream: true },
   );
 
-  const hasMessageInProgress = messages.some(
-    (msg) => msg.role !== "user" && msg.status === "pending",
-  );
+  const hasMessageInProgress = messages.some((msg) => msg.status === "pending");
 
   const [message, setMessage] = useDebouncedServerSync(
     process.props.input?.text ?? "",
