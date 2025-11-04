@@ -122,8 +122,12 @@ export const updateText = myMutation({
 export const sendMessage = myMutation({
   args: {
     processId: v.id("processes"),
+    text: v.string(),
   },
   handler: async (ctx, args) => {
+    await cheffy.forProcess(args.processId).patchInput(ctx.db, {
+      text: args.text,
+    });
     await cheffy.forProcess(args.processId).sendMessage(ctx, ctx.userId);
   },
 });

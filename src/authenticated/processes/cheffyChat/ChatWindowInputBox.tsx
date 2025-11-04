@@ -38,15 +38,11 @@ export function ChatWindowInputBox() {
     const text = message.trim();
     if (!text || hasMessageInProgress) return;
 
-    await updateText({
-      processId: process._id,
-      text,
-    });
-
     setMessage("");
 
     void sendMessage({
       processId: process._id,
+      text,
     });
 
     if (textareaRef.current) textareaRef.current.style.height = "auto";
