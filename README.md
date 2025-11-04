@@ -1,4 +1,13 @@
+![alt text](./Docs/screenshot01.webp)
+
 # Convex OS
+
+This is a demo project that attempts to recreate parts of Windows XP using React and [Convex](https://convex.dev).
+
+## Development
+
+`bun install`
+`bun run dev`
 
 # Credits
 
