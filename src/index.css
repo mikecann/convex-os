@@ -21,7 +21,6 @@ body {
 
 /* Force black text for Windows XP style - prevent dark mode from overriding */
 input,
-button,
 label,
 span,
 div {
@@ -47,7 +46,6 @@ input[type="text"] {
 /* Ensure toolbar buttons render correctly */
 button {
   font-family: inherit;
-  color: inherit;
 }
 
 button:not(:disabled) {
