@@ -24,7 +24,7 @@ export const leftMenuItems: MenuItem[] = [
     icon: "/xp/github.png",
     label: "View on GitHub",
     onClick: () =>
-      window.open("https://github.com/get-convex/convex-os", "_blank"),
+      window.open("https://github.com/mikecann/convex-os", "_blank"),
   },
   {
     icon: "/convex.svg",
