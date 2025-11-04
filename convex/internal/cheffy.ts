@@ -45,7 +45,10 @@ export const clearInput = internalMutation({
   },
 });
 
-export const generateResponseAsync = cheffyAgent.asTextAction({});
+export const generateResponseAsync = cheffyAgent.asTextAction({
+  stream: { chunking: "line", throttleMs: 500 },
+
+});
 
 export const generateThreadTitleAsync = internalAction({
   args: { threadId: v.string() },

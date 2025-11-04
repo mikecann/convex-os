@@ -19,9 +19,7 @@ export function MessagesArea() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (messages.length === 0) {
-    return <EmptyCheffyState />;
-  }
+  if (messages.length === 0) return <EmptyCheffyState />;
 
   return (
     <div
