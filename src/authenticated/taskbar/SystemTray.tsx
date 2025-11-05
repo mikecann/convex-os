@@ -8,6 +8,7 @@ export function SystemTray() {
         marginLeft: "auto",
         height: "38px",
         width: "fit-content",
+        flexShrink: 0,
         color: "white",
         borderTop: "1px solid #075dca",
         borderBottom: "1px solid #0a5bc6",

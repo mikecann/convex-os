@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { MenuItem } from "./types";
 
 interface StartMenuItemProps {
@@ -13,6 +14,8 @@ export function StartMenuItem({
   background = "transparent",
   hoverBackground = "#316AC5",
 }: StartMenuItemProps) {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
     <div
       style={{
@@ -23,16 +26,12 @@ export function StartMenuItem({
         cursor: item.onClick || item.processKind ? "pointer" : "not-allowed",
         minHeight: item.subtitle ? "30px" : "22px",
         fontSize: "11px",
+        background: isHovered ? hoverBackground : background,
+        color: isHovered ? "white" : "black",
       }}
       onClick={() => onItemClick(item)}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = hoverBackground;
-        e.currentTarget.style.color = "white";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = background;
-        e.currentTarget.style.color = "black";
-      }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <img
         src={item.icon}
@@ -57,7 +56,7 @@ export function StartMenuItem({
           <span
             style={{
               fontSize: "10px",
-              color: "#666",
+              color: isHovered ? "#E0E0E0" : "#666",
               lineHeight: "1.1",
             }}
           >
@@ -66,7 +65,7 @@ export function StartMenuItem({
         )}
       </div>
       {item.expanded && (
-        <span style={{ fontSize: "8px", color: "#666" }}>▶</span>
+        <span style={{ fontSize: "8px", color: isHovered ? "#E0E0E0" : "#666" }}>▶</span>
       )}
     </div>
   );

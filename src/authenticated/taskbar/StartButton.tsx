@@ -26,6 +26,8 @@ export function StartButton({ onClick }: StartButtonProps) {
         boxShadow: "-2px -2px 10px rgba(0,0,0,0.56) inset",
         height: "100%",
         width: "100px",
+        minWidth: "100px",
+        flexShrink: 0,
         color: "white",
         fontWeight: "500",
         fontSize: "1.1rem",
