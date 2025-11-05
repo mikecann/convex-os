@@ -85,7 +85,8 @@ export function TaskbarButton({
             ? "inset 1px 1px 1px rgba(255,255,255,0.4)"
             : "1px 1px 2px rgba(0,0,0,0.4)",
           cursor: "pointer",
-          minWidth: "120px",
+          flex: 1,
+          minWidth: "80px",
           maxWidth: "200px",
           outline: "none",
           transition: "background 0.15s ease",

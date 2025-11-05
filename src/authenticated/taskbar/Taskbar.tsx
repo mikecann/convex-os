@@ -41,6 +41,7 @@ export function Taskbar({ onStartClick }: TaskbarProps) {
           gap: "6px",
           paddingLeft: "8px",
           paddingRight: "8px",
+          overflow: "hidden",
         }}
       >
         {processes.map((process) => (
