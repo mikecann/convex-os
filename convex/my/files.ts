@@ -7,14 +7,6 @@ export const list = myQuery({
   handler: (ctx) => files.forUser(ctx.userId).list(ctx.db),
 });
 
-export const get = myQuery({
-  args: {
-    fileId: v.id("files"),
-  },
-  handler: (ctx, { fileId }) =>
-    files.forUser(ctx.userId).forFile(fileId).get(ctx.db),
-});
-
 export const find = myQuery({
   args: {
     fileId: v.id("files"),

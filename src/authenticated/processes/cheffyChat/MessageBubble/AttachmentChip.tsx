@@ -9,7 +9,7 @@ import {
 import { useOpenFileInPreview } from "../../useOpenFileInPreview";
 
 export function AttachmentChip({ fileId }: { fileId: Id<"files"> }) {
-  const file = useQuery(api.my.files.get, { fileId });
+  const file = useQuery(api.my.files.find, { fileId });
   const openFileInPreview = useOpenFileInPreview();
 
   if (!file) return null;

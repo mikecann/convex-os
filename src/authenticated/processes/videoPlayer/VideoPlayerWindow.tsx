@@ -23,7 +23,7 @@ export function VideoPlayerWindow({
   window: Doc<"windows">;
 }) {
   const file = useQuery(
-    api.my.files.get,
+    api.my.files.find,
     process.props.fileId ? { fileId: process.props.fileId } : "skip",
   );
   const updateProcessProps = useMutation(api.my.processes.updateProps);

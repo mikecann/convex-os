@@ -48,7 +48,7 @@ function AttachmentChip({
   fileId: Id<"files">;
   onRemove: () => void;
 }) {
-  const file = useQuery(api.my.files.get, { fileId });
+  const file = useQuery(api.my.files.find, { fileId });
 
   if (!file) return null;
 
