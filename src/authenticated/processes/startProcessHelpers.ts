@@ -1,5 +1,6 @@
 import { ProcessKinds } from "../../../convex/processes/schema";
 import { Id } from "../../../convex/_generated/dataModel";
+import { DEFAULT_INTERNET_EXPLORER_URL } from "../../../shared/constants";
 
 interface ProcessConfig {
   title: string;
@@ -158,7 +159,7 @@ export function startInternetExplorer(options?: {
   url?: string;
 }) {
   const config = processConfigs.internet_explorer;
-  const defaultUrl = options?.url || "https://www.mikecann.blog";
+  const defaultUrl = options?.url || DEFAULT_INTERNET_EXPLORER_URL;
 
   return {
     kind: "internet_explorer" as const,

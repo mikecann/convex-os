@@ -9,8 +9,7 @@ import { MenuBar } from "./MenuBar";
 import { StandardToolbar } from "./StandardToolbar";
 import { BrowserContent } from "./BrowserContent";
 import { StatusBar } from "./StatusBar";
-
-const DEFAULT_URL = "https://www.mikecann.blog";
+import { DEFAULT_INTERNET_EXPLORER_URL } from "../../../../shared/constants";
 
 export function InternetExplorerWindow({
   process,
@@ -24,8 +23,8 @@ export function InternetExplorerWindow({
   const onError = useErrorHandler();
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const currentUrl = process.props.url || DEFAULT_URL;
-  const history = process.props.history || [DEFAULT_URL];
+  const currentUrl = process.props.url || DEFAULT_INTERNET_EXPLORER_URL;
+  const history = process.props.history || [DEFAULT_INTERNET_EXPLORER_URL];
   const historyIndex = process.props.historyIndex ?? history.length - 1;
 
   const [urlInput, setUrlInput] = useState(currentUrl);
@@ -152,7 +151,19 @@ export function InternetExplorerWindow({
               setIsLoading(false);
             }, 100);
           }}
-          onHome={() => navigateToUrl(DEFAULT_URL)}
+          onHome={() => {
+            if (currentUrl === DEFAULT_INTERNET_EXPLORER_URL && iframeRef.current) {
+              setIsLoading(true);
+              const currentSrc = iframeRef.current.src;
+              iframeRef.current.src = "";
+              setTimeout(() => {
+                if (iframeRef.current) iframeRef.current.src = currentSrc;
+                setIsLoading(false);
+              }, 100);
+            } else {
+              navigateToUrl(DEFAULT_INTERNET_EXPLORER_URL);
+            }
+          }}
         />
         <BrowserContent
           iframeRef={iframeRef}
