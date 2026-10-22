@@ -82,3 +82,7 @@ Deploy the backend and frontend together.
 
 I borrowed some icons from https://github.com/ShizukuIchi/winXP
 CSS thanks to xp.css: https://botoxparty.github.io/XP.css/
+
+### Vercel previews
+
+Production builds deploy Convex and build the frontend as before. Preview builds only build the frontend, with no Convex deploy key in the child process. They use `VITE_CONVEX_URL` when supplied, otherwise the existing development deployment `moonlit-ladybug-819`. This prevents a production key configured in Vercel from deploying PR code to production.
