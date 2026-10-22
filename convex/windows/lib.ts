@@ -1,3 +1,4 @@
+import { ConvexError } from "convex/values";
 import { ensureFP } from "../../shared/ensure";
 import { Doc, Id } from "../_generated/dataModel";
 import { DatabaseReader, DatabaseWriter } from "../_generated/server";
@@ -50,6 +51,15 @@ export const windows = {
       async getUserId(db: DatabaseReader) {
         const process = await this.getProcess(db);
         return process.userId;
+      },
+
+      async ensureOwnership(db: DatabaseReader, userId: Id<"users">) {
+        const { window, process } = await this.getWithProcess(db);
+        if (process.userId !== userId)
+          throw new ConvexError(
+            `window ${windowId} does not belong to user ${userId}`,
+          );
+        return window;
       },
 
       delete(db: DatabaseWriter) {
@@ -196,12 +206,11 @@ export const windows = {
           });
         }
 
-        if (window.viewState.kind === "open") 
+        if (window.viewState.kind === "open")
           return await db.patch(window._id, {
             ...window,
             viewState: { kind: "maximized" },
           });
-        
       },
     };
   },

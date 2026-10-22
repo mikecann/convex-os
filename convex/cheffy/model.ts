@@ -12,12 +12,38 @@ import { processes } from "../processes/model";
 import { ProcessProps } from "../processes/schema";
 import { cheffyAgent } from "./agent";
 import { files } from "../files/model";
+import { ConvexError } from "convex/values";
+import {
+  CHEFFY_LIMITS,
+  consumeDailyBudget,
+  replyProviderOptions,
+} from "./limits";
+
+export const ensureThreadOwnership = async (
+  ctx: QueryCtx,
+  threadId: string,
+  userId: Id<"users">,
+  { allowMissing = false }: { allowMissing?: boolean } = {},
+) => {
+  const thread = await ctx.runQuery(components.agent.threads.getThread, {
+    threadId,
+  });
+  if (!thread && allowMissing) return null;
+  if (!thread || thread.userId !== userId)
+    throw new ConvexError(`thread ${threadId} does not belong to you`);
+  return thread;
+};
 
 export const cheffy = {
   forProcess(processId: Id<"processes">) {
     return {
       get(db: DatabaseReader) {
         return processes.forProcess(processId).getKind(db, "cheffy_chat");
+      },
+
+      async ensureOwnership(db: DatabaseReader, userId: Id<"users">) {
+        await processes.forProcess(processId).withUser(userId).get(db);
+        return this.get(db);
       },
 
       async findCurrentThread(ctx: QueryCtx) {
@@ -145,7 +171,19 @@ export const cheffy = {
         userId: Id<"users">,
       ): Promise<string> {
         const process = await this.get(ctx.db);
-        if (process.props.threadId) return process.props.threadId;
+        if (process.props.threadId) {
+          // The thread id is client-writable via process props, so never trust
+          // it: only reuse a thread that exists and belongs to this user.
+          const thread = await ctx.runQuery(
+            components.agent.threads.getThread,
+            { threadId: process.props.threadId },
+          );
+          if (thread && thread.userId === userId) return thread._id;
+          if (thread)
+            throw new ConvexError(
+              `thread ${process.props.threadId} does not belong to you`,
+            );
+        }
 
         const result = await cheffyAgent.createThread(ctx, {
           userId,
@@ -158,6 +196,7 @@ export const cheffy = {
 
       async convertAttachmentsToContent(
         db: DatabaseReader,
+        userId: Id<"users">,
         fileIds: Id<"files">[],
       ): Promise<
         Array<
@@ -168,10 +207,17 @@ export const cheffy = {
       > {
         return Promise.all(
           fileIds.map(async (fileId) => {
-            const file = await files.forFile(fileId).getUploaded(db);
+            const file = await files.forUser(userId).forFile(fileId).get(db);
 
             if (file.uploadState.kind !== "uploaded")
               throw new Error("File is not uploaded");
+
+            // Use the real stored size, not the client-declared one.
+            const stored = await db.system.get(file.uploadState.storageId);
+            if (!stored || stored.size > CHEFFY_LIMITS.maxAttachmentBytes)
+              throw new ConvexError(
+                `Attachments must be under ${CHEFFY_LIMITS.maxAttachmentBytes / 1024 / 1024}MB`,
+              );
 
             const url = file.uploadState.url;
 
@@ -197,10 +243,20 @@ export const cheffy = {
       },
 
       async sendMessage(ctx: MutationCtx, userId: Id<"users">) {
-        const process = await this.get(ctx.db);
+        const process = await this.ensureOwnership(ctx.db, userId);
 
-        const text = process.props.input?.text;
+        const text = process.props.input?.text?.trim();
         if (!text) throw new Error("No text in input");
+        if (text.length > CHEFFY_LIMITS.maxInputChars)
+          throw new ConvexError(
+            `Messages must be ${CHEFFY_LIMITS.maxInputChars} characters or fewer`,
+          );
+
+        const attachments = process.props.input?.attachments ?? [];
+        if (attachments.length > CHEFFY_LIMITS.maxAttachments)
+          throw new ConvexError(
+            `You can attach up to ${CHEFFY_LIMITS.maxAttachments} files`,
+          );
 
         const threadId = await this.getOrCreateThreadId(ctx, userId);
 
@@ -209,11 +265,15 @@ export const cheffy = {
             "Cannot send message while another message is in progress",
           );
 
-        const attachments = process.props.input?.attachments ?? [];
         const attachmentsContent = await this.convertAttachmentsToContent(
           ctx.db,
+          userId,
           attachments,
         );
+
+        // Last check before anything paid is scheduled. Throwing here rolls
+        // back the whole mutation, so nothing is saved or scheduled.
+        await consumeDailyBudget(ctx.db, userId);
 
         const { messageId } = await saveMessage(ctx, components.agent, {
           threadId,
@@ -242,6 +302,7 @@ export const cheffy = {
           {
             threadId,
             promptMessageId: messageId,
+            providerOptions: replyProviderOptions,
           },
         );
 

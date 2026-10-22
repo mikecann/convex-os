@@ -103,8 +103,42 @@ export const processes = {
             db: DatabaseWriter,
             { props }: { props: Process["props"] },
           ) => {
+            await withUser.get(db);
             const patch: Record<string, typeof props> = { props };
             await db.patch(processId, patch);
+          },
+
+          minimize: async (db: DatabaseWriter) => {
+            await withUser.get(db);
+            await processes.forProcess(processId).minimize(db);
+          },
+
+          focus: async (db: DatabaseWriter) => {
+            await withUser.get(db);
+            await processes.forProcess(processId).focus(db);
+          },
+
+          centerOnScreen: async (
+            db: DatabaseWriter,
+            size: { desktopWidth: number; desktopHeight: number },
+          ) => {
+            await withUser.get(db);
+            await processes.forProcess(processId).centerOnScreen(db, size);
+          },
+
+          findName: async (db: DatabaseReader) => {
+            await withUser.get(db);
+            return await processes.forProcess(processId).findName(db);
+          },
+
+          listWindows: async (db: DatabaseReader) => {
+            await withUser.get(db);
+            return await windows.forProcess(processId).list(db);
+          },
+
+          close: async (db: DatabaseWriter) => {
+            await withUser.get(db);
+            await processes.forProcess(processId).close(db);
           },
         };
 
