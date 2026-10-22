@@ -38,7 +38,10 @@ export const minimize = myMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    return processes.forProcess(processId).minimize(ctx.db);
+    return processes
+      .forProcess(processId)
+      .withUser(ctx.userId)
+      .minimize(ctx.db);
   },
 });
 
@@ -47,7 +50,7 @@ export const focus = myMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    return processes.forProcess(processId).focus(ctx.db);
+    return processes.forProcess(processId).withUser(ctx.userId).focus(ctx.db);
   },
 });
 
@@ -56,7 +59,7 @@ export const findName = myQuery({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) =>
-    processes.forProcess(processId).findName(ctx.db),
+    processes.forProcess(processId).withUser(ctx.userId).findName(ctx.db),
 });
 
 export const close = myMutation({
@@ -64,7 +67,7 @@ export const close = myMutation({
     processId: v.id("processes"),
   },
   handler: async (ctx, { processId }) =>
-    processes.forProcess(processId).close(ctx.db),
+    processes.forProcess(processId).withUser(ctx.userId).close(ctx.db),
 });
 
 export const restore = myMutation({
@@ -72,7 +75,7 @@ export const restore = myMutation({
     processId: v.id("processes"),
   },
   handler: (ctx, { processId }) => {
-    return processes.forProcess(processId).focus(ctx.db);
+    return processes.forProcess(processId).withUser(ctx.userId).focus(ctx.db);
   },
 });
 
@@ -85,6 +88,7 @@ export const centerOnScreen = myMutation({
   handler: (ctx, { processId, desktopWidth, desktopHeight }) => {
     return processes
       .forProcess(processId)
+      .withUser(ctx.userId)
       .centerOnScreen(ctx.db, { desktopWidth, desktopHeight });
   },
 });
@@ -109,7 +113,13 @@ export const start = myMutation({
   args: {
     process: processStartingValidator,
   },
-  handler: (ctx, { process }) => {
+  handler: async (ctx, { process }) => {
+    // A file browser can drive its parent's window, so it must be ours.
+    if (process.kind === "file_browser" && process.props.parentProcessId)
+      await processes
+        .forProcess(process.props.parentProcessId)
+        .withUser(ctx.userId)
+        .get(ctx.db);
     return processes.forUser(ctx.userId).start(ctx.db, {
       process,
     });

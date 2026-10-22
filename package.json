@@ -13,7 +13,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint . --max-warnings 0",
     "lint:fix": "eslint . --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest run"
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.56",
@@ -32,12 +33,14 @@
     "xp.css": "^0.2.6"
   },
   "devDependencies": {
+    "@edge-runtime/vm": "^5.0.0",
     "@eslint/js": "^9.38.0",
     "@types/node": "^24.9.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
     "babel-plugin-react-compiler": "^1.0.0",
+    "convex-test": "0.0.41",
     "dotenv": "^17.2.3",
     "eslint": "^9.38.0",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -47,6 +50,7 @@
     "prettier": "^3.6.2",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vite": "^7.1.12"
+    "vite": "^7.1.12",
+    "vitest": "^3"
   }
 }

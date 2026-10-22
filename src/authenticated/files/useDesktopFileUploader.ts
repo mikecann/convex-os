@@ -1,7 +1,6 @@
 import { useMutation } from "convex/react";
 import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
-import { Id } from "../../../convex/_generated/dataModel";
 import { useErrorHandler } from "../../common/errors/useErrorHandler";
 import { playSound } from "../../common/sounds/soundEffects";
 import { getMimeTypeFromFilename } from "../../../shared/fileTypes";
@@ -23,8 +22,6 @@ type UploadStatus = {
 export function useDesktopFileUploader() {
   const createFiles = useMutation(api.my.files.createAll);
   const startUpload = useMutation(api.my.files.startUpload);
-  //const generateUploadUrl = useMutation(api.my.files.generateUploadUrl);
-  const completeUpload = useMutation(api.my.files.completeUpload);
   const setErrorState = useMutation(api.my.files.setUploadError);
   const updateProgress = useMutation(api.my.files.updateUploadProgress);
   const [status, setStatus] = useState<UploadStatus>({
@@ -80,33 +77,23 @@ export function useDesktopFileUploader() {
             xhr.upload.onprogress = (event) => {
               if (!event.lengthComputable) return;
               const progress = Math.round((event.loaded / event.total) * 100);
-              void updateProgress({ fileId, progress });
+              // The server may already have finished the upload.
+              updateProgress({ fileId, progress }).catch(() => {});
             };
 
+            // The server stores and links the upload itself.
             xhr.onload = () => {
-              if (xhr.status >= 200 && xhr.status < 300) {
-                try {
-                  const response = JSON.parse(xhr.responseText) as {
-                    storageId: Id<"_storage">;
-                  };
-                  void completeUpload({ fileId, storageId: response.storageId })
-                    .then(() => resolve())
-                    .catch(reject);
-                } catch (parseError) {
-                  reject(
-                    parseError instanceof Error
-                      ? parseError
-                      : new Error("Upload response could not be parsed"),
-                  );
-                }
-                return;
+              if (xhr.status >= 200 && xhr.status < 300) return resolve();
+              let message = `Upload failed with status ${xhr.status}: ${xhr.statusText}`;
+              try {
+                const response = JSON.parse(xhr.responseText) as {
+                  error?: string;
+                };
+                if (response.error) message = response.error;
+              } catch {
+                // Keep the status message.
               }
-
-              reject(
-                new Error(
-                  `Upload failed with status ${xhr.status}: ${xhr.statusText}`,
-                ),
-              );
+              reject(new Error(message));
             };
 
             xhr.onerror = () => {

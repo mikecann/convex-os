@@ -53,6 +53,8 @@ export const updateUploadProgress = myMutation({
       .updateUploadProgress(ctx.db, { progress }),
 });
 
+// Kept for frontends cached from before uploads were linked server-side.
+// It never links anything, see confirmUploaded.
 export const completeUpload = myMutation({
   args: {
     fileId: v.id("files"),
@@ -62,7 +64,7 @@ export const completeUpload = myMutation({
     files
       .forUser(ctx.userId)
       .forFile(fileId)
-      .completeUpload(ctx, { storageId }),
+      .confirmUploaded(ctx.db, { storageId }),
 });
 
 export const setUploadError = myMutation({

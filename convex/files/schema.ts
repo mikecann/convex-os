@@ -9,6 +9,9 @@ export const fileUploadStateValidator = v.union(
     kind: v.literal("uploading"),
     progress: v.number(),
     uploadUrl: v.string(),
+    // Absent on uploads started before server-side upload linking.
+    uploadToken: v.optional(v.string()),
+    startedAt: v.optional(v.number()),
   }),
   v.object({
     kind: v.literal("uploaded"),
@@ -39,4 +42,6 @@ export const filesTable = defineTable({
     y: v.number(),
   }),
   uploadState: fileUploadStateValidator,
-}).index("by_user", ["userId"]);
+})
+  .index("by_user", ["userId"])
+  .index("by_storage", ["uploadState.storageId"]);

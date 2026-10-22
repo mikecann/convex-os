@@ -8,6 +8,9 @@ import {
 } from "../_generated/server";
 import { clamp } from "../../shared/num";
 
+// HTTP actions accept request bodies up to 20MB.
+export const MAX_UPLOAD_BYTES = 20 * 1024 * 1024;
+export const UPLOAD_TOKEN_TTL = 60 * 60 * 1000;
 
 export const files = {
   forFile(fileId: Id<"files">) {
@@ -22,10 +25,64 @@ export const files = {
 
       async getUploaded(db: DatabaseReader) {
         const file = await this.get(db);
-        if (file.uploadState.kind !== "uploaded") throw new Error("File is not uploaded");
+        if (file.uploadState.kind !== "uploaded")
+          throw new Error("File is not uploaded");
         return file;
       },
     };
+  },
+
+  forUpload(fileId: Id<"files">, token: string) {
+    return {
+      async find(db: DatabaseReader) {
+        const file = await db.get(fileId);
+        if (
+          !file ||
+          file.uploadState.kind !== "uploading" ||
+          !file.uploadState.uploadToken ||
+          file.uploadState.uploadToken !== token ||
+          Date.now() - (file.uploadState.startedAt ?? 0) > UPLOAD_TOKEN_TTL
+        )
+          return null;
+        return file;
+      },
+
+      // Only for a blob the upload HTTP action has just stored. False means
+      // the caller must delete that blob.
+      async complete(
+        { db, storage }: MutationCtx,
+        { storageId }: { storageId: Id<"_storage"> },
+      ) {
+        if (!(await this.find(db))) return false;
+        const stored = await db.system.get(storageId);
+        if (!stored || stored.size > MAX_UPLOAD_BYTES) return false;
+        const url = await storage.getUrl(storageId);
+        if (!url) return false;
+        await db.patch(fileId, {
+          size: stored.size,
+          uploadState: { kind: "uploaded", storageId, url },
+        });
+        return true;
+      },
+    };
+  },
+
+  // Older clients could link any storage ID they knew, so a blob may also be
+  // referenced by someone else's file. Only delete it when nothing else does.
+  async deleteUnsharedStorage(
+    { db, storage }: MutationCtx,
+    storageId: Id<"_storage">,
+    deletingFileId: Id<"files">,
+  ) {
+    const others = (
+      await db
+        .query("files")
+        .withIndex("by_storage", (q) =>
+          q.eq("uploadState.storageId", storageId),
+        )
+        .take(2)
+    ).filter((other) => other._id !== deletingFileId);
+    if (others.length === 0) await storage.delete(storageId);
   },
 
   forUser(userId: Id<"users">) {
@@ -107,23 +164,52 @@ export const files = {
               );
           },
 
-          async startUpload({ db, storage }: MutationCtx) {
+          // Uploads go through our own HTTP action (convex/http.ts), which
+          // stores the bytes and links the new blob itself. Clients never
+          // name a storage ID, so knowing one can't adopt someone's blob.
+          async startUpload({ db }: MutationCtx) {
             const file = await this.get(db);
 
             if (file.uploadState.kind !== "created")
               throw new ConvexError(`File ${fileId} is not in a created state`);
 
-            const uploadUrl = await storage.generateUploadUrl();
+            const siteUrl = process.env.CONVEX_SITE_URL;
+            if (!siteUrl) throw new Error("CONVEX_SITE_URL is not available");
+            const uploadToken = crypto.randomUUID() + crypto.randomUUID();
+            const url = new URL("/files/upload", siteUrl);
+            url.searchParams.set("fileId", fileId);
+            url.searchParams.set("token", uploadToken);
+            const uploadUrl = url.toString();
 
             await db.patch(fileId, {
               uploadState: {
                 kind: "uploading",
                 progress: 0,
                 uploadUrl,
+                uploadToken,
+                startedAt: Date.now(),
               },
             });
 
             return { uploadUrl };
+          },
+
+          // For frontends cached from before server-side linking, which
+          // still call my/files:completeUpload after uploading. Writes
+          // nothing: it only confirms the upload action already linked this
+          // exact blob to this file.
+          async confirmUploaded(
+            db: DatabaseReader,
+            { storageId }: { storageId: Id<"_storage"> },
+          ) {
+            const file = await this.get(db);
+            if (
+              file.uploadState.kind !== "uploaded" ||
+              file.uploadState.storageId !== storageId
+            )
+              throw new ConvexError(
+                "This upload can't be completed. Refresh the page and upload the file again.",
+              );
           },
 
           async updateUploadProgress(
@@ -141,32 +227,6 @@ export const files = {
               uploadState: {
                 ...file.uploadState,
                 progress: clamp(progress, 0, 100),
-              },
-            });
-          },
-
-          async completeUpload(
-            { db, storage }: MutationCtx,
-            { storageId }: { storageId: Id<"_storage"> },
-          ) {
-            const file = await this.get(db);
-
-            if (file.uploadState.kind !== "uploading")
-              throw new ConvexError(
-                `File ${fileId} is not in a uploading state`,
-              );
-
-            const url = await storage.getUrl(storageId);
-            if (!url)
-              throw new ConvexError(
-                `Download URL for storageId '${storageId}' could not be generated`,
-              );
-
-            await db.patch(fileId, {
-              uploadState: {
-                kind: "uploaded",
-                storageId,
-                url,
               },
             });
           },
@@ -229,16 +289,20 @@ export const files = {
       },
 
       async deleteAll(
-        { db, storage }: MutationCtx,
+        ctx: MutationCtx,
         { fileIds }: { fileIds: Array<Id<"files">> },
       ) {
         for (const fileId of fileIds) {
-          const file = await this.forFile(fileId).get(db);
+          const file = await this.forFile(fileId).get(ctx.db);
 
           if (file.uploadState.kind === "uploaded")
-            await storage.delete(file.uploadState.storageId);
+            await files.deleteUnsharedStorage(
+              ctx,
+              file.uploadState.storageId,
+              fileId,
+            );
 
-          await db.delete(fileId);
+          await ctx.db.delete(fileId);
         }
       },
     };

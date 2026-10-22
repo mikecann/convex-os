@@ -1,6 +1,6 @@
 import { v } from "convex/values";
 import { myMutation, myQuery } from "../lib";
-import {} from "../processes/schema";
+import { processes } from "../processes/model";
 import { windows } from "../windows/lib";
 import { windowViewStateValidator } from "../windows/schema";
 
@@ -13,14 +13,18 @@ export const listForProcess = myQuery({
   args: {
     processId: v.id("processes"),
   },
-  handler: (ctx, { processId }) => windows.forProcess(processId).list(ctx.db),
+  handler: (ctx, { processId }) =>
+    processes.forProcess(processId).withUser(ctx.userId).listWindows(ctx.db),
 });
 
 export const minimize = myMutation({
   args: {
     windowId: v.id("windows"),
   },
-  handler: (ctx, { windowId }) => windows.forWindow(windowId).minimize(ctx.db),
+  handler: async (ctx, { windowId }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
+    return windows.forWindow(windowId).minimize(ctx.db);
+  },
 });
 
 export const updateGeometry = myMutation({
@@ -37,23 +41,31 @@ export const updateGeometry = myMutation({
       }),
     ),
   },
-  handler: (ctx, { windowId, position, size }) =>
-    windows.forWindow(windowId).updateGeometry(ctx.db, { position, size }),
+  handler: async (ctx, { windowId, position, size }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
+    return windows
+      .forWindow(windowId)
+      .updateGeometry(ctx.db, { position, size });
+  },
 });
 
 export const focus = myMutation({
   args: {
     windowId: v.id("windows"),
   },
-  handler: (ctx, { windowId }) => windows.forWindow(windowId).focus(ctx.db),
+  handler: async (ctx, { windowId }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
+    return windows.forWindow(windowId).focus(ctx.db);
+  },
 });
 
 export const close = myMutation({
   args: {
     windowId: v.id("windows"),
   },
-  handler: (ctx, { windowId }) => {
-    windows.forWindow(windowId).close(ctx.db);
+  handler: async (ctx, { windowId }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
+    await windows.forWindow(windowId).close(ctx.db);
   },
 });
 
@@ -61,8 +73,10 @@ export const toggleMaximize = myMutation({
   args: {
     windowId: v.id("windows"),
   },
-  handler: (ctx, { windowId }) =>
-    windows.forWindow(windowId).toggleMaximize(ctx.db),
+  handler: async (ctx, { windowId }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
+    return windows.forWindow(windowId).toggleMaximize(ctx.db);
+  },
 });
 
 export const updateTitle = myMutation({
@@ -72,6 +86,7 @@ export const updateTitle = myMutation({
   },
   returns: v.null(),
   handler: async (ctx, { windowId, title }) => {
+    await windows.forWindow(windowId).ensureOwnership(ctx.db, ctx.userId);
     await ctx.db.patch(windowId, { title });
     return null;
   },

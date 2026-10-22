@@ -6,6 +6,8 @@ import { useOptimisticSendMessage } from "../../../common/hooks/optimistic";
 import { useCheffyChatContext } from "./useCheffyChatContext";
 import { Button } from "../../../common/components/Button";
 import { useUIMessages } from "@convex-dev/agent/react";
+import { ConvexError } from "convex/values";
+import { CHEFFY_LIMITS } from "../../../../convex/cheffy/limits";
 
 export function ChatWindowInputBox() {
   const { process } = useCheffyChatContext();
@@ -38,9 +40,17 @@ export function ChatWindowInputBox() {
 
     setMessage("");
 
-    void sendMessage({
+    sendMessage({
       processId: process._id,
       text,
+    }).catch((error: unknown) => {
+      // Give the text back so a rejected message (e.g. daily limit) isn't lost.
+      setMessage(text);
+      alert(
+        error instanceof ConvexError
+          ? String(error.data)
+          : "Cheffy couldn't send that message.",
+      );
     });
 
     if (textareaRef.current) textareaRef.current.style.height = "auto";
@@ -83,6 +93,7 @@ export function ChatWindowInputBox() {
             resize: "none",
           }}
           rows={3}
+          maxLength={CHEFFY_LIMITS.maxInputChars}
         />
         <Button
           type="submit"

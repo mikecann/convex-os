@@ -9,6 +9,7 @@ import { processes } from "../processes/model";
 import { cheffyAgent } from "../cheffy/agent";
 import { generateText } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { CHEFFY_LIMITS } from "../cheffy/limits";
 
 export const createThread = internalQuery({
   args: {
@@ -47,7 +48,6 @@ export const clearInput = internalMutation({
 
 export const generateResponseAsync = cheffyAgent.asTextAction({
   stream: { chunking: "line", throttleMs: 500 },
-
 });
 
 export const generateThreadTitleAsync = internalAction({
@@ -96,7 +96,10 @@ export const generateThreadTitleAsync = internalAction({
 
     const { text: title } = await generateText({
       model: openai.chat("gpt-5-mini"),
-      prompt: `Based on the following conversation, generate a concise title (maximum 6 words). Only return the title, nothing else:\n\n${messagesText}`,
+      prompt: `Based on the following conversation, generate a concise title (maximum 6 words). Only return the title, nothing else:\n\n${messagesText.slice(0, CHEFFY_LIMITS.titlePromptChars)}`,
+      maxOutputTokens: CHEFFY_LIMITS.titleMaxOutputTokens,
+      maxRetries: CHEFFY_LIMITS.maxProviderRetries,
+      providerOptions: { openai: { reasoningEffort: "minimal" } },
     });
 
     if (title.trim())
