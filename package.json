@@ -18,10 +18,10 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.56",
-    "@convex-dev/agent": "^0.2.12",
+    "@convex-dev/agent": "^0.3.2",
     "@convex-dev/auth": "^0.0.90",
     "@types/react-syntax-highlighter": "^15.5.13",
-    "ai": "^5.0.83",
+    "ai": "5.0.277",
     "convex": "^1.28.0",
     "convex-helpers": "^0.1.104",
     "react": "^19.2.0",
