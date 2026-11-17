@@ -22,7 +22,7 @@
     "@convex-dev/auth": "^0.0.90",
     "@types/react-syntax-highlighter": "^15.5.13",
     "ai": "5.0.277",
-    "convex": "^1.28.0",
+    "convex": "^1.50.0",
     "convex-helpers": "^0.1.104",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
